@@ -12,15 +12,28 @@ jest.mock('next/router', () => ({
 }));
 
 import LoginPage from 'pages/login';
+import { UserProvider } from 'hooks/user-context';
+import { AuthProvider } from 'hooks/auth-context';
 
 describe('<loginPage />', () => {
   /* global fetchMock */
+  let tree;
+
+  beforeEach(() => {
+    tree = (
+      <UserProvider>
+        <AuthProvider>
+          <LoginPage />
+        </AuthProvider>
+      </UserProvider>
+    );
+  });
   afterEach(() => {
     spyRouterPush.mockReset();
   });
 
   it('should render', () => {
-    expect(render(<LoginPage />)).toBeDefined();
+    expect(render(tree)).toBeDefined();
   });
 
   it('should show an error for wrong username', async () => {
@@ -32,7 +45,7 @@ describe('<loginPage />', () => {
 }`,
       { status: 401 },
     );
-    const { getByLabelText, getByRole, getByText } = render(<LoginPage />);
+    const { getByLabelText, getByRole, getByText } = render(tree);
 
     userEvent.type(getByLabelText(/Username/), 'nobody');
     userEvent.type(getByLabelText(/Password/), 'Pa$$w0rd!');
@@ -55,7 +68,7 @@ describe('<loginPage />', () => {
 }`,
       { status: 401 },
     );
-    const { getByLabelText, getByRole, getByText } = render(<LoginPage />);
+    const { getByLabelText, getByRole, getByText } = render(tree);
 
     userEvent.type(getByLabelText(/Username/), 'admin');
     userEvent.type(getByLabelText(/Password/), 'ji32k7au4a83');
@@ -77,7 +90,7 @@ describe('<loginPage />', () => {
   "picture": "https://i.pravatar.cc/200",
   "bio": "Lorem ipsum dolorem"
 }`);
-    const { getByLabelText, getByRole } = render(<LoginPage />);
+    const { getByLabelText, getByRole } = render(tree);
 
     userEvent.type(getByLabelText(/Username/), 'admin');
     userEvent.type(getByLabelText(/Password/), 'Pa$$w0rd!');

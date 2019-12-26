@@ -8,11 +8,12 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
 import LoginForm from 'components/forms/login';
-import login from 'services/login';
 import useStyles from './styles';
+import { useAuth } from 'hooks/auth-context';
 
 export default function SignInSide(props) {
   const [error, setError] = useState<string>();
+  const { login } = useAuth();
   const router = useRouter();
   const classes = useStyles(props);
 

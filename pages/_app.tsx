@@ -1,7 +1,10 @@
-import React from 'react';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import App from 'next/app';
 import Head from 'next/head';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import React from 'react';
+
+import { AuthProvider } from 'hooks/auth-context';
+import { UserProvider } from 'hooks/user-context';
 
 class MyApp extends App {
   componentDidMount() {
@@ -20,9 +23,12 @@ class MyApp extends App {
         <Head>
           <title>MUI + Next.js</title>
         </Head>
-        <CssBaseline>
-          <Component {...pageProps} />
-        </CssBaseline>
+        <UserProvider>
+          <AuthProvider>
+            <CssBaseline />
+            <Component {...pageProps} />
+          </AuthProvider>
+        </UserProvider>
       </>
     );
   }
