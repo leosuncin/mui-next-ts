@@ -10,12 +10,8 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 
 import Copyright from 'components/copyright';
+import { AuthLogin } from 'services/login';
 import useStyles from './styles';
-
-type AuthLogin = {
-  username: string;
-  password: string;
-};
 
 const propTypes = {
   onSubmit: PropTypes.func.isRequired,

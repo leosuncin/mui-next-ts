@@ -25,5 +25,9 @@ export default makeStyles((theme: Theme) =>
       margin: theme.spacing(1),
       backgroundColor: theme.palette.secondary.main,
     },
+    errorMessage: {
+      textAlign: 'center',
+      color: '#e51560',
+    },
   }),
 );

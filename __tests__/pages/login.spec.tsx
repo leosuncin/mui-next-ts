@@ -1,0 +1,90 @@
+import { act, fireEvent, render, waitForElement } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
+
+const spyRouterPush = jest.fn();
+jest.mock('next/router', () => ({
+  useRouter() {
+    return {
+      push: spyRouterPush,
+    };
+  },
+}));
+
+import LoginPage from 'pages/login';
+
+describe('<loginPage />', () => {
+  /* global fetchMock */
+  afterEach(() => {
+    spyRouterPush.mockReset();
+  });
+
+  it('should render', () => {
+    expect(render(<LoginPage />)).toBeDefined();
+  });
+
+  it('should show an error for wrong username', async () => {
+    fetchMock.mockResponse(
+      `{
+  "statusCode": 401,
+  "error": "Unauthorized",
+  "message": "There isn't any user with username: nobody"
+}`,
+      { status: 401 },
+    );
+    const { getByLabelText, getByRole, getByText } = render(<LoginPage />);
+
+    userEvent.type(getByLabelText(/Username/), 'nobody');
+    userEvent.type(getByLabelText(/Password/), 'Pa$$w0rd!');
+    await act(async () => {
+      fireEvent.submit(getByRole('form'));
+    });
+
+    const errorMessage = await waitForElement(() =>
+      getByText(/any user with username/i),
+    );
+    expect(errorMessage).toBeVisible();
+  });
+
+  it('should show an error for wrong password', async () => {
+    fetchMock.mockResponse(
+      `{
+  "statusCode": 401,
+  "error": "Unauthorized",
+  "message": "Wrong password for user with username: admin"
+}`,
+      { status: 401 },
+    );
+    const { getByLabelText, getByRole, getByText } = render(<LoginPage />);
+
+    userEvent.type(getByLabelText(/Username/), 'admin');
+    userEvent.type(getByLabelText(/Password/), 'ji32k7au4a83');
+    await act(async () => {
+      fireEvent.submit(getByRole('form'));
+    });
+
+    const errorMessage = await waitForElement(() =>
+      getByText(/Wrong password/i),
+    );
+    expect(errorMessage).toBeVisible();
+  });
+
+  it('should login the user', async () => {
+    fetchMock.mockResponseOnce(`{
+  "id": "760add88-0a2b-4358-bc3f-7d82245c5dea",
+  "username": "admin",
+  "name": "Administrator",
+  "picture": "https://i.pravatar.cc/200",
+  "bio": "Lorem ipsum dolorem"
+}`);
+    const { getByLabelText, getByRole } = render(<LoginPage />);
+
+    userEvent.type(getByLabelText(/Username/), 'admin');
+    userEvent.type(getByLabelText(/Password/), 'Pa$$w0rd!');
+    await act(async () => {
+      fireEvent.submit(getByRole('form'));
+    });
+
+    expect(spyRouterPush).toHaveBeenCalledTimes(1);
+  });
+});
