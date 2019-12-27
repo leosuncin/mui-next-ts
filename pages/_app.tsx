@@ -23,7 +23,7 @@ class MyApp extends App {
         <Head>
           <title>MUI + Next.js</title>
         </Head>
-        <UserProvider>
+        <UserProvider initialUser={pageProps.user}>
           <AuthProvider>
             <CssBaseline />
             <Component {...pageProps} />
