@@ -1,0 +1,72 @@
+{
+  // Use IntelliSense para saber los atributos posibles.
+  // Mantenga el puntero para ver las descripciones de los existentes atributos
+  // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach by Process ID",
+      "type": "node",
+      "request": "attach",
+      "processId": "${command:PickProcess}",
+      "restart": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Next.js",
+      "program": "${workspaceFolder}/node_modules/next/dist/bin/next",
+      "env": {
+        "NODE_OPTIONS": "--inspect"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true,
+      "disableOptimisticBPs": true,
+      "trace": true
+    },
+    {
+      "name": "Launch Next.js in Chrome",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Launch Next.js in Firefox",
+      "type": "firefox",
+      "request": "launch",
+      "reAttach": true,
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Launch all jest tests",
+      "type": "node",
+      "request": "launch",
+      "envFile": "${workspaceFolder}/.env",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+      "args": ["--runInBand"],
+      "disableOptimisticBPs": true
+    },
+    {
+      "name": "Launch current jest test",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+      "args": ["${relativeFile}"],
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "disableOptimisticBPs": true
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Launch Next.js + Firefox",
+      "configurations": ["Launch Next.js", "Launch Next.js in Firefox"]
+    },
+    {
+      "name": "Launch Next.js + Chrome",
+      "configurations": ["Launch Next.js", "Launch Next.js in Chrome"]
+    }
+  ]
+}
