@@ -1,12 +1,11 @@
 {
   "root": true,
   "parser": "babel-eslint",
-  "plugins": ["jsx-a11y", "react", "react-hooks", "jest"],
+  "plugins": ["jsx-a11y", "react", "react-hooks"],
   "env": {
     "browser": true,
     "commonjs": true,
     "es6": true,
-    "jest": true,
     "node": true
   },
   "settings": {
@@ -14,7 +13,6 @@
       "version": "detect"
     }
   },
-  "extends": ["plugin:jest/recommended"],
   "overrides": [
     {
       "files": ["**/*.ts", "**/*.tsx"],

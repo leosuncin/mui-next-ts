@@ -3,6 +3,9 @@ module.exports = {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleDirectories: ['node_modules', '.'],
+  modulePathIgnorePatterns: ['<rootDir>/cypress'],
+  coverageDirectory: '<rootDir>/coverage/unit',
+  coveragePathIgnorePatterns: ['/node_modules/', 'pages/api/__coverage__.ts'],
   globals: {
     // we must specify a custom tsconfig for tests because we need the typescript transform
     // to transform jsx into js rather than leaving it jsx such as the next build requires.  you

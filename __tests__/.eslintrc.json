@@ -1,0 +1,7 @@
+{
+  "plugins": ["jest"],
+  "env": {
+    "jest": true
+  },
+  "extends": ["plugin:jest/recommended"]
+}

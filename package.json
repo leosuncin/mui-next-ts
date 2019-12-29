@@ -6,11 +6,15 @@
   "scripts": {
     "build": "next build",
     "debug": "NODE_OPTIONS='--inspect-brk' next",
+    "cy:open": "cypress open",
     "dev": "next dev",
     "export": "next export",
     "lint": "tsc -p . --noEmit && eslint **/*.ts?",
     "start": "next start",
-    "test": "jest"
+    "start:e2e": "start-test dev 3000 test:e2e",
+    "test": "jest",
+    "test:e2e": "cypress run",
+    "test:watch": "jest --watch"
   },
   "keywords": [],
   "author": "Jaime Leonardo Suncin Cruz <leosuncin@gmail.com>",
@@ -39,6 +43,10 @@
     "xstate": "^4.7.3"
   },
   "devDependencies": {
+    "@cypress/code-coverage": "^1.10.4",
+    "@cypress/webpack-preprocessor": "^4.1.1",
+    "@istanbuljs/nyc-config-typescript": "^1.0.0",
+    "@testing-library/cypress": "^5.0.2",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.4.0",
     "@testing-library/user-event": "^8.0.2",
@@ -53,19 +61,36 @@
     "@typescript-eslint/eslint-plugin": "^2.13.0",
     "@typescript-eslint/parser": "^2.13.0",
     "babel-eslint": "^10.0.3",
+    "babel-plugin-istanbul": "^6.0.0",
+    "cypress": "^3.8.1",
     "eslint": "^6.8.0",
+    "eslint-plugin-cypress": "^2.8.1",
     "eslint-plugin-jest": "^23.1.1",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.17.0",
     "eslint-plugin-react-hooks": "^2.3.0",
     "husky": "^3.1.0",
+    "istanbul-lib-coverage": "^3.0.0",
     "jest": "^24.9.0",
     "jest-fetch-mock": "^3.0.0",
     "lint-staged": "^9.5.0",
     "mutationobserver-shim": "^0.3.3",
     "node-mocks-http": "^1.8.1",
+    "nyc": "^15.0.0",
     "prettier": "^1.19.1",
+    "source-map-support": "^0.5.16",
+    "start-server-and-test": "^1.10.6",
     "ts-jest": "^24.2.0",
+    "ts-loader": "^6.2.1",
+    "ts-node": "^8.5.4",
     "typescript": "^3.7.4"
+  },
+  "nyc": {
+    "extends": "@istanbuljs/nyc-config-typescript",
+    "all": true,
+    "report-dir": "coverage/e2e",
+    "exclude": [
+      "pages/api/__coverage__.ts"
+    ]
   }
 }
