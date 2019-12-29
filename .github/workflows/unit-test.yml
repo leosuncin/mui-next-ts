@@ -1,0 +1,48 @@
+name: Unit test
+
+on: [push]
+
+jobs:
+  unit:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js 12
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - uses: actions/cache@v1
+      name: Cache dependencies
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - name: Cache local node_modules
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-modules-
+    - name: Cache Next.js build
+      uses: actions/cache@v1
+      with:
+        path: .next
+        key: ${{ runner.os }}-next-build-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-next-build-
+    - name: npm install, build, and test
+      run: |
+        npm ci
+        npm run build --if-present
+        npm test -- --coverage
+      env:
+        CI: true
+        APP_SECRET: c67d158338b7e5df7ff128228c74de33cb7a23f388d1c57c6b0df8fb1c825fad58d33a1eba4ffb6fcfc638a2470abff1583707a6c9ae076575a0f0639eb1b08e
+    - uses: actions/upload-artifact@v1
+      with:
+        name: unit-coverage
+        path: coverage/unit

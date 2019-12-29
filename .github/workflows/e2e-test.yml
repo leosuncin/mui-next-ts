@@ -1,0 +1,31 @@
+name: E2E test
+
+on: [push]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache Next.js build
+      uses: actions/cache@v1
+      with:
+        path: .next
+        key: ${{ runner.os }}-next-build-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-next-build-
+    - name: Cypress run
+      uses: cypress-io/github-action@v1
+      timeout-minutes: 10
+      env:
+        CODE_COVERAGE: true
+        APP_SECRET: c67d158338b7e5df7ff128228c74de33cb7a23f388d1c57c6b0df8fb1c825fad58d33a1eba4ffb6fcfc638a2470abff1583707a6c9ae076575a0f0639eb1b08e
+      with:
+        build: npm run build
+        start: npm start
+        wait-on: 'http://localhost:3000'
+    - run: npx nyc report
+    - uses: actions/upload-artifact@v1
+      with:
+        name: e2e-coverage
+        path: coverage/e2e
