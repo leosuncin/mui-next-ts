@@ -1,11 +1,11 @@
-import validate from 'libs/validate';
+import { validateLogin, validateRegister } from 'libs/validate';
 
-describe('validate', () => {
+describe('validate login', () => {
   const username = 'john_doe';
   const password = 'password';
 
   it('should require the username and password', () => {
-    expect(validate({})).toMatchInlineSnapshot(`
+    expect(validateLogin({})).toMatchInlineSnapshot(`
       Array [
         Object {
           "children": Array [],
@@ -32,7 +32,7 @@ describe('validate', () => {
   });
 
   it('should require the username', () => {
-    expect(validate({ password })).toMatchInlineSnapshot(`
+    expect(validateLogin({ password })).toMatchInlineSnapshot(`
       Array [
         Object {
           "children": Array [],
@@ -49,7 +49,7 @@ describe('validate', () => {
   });
 
   it('should require the password', () => {
-    expect(validate({ username })).toMatchInlineSnapshot(`
+    expect(validateLogin({ username })).toMatchInlineSnapshot(`
       Array [
         Object {
           "children": Array [],
@@ -66,7 +66,7 @@ describe('validate', () => {
   });
 
   it('should validate the username and password length', () => {
-    expect(validate({ username: 'user', password: 'qwerty' }))
+    expect(validateLogin({ username: 'user', password: 'qwerty' }))
       .toMatchInlineSnapshot(`
       Array [
         Object {
@@ -90,7 +90,7 @@ describe('validate', () => {
   });
 
   it('should validate the username and password type', () => {
-    expect(validate({ username: true, password: 123456 }))
+    expect(validateLogin({ username: true, password: 123456 }))
       .toMatchInlineSnapshot(`
       Array [
         Object {
@@ -110,6 +110,56 @@ describe('validate', () => {
           },
           "property": "password",
           "value": 123456,
+        },
+      ]
+    `);
+  });
+});
+
+describe('validate register', () => {
+  it('should require all the fields', () => {
+    expect(validateRegister({})).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "children": Array [],
+          "constraints": Object {
+            "isDefined": "firstName should not be null or undefined",
+            "isString": "firstName must be a string",
+            "minLength": "firstName must be longer than or equal to 1 characters",
+          },
+          "property": "firstName",
+          "value": undefined,
+        },
+        Object {
+          "children": Array [],
+          "constraints": Object {
+            "isDefined": "lastName should not be null or undefined",
+            "isString": "lastName must be a string",
+            "minLength": "lastName must be longer than or equal to 1 characters",
+          },
+          "property": "lastName",
+          "value": undefined,
+        },
+        Object {
+          "children": Array [],
+          "constraints": Object {
+            "isDefined": "email should not be null or undefined",
+            "isEmail": "email must be an email",
+            "isString": "email must be a string",
+            "minLength": "email must be longer than or equal to 1 characters",
+          },
+          "property": "email",
+          "value": undefined,
+        },
+        Object {
+          "children": Array [],
+          "constraints": Object {
+            "isDefined": "password should not be null or undefined",
+            "isString": "password must be a string",
+            "minLength": "password must be longer than or equal to 8 characters",
+          },
+          "property": "password",
+          "value": undefined,
         },
       ]
     `);
