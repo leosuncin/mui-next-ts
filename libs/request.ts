@@ -1,6 +1,7 @@
 import fetch from 'cross-fetch';
 
-import { Error as ErrorResponse, ValidationError } from 'pages/api/auth/login';
+import { ValidationError } from 'libs/validate';
+import { Error as ErrorResponse } from 'pages/api/auth/login';
 
 const options: RequestInit = { mode: 'cors', credentials: 'include' };
 

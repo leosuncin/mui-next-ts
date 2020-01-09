@@ -1,25 +1,31 @@
+import {
+  METHOD_NOT_ALLOWED,
+  OK,
+  UNAUTHORIZED,
+  UNPROCESSABLE_ENTITY,
+} from 'http-status-codes';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
 
-import loginApi from 'pages/api/auth/login';
+import loginHandler from 'pages/api/auth/login';
 
-describe('POST /api/auth/login', () => {
+describe('/api/auth/login', () => {
   it('should validate the request method', () => {
     const { req, res } = createMocks<NextApiRequest, NextApiResponse>();
     req._setMethod('PUT');
 
-    loginApi(req, res);
+    loginHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(405);
+    expect(res._getStatusCode()).toBe(METHOD_NOT_ALLOWED);
   });
 
   it('should validate the body', () => {
     const { req, res } = createMocks<NextApiRequest, NextApiResponse>();
     req._setMethod('POST');
 
-    loginApi(req, res);
+    loginHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(422);
+    expect(res._getStatusCode()).toBe(UNPROCESSABLE_ENTITY);
     expect(Array.isArray(res._getData().message)).toBe(true);
   });
 
@@ -32,9 +38,9 @@ describe('POST /api/auth/login', () => {
       },
     });
 
-    loginApi(req, res);
+    loginHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(401);
+    expect(res._getStatusCode()).toBe(UNAUTHORIZED);
     expect(res._getData().message).toMatch(/username/);
   });
 
@@ -47,9 +53,9 @@ describe('POST /api/auth/login', () => {
       },
     });
 
-    loginApi(req, res);
+    loginHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(401);
+    expect(res._getStatusCode()).toBe(UNAUTHORIZED);
     expect(res._getData().message).toMatch(/Wrong\s+password/);
   });
 
@@ -62,9 +68,9 @@ describe('POST /api/auth/login', () => {
       },
     });
 
-    loginApi(req, res);
+    loginHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(200);
+    expect(res._getStatusCode()).toBe(OK);
     expect(res._getHeaders()).toHaveProperty(
       'authorization',
       expect.stringMatching(/Bearer \w+/),
