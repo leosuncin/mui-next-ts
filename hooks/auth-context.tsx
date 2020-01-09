@@ -3,10 +3,12 @@ import React, { createContext, useContext } from 'react';
 
 import login, { AuthLogin } from 'services/login';
 import { useUserDispatch } from 'hooks/user-context';
+import register, { AuthRegister } from 'services/register';
 
 type AuthContextType = {
   login: (body: AuthLogin) => Promise<void>;
   logout: () => void;
+  register: (body: AuthRegister) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>(null);
@@ -23,6 +25,11 @@ export const AuthProvider: React.FC = props => {
       setUser(null);
       cookie.remove('sessionUser');
       localStorage.setItem('logoutAt', new Date().toISOString());
+    },
+    async register(body) {
+      const user = await register(body);
+      cookie.set('sessionUser', user, { sameSite: 'strict' });
+      setUser(user);
     },
   };
 
