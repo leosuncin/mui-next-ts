@@ -24,7 +24,12 @@ describe('Login page', () => {
       .click()
       .wait('@sendLogin')
       .its('status')
-      .should('be', 200);
+      .should('be', 200)
+      .waitUntil(() =>
+        cy.location('pathname').then(pathname => pathname !== '/login'),
+      )
+      .location('pathname')
+      .should('equal', '/');
   });
 
   it('should validate the credentials', () => {
@@ -65,5 +70,15 @@ describe('Login page', () => {
       .its('status')
       .should('be', 401)
       .findByText(/Wrong password/i);
+  });
+
+  it('should go to register', () => {
+    cy.findByText(/Register/i)
+      .click()
+      .waitUntil(() =>
+        cy.location('pathname').then(pathname => pathname !== '/login'),
+      )
+      .location('pathname')
+      .should('equal', '/register');
   });
 });
