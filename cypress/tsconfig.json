@@ -6,6 +6,10 @@
     "isolatedModules": false,
     "target": "es6",
     "module": "es6",
-    "types": ["cypress", "@types/testing-library__cypress"]
+    "types": [
+      "cypress",
+      "@types/testing-library__cypress",
+      "cypress-wait-until"
+    ]
   }
 }
