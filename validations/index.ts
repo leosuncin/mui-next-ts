@@ -29,3 +29,19 @@ export const email = {
     message: 'Email is invalid',
   },
 };
+
+export const address1 = {
+  required: 'Address line 1 should not be empty',
+};
+
+export const city = {
+  required: 'City should not be empty',
+};
+
+export const zip = {
+  required: 'Zip / Postal code should not be empty',
+};
+
+export const country = {
+  required: 'Country should not be empty',
+};
