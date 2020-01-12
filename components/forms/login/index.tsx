@@ -12,26 +12,12 @@ import { useForm } from 'react-hook-form';
 import Copyright from 'components/copyright';
 import { AuthLogin } from 'services/login';
 import useStyles from './styles';
+import { username, password } from 'validations';
 
 const propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
-export const validations = {
-  username: {
-    required: 'Username should not be empty',
-    minLength: {
-      value: 5,
-      message: 'Username too short (at least 5 characters required)',
-    },
-  },
-  password: {
-    required: 'Password should not be empty',
-    minLength: {
-      value: 8,
-      message: 'Password too short (at least 8 characters required)',
-    },
-  },
-};
+const validations = { username, password };
 
 const LoginForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
   const { handleSubmit, register, errors, formState } = useForm<AuthLogin>();

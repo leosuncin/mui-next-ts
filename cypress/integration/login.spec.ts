@@ -2,7 +2,7 @@
 // https://on.cypress.io/intelligent-code-completion
 /// <reference types="Cypress" />
 /// <reference types="@types/testing-library__cypress" />
-
+import { username, password } from '../../validations';
 describe('Login page', () => {
   const usernameLabel = /Username/i;
   const passwordLabel = /Password/i;
@@ -35,15 +35,15 @@ describe('Login page', () => {
   it('should validate the credentials', () => {
     cy.findByText(submitButton)
       .click()
-      .findByText(/Username should not be empty/i)
-      .findByText(/Password should not be empty/i);
+      .findByText(username.required)
+      .findByText(password.required);
 
     cy.findByLabelText(usernameLabel)
       .type('user')
       .findByLabelText(passwordLabel)
       .type('pwd')
-      .findByText(/Username too short/i)
-      .findByText(/Password too short/i);
+      .findByText(username.minLength.message)
+      .findByText(password.minLength.message);
   });
 
   it('should show incorrect username', () => {
