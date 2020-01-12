@@ -1,7 +1,9 @@
 import React from 'react';
 import { render, fireEvent, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import RegisterForm, { validations } from 'components/forms/register';
+
+import RegisterForm from 'components/forms/register';
+import { firstName, lastName, email, password } from 'validations';
 
 describe('<RegisterForm />', () => {
   it('should render', () => {
@@ -17,10 +19,10 @@ describe('<RegisterForm />', () => {
       fireEvent.submit(getByRole('form'));
     });
 
-    expect(getByText(validations.firstName.required)).toBeInTheDocument();
-    expect(getByText(validations.lastName.required)).toBeInTheDocument();
-    expect(getByText(validations.email.required)).toBeInTheDocument();
-    expect(getByText(validations.password.required)).toBeInTheDocument();
+    expect(getByText(firstName.required)).toBeInTheDocument();
+    expect(getByText(lastName.required)).toBeInTheDocument();
+    expect(getByText(email.required)).toBeInTheDocument();
+    expect(getByText(password.required)).toBeInTheDocument();
   });
 
   it('should submit the form', async () => {

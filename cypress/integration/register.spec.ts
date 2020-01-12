@@ -5,6 +5,8 @@
 /// <reference types="cypress-wait-until" />
 import faker from 'faker';
 
+import { firstName, lastName, email, password } from '../../validations';
+
 describe('Register page', () => {
   const firstNameLabel = /First nam/i;
   const lastNameLabel = /Last name/i;
@@ -43,17 +45,17 @@ describe('Register page', () => {
   it('should validate the data', () => {
     cy.findByText(submitButton)
       .click()
-      .findByText(/First name should not be empty/i)
-      .findByText(/Last name should not be empty/i)
-      .findByText(/Email should not be empty/i)
-      .findByText(/Password should not be empty/i);
+      .findByText(firstName.required)
+      .findByText(lastName.required)
+      .findByText(email.required)
+      .findByText(password.required);
 
     cy.findByLabelText(emailLabel)
       .type(faker.internet.userName())
       .findByLabelText(passwordLabel)
       .type('pwd')
-      .findByText(/Email is invalid/i)
-      .findByText(/Password too short/i);
+      .findByText(email.pattern.message)
+      .findByText(password.minLength.message);
   });
 
   it('should shown the error for duplicate user', () => {

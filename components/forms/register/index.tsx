@@ -7,38 +7,22 @@ import {
   TextField,
 } from '@material-ui/core';
 import Link from 'next/link';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
 import Copyright from 'components/copyright';
 import useStyles from './styles';
+import { firstName, lastName, email, password } from 'validations';
 
 type RegisterFormProps = {
   onSubmit: (body) => Promise<void>;
 };
 
 export const validations = {
-  firstName: {
-    required: 'First name should not be empty',
-  },
-  lastName: {
-    required: 'Last name should not be empty',
-  },
-  email: {
-    required: 'Email should not be empty',
-    pattern: {
-      value: /^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
-      message: 'Email is invalid',
-    },
-  },
-  password: {
-    required: 'Password should not be empty',
-    minLength: {
-      value: 8,
-      message: 'Password too short (at least 8 characters required)',
-    },
-  },
+  firstName,
+  lastName,
+  email,
+  password,
 };
 const RegisterForm: React.FC<RegisterFormProps> = props => {
   const { handleSubmit, register, errors, formState } = useForm<
@@ -140,9 +124,6 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
       </Box>
     </form>
   );
-};
-RegisterForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
 };
 
 export default RegisterForm;
