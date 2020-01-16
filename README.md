@@ -6,6 +6,15 @@
   <a href="#" target="_blank">
     <img alt="E2E test" src="https://github.com/leosuncin/mui-next-ts/workflows/E2E%20test/badge.svg" />
   </a>
+  <a href="https://greenkeeper.io/" target="_blank">
+    <img alt="Greenkeeper badge" src="https://badges.greenkeeper.io/leosuncin/mui-next-ts.svg" />
+  </a>
+  <a href="https://david-dm.org/leosuncin/mui-next-ts" target="_blank">
+    <img alt="Dependency Status" src="https://img.shields.io/david/leosuncin/mui-next-ts.svg?style=flat" />
+  </a>
+  <a href="https://david-dm.org/leosuncin/mui-next-ts#info=devDependencies" target="_blank">
+    <img alt="devDependency Status" src="https://img.shields.io/david/dev/leosuncin/mui-next-ts.svg?style=flat" />
+  </a>
   <a href="https://twitter.com/jl_suncin" target="_blank">
     <img alt="Twitter: jl_suncin" src="https://img.shields.io/twitter/follow/jl_suncin.svg?style=social" />
   </a>
@@ -14,8 +23,6 @@
 > Showcase project for how to use Material UI with Next.js
 
 ## Prerequisites
-
-[![Greenkeeper badge](https://badges.greenkeeper.io/leosuncin/mui-next-ts.svg)](https://greenkeeper.io/)
 
 - node >= 12
 - npm >= 6
