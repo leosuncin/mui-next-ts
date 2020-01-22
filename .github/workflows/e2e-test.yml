@@ -5,6 +5,7 @@ on: [push]
 jobs:
   e2e:
     runs-on: ubuntu-16.04
+    if: "!contains(github.event.head_commit.message, 'skip-ci')"
     steps:
     - uses: actions/checkout@v1
     # just so we learn about available environment variables Zeit Now provides
