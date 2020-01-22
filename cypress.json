@@ -4,5 +4,6 @@
     "codeCoverage": {
       "url": "/api/__coverage__"
     }
-  }
+  },
+  "projectId": "kbsfrp"
 }
