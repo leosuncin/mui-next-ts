@@ -12,6 +12,13 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         eslint_flags: --ext '.js' --ext '.ts' --ext '.tsx' .
 
+  tsc:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: bahmutov/npm-install@v1
+    - uses: icrawl/action-tsc@v1
+
   unit:
     runs-on: ubuntu-latest
     steps:
@@ -24,9 +31,8 @@ jobs:
         key: ${{ runner.os }}-next-build
         restore-keys: |
           ${{ runner.os }}-next-build-
-    - name: npm install, build, and test
+    - name: npm test
       run: |
-        npm run build --if-present
         npm test -- --coverage
       env:
         CI: true
