@@ -45,3 +45,31 @@ export const zip = {
 export const country = {
   required: 'Country should not be empty',
 };
+
+export const cardName = {
+  required: 'Card on name should not be empty',
+};
+
+export const cardNumber = {
+  required: 'Card number should not be empty',
+  pattern: {
+    value: /((3(4[0-9]{2}|7[0-9]{2})( |-|)[0-9]{6}( |-|)[0-9]{5}))|((3(7[0-9]{2}|7[0-9]{2})( |-|)[0-9]{4}( |-|)[0-9]{4}( |-|)[0-9]{4}))|((4[0-9]{3}( |-|)([0-9]{4})( |-|)([0-9]{4})( |-|)([0-9]{4})))|((5[0-9]{3}( |-|)([0-9]{4})( |-|)([0-9]{4})( |-|)([0-9]{4})))/,
+    message: 'Card number is invalid',
+  },
+};
+
+export const expDate = {
+  required: 'Expiry date should not be empty',
+  pattern: {
+    value: /\d{2}\/\d{2,4}/,
+    message: 'Expiry date is invalid',
+  },
+};
+
+export const cvv = {
+  required: 'CVV should not be empty',
+  pattern: {
+    value: /\d{3}/,
+    message: 'CVV is invalid',
+  },
+};
