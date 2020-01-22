@@ -12,6 +12,7 @@ describe('withAuthentication HOC', () => {
   afterEach(() => {
     mockPushRoute.mockReset();
   });
+
   describe('server side', () => {
     it('should redirect', async () => {
       const { req, res } = createMocks<IncomingMessage, ServerResponse>();
@@ -34,17 +35,10 @@ describe('withAuthentication HOC', () => {
 
       await expect(
         withAuthentication(jest.fn()).getInitialProps(ctx),
-      ).resolves.toMatchObject({
-        user: {
-          id: expect.any(String),
-          username: expect.any(String),
-          name: expect.any(String),
-          picture: expect.any(String),
-          bio: expect.any(String),
-        },
-      });
+      ).resolves.toBeDefined();
     });
   });
+
   describe('client side', () => {
     let oldProcessBrowser: boolean | undefined;
 
