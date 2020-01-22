@@ -15,6 +15,9 @@
   <a href="https://david-dm.org/leosuncin/mui-next-ts#info=devDependencies" target="_blank">
     <img alt="devDependency Status" src="https://img.shields.io/david/dev/leosuncin/mui-next-ts.svg?style=flat" />
   </a>
+  <a href="https://www.codefactor.io/repository/github/leosuncin/mui-next-ts" target="_blank">
+    <img alt="CodeFactor" src="https://www.codefactor.io/repository/github/leosuncin/mui-next-ts/badge" />
+  </a>
   <a href="https://twitter.com/jl_suncin" target="_blank">
     <img alt="Twitter: jl_suncin" src="https://img.shields.io/twitter/follow/jl_suncin.svg?style=social" />
   </a>
