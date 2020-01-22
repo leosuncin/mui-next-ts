@@ -3,10 +3,17 @@ name: Unit test
 on: [push]
 
 jobs:
-  unit:
-
+  lint:
     runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: reviewdog/action-eslint@v1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        eslint_flags: --ext '.js' --ext '.ts' --ext '.tsx' .
 
+  unit:
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - uses: bahmutov/npm-install@v1
