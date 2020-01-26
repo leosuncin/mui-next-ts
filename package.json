@@ -35,7 +35,7 @@
     "jsonwebtoken": "^8.5.1",
     "luxon": "^1.21.3",
     "mui-datatables": "^2.13.3",
-    "next": "^9.2.0",
+    "next": "^9.2.1",
     "next-cookies": "^2.0.3",
     "next-fonts": "^1.0.1",
     "react": "^16.12.0",
