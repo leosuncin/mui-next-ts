@@ -9,8 +9,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     # just so we learn about available environment variables Zeit Now provides
-    - name: Print env variables
-      run: npx -p @bahmutov/print-env print-env NOW
+    - uses: hmarr/debug-action@master
     - name: Cache Next.js build
       uses: actions/cache@v1
       with:
@@ -24,13 +23,20 @@ jobs:
       env:
         CODE_COVERAGE: true
         APP_SECRET: c67d158338b7e5df7ff128228c74de33cb7a23f388d1c57c6b0df8fb1c825fad58d33a1eba4ffb6fcfc638a2470abff1583707a6c9ae076575a0f0639eb1b08e
-        CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
       with:
         build: npm run build
         start: npm start
         wait-on: 'http://localhost:3000'
-        record: true
-
+    - uses: actions/upload-artifact@v1
+      if: failure()
+      with:
+        name: Cypress screenshots
+        path: cypress/screenshots
+    - uses: actions/upload-artifact@v1
+      if: failure()
+      with:
+        name: Cypress video
+        path: cypress/videos
     - run: npx nyc report
     - uses: actions/upload-artifact@v1
       with:
