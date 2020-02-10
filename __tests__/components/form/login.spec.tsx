@@ -1,8 +1,7 @@
-import React from 'react';
-import { render, fireEvent, act } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-
 import LoginForm, { validations } from 'components/forms/login';
+import React from 'react';
 
 describe('<LoginForm />', () => {
   it('should render', () => {
@@ -31,12 +30,8 @@ describe('<LoginForm />', () => {
       fireEvent.submit(getByRole('form'));
     });
 
-    expect(
-      getByText(validations.username.minLength.message),
-    ).toBeInTheDocument();
-    expect(
-      getByText(validations.password.minLength.message),
-    ).toBeInTheDocument();
+    expect(getByText(validations.username.minLength)).toBeInTheDocument();
+    expect(getByText(validations.password.minLength)).toBeInTheDocument();
   });
 
   it('should submit the form', async () => {

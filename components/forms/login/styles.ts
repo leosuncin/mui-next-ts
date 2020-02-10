@@ -15,5 +15,9 @@ export default makeStyles((theme: Theme) =>
       padding: theme.spacing(2),
       textAlign: 'center',
     },
+    errorMessage: {
+      textAlign: 'center',
+      color: '#e51560',
+    },
   }),
 );
