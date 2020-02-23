@@ -51,7 +51,7 @@
     "@testing-library/cypress": "^5.0.2",
     "@testing-library/jest-dom": "^5.0.0",
     "@testing-library/react": "^9.4.0",
-    "@testing-library/user-event": "^8.0.4",
+    "@testing-library/user-event": "^10.0.0",
     "@types/faker": "^4.1.8",
     "@types/jest": "^25.1.1",
     "@types/js-cookie": "^2.2.4",
