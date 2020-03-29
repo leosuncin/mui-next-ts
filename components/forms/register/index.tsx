@@ -48,6 +48,7 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
 
   return (
     <form
+      title="register form"
       className={classes.root}
       noValidate
       onSubmit={handleSubmit(props.onSubmit)}
