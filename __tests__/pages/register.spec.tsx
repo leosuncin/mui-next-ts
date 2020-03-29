@@ -46,7 +46,7 @@ describe('<RegisterPage />', () => {
     }`,
       { status: 409 },
     );
-    const { getByLabelText, getByRole, getByText } = render(tree);
+    const { getByLabelText, getByTitle, getByText } = render(tree);
 
     userEvent.type(getByLabelText(/First name/i), 'Jane');
     userEvent.type(getByLabelText(/Last name/i), 'Doe');
@@ -54,7 +54,7 @@ describe('<RegisterPage />', () => {
     userEvent.type(getByLabelText(/Password/i), '!drowssap');
 
     await act(async () => {
-      fireEvent.submit(getByRole('form'));
+      fireEvent.submit(getByTitle('register form'));
     });
 
     await expect(
@@ -70,7 +70,7 @@ describe('<RegisterPage />', () => {
       "picture": "https://i.pravatar.cc/200",
       "bio": "Lorem ipsum dolorem"
     }`);
-    const { getByLabelText, getByRole } = render(tree);
+    const { getByLabelText, getByTitle } = render(tree);
 
     userEvent.type(getByLabelText(/First name/i), 'Kristen');
     userEvent.type(getByLabelText(/Last name/i), 'Williams');
@@ -78,7 +78,7 @@ describe('<RegisterPage />', () => {
     userEvent.type(getByLabelText(/Password/i), 'Pa$$w0rd!');
 
     await act(async () => {
-      fireEvent.submit(getByRole('form'));
+      fireEvent.submit(getByTitle('register form'));
     });
 
     expect(spyRouterPush).toHaveBeenCalledTimes(1);

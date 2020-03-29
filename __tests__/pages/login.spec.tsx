@@ -45,12 +45,12 @@ describe('<loginPage />', () => {
 }`,
       { status: 401 },
     );
-    const { getByLabelText, getByRole, getByText } = render(tree);
+    const { getByLabelText, getByTitle, getByText } = render(tree);
 
     userEvent.type(getByLabelText(/Username/), 'nobody');
     userEvent.type(getByLabelText(/Password/), 'Pa$$w0rd!');
     await act(async () => {
-      fireEvent.submit(getByRole('form'));
+      fireEvent.submit(getByTitle('login form'));
     });
 
     const errorMessage = await waitForElement(() =>
@@ -68,12 +68,12 @@ describe('<loginPage />', () => {
 }`,
       { status: 401 },
     );
-    const { getByLabelText, getByRole, getByText } = render(tree);
+    const { getByLabelText, getByTitle, getByText } = render(tree);
 
     userEvent.type(getByLabelText(/Username/), 'admin');
     userEvent.type(getByLabelText(/Password/), 'ji32k7au4a83');
     await act(async () => {
-      fireEvent.submit(getByRole('form'));
+      fireEvent.submit(getByTitle('login form'));
     });
 
     const errorMessage = await waitForElement(() =>
@@ -90,12 +90,12 @@ describe('<loginPage />', () => {
   "picture": "https://i.pravatar.cc/200",
   "bio": "Lorem ipsum dolorem"
 }`);
-    const { getByLabelText, getByRole } = render(tree);
+    const { getByLabelText, getByTitle } = render(tree);
 
     userEvent.type(getByLabelText(/Username/), 'admin');
     userEvent.type(getByLabelText(/Password/), 'Pa$$w0rd!');
     await act(async () => {
-      fireEvent.submit(getByRole('form'));
+      fireEvent.submit(getByTitle('login form'));
     });
 
     expect(spyRouterPush).toHaveBeenCalledTimes(1);

@@ -9,12 +9,12 @@ describe('<RegisterForm />', () => {
   });
 
   it('should require the fields', async () => {
-    const { getByRole, getByText } = render(
+    const { getByTitle, getByText } = render(
       <RegisterForm onSubmit={jest.fn as any} />,
     );
 
     await act(async () => {
-      fireEvent.submit(getByRole('form'));
+      fireEvent.submit(getByTitle('register form'));
     });
 
     expect(getByText(validations.firstName.required)).toBeInTheDocument();
@@ -25,7 +25,7 @@ describe('<RegisterForm />', () => {
 
   it('should submit the form', async () => {
     const handleSubmit = jest.fn();
-    const { getByLabelText, getByRole } = render(
+    const { getByLabelText, getByTitle } = render(
       <RegisterForm onSubmit={handleSubmit} />,
     );
 
@@ -34,7 +34,7 @@ describe('<RegisterForm />', () => {
     userEvent.type(getByLabelText(/Email/i), 'joe@doe.me');
     userEvent.type(getByLabelText(/Password/i), 'Pa$$w0rd!');
     await act(async () => {
-      fireEvent.submit(getByRole('form'));
+      fireEvent.submit(getByTitle('register form'));
     });
 
     expect(handleSubmit).toHaveBeenCalledWith(
