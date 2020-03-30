@@ -1,4 +1,4 @@
-import { act, fireEvent, render, waitForElement } from '@testing-library/react';
+import { act, fireEvent, render, wait } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
@@ -58,7 +58,7 @@ describe('<RegisterPage />', () => {
     });
 
     await expect(
-      waitForElement(() => getByText('Username or Email already registered')),
+      wait(() => getByText('Username or Email already registered')),
     ).resolves.toBeInTheDocument();
   });
 
