@@ -39,6 +39,7 @@ const LoginForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
 
   return (
     <form
+      title="login form"
       className={classes.root}
       noValidate
       onSubmit={handleSubmit(props.onSubmit)}
