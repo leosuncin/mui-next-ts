@@ -20,64 +20,53 @@ describe('Register page', () => {
   });
 
   it('should register', () => {
-    cy.findByLabelText(firstNameLabel)
-      .type(faker.name.firstName())
-      .findByLabelText(lastNameLabel)
-      .type(faker.name.lastName())
-      .findByLabelText(emailLabel)
-      .type(faker.internet.exampleEmail())
-      .findByLabelText(passwordLabel)
-      .type('Pa$$w0rd!')
-      .findByText(submitButton)
+    cy.findByLabelText(firstNameLabel).type(faker.name.firstName());
+    cy.findByLabelText(lastNameLabel).type(faker.name.lastName());
+    cy.findByLabelText(emailLabel).type(faker.internet.exampleEmail());
+    cy.findByLabelText(passwordLabel).type('Pa$$w0rd!');
+    cy.findByText(submitButton)
       .click()
       .wait('@sendRegister')
       .its('status')
       .should('be', 200)
       .waitUntil(() =>
-        cy.location('pathname').then(pathname => pathname !== '/register'),
+        cy.location('pathname').then((pathname) => pathname !== '/register'),
       )
       .location('pathname')
       .should('equal', '/');
   });
 
   it('should validate the data', () => {
-    cy.findByText(submitButton)
-      .click()
-      .findByText(/First name should not be empty/i)
-      .findByText(/Last name should not be empty/i)
-      .findByText(/Email should not be empty/i)
-      .findByText(/Password should not be empty/i);
+    cy.findByText(submitButton).click();
+    cy.findByText(/First name should not be empty/i);
+    cy.findByText(/Last name should not be empty/i);
+    cy.findByText(/Email should not be empty/i);
+    cy.findByText(/Password should not be empty/i);
 
-    cy.findByLabelText(emailLabel)
-      .type(faker.internet.userName())
-      .findByLabelText(passwordLabel)
-      .type('pwd')
-      .findByText(/Email is invalid/i)
-      .findByText(/Password too short/i);
+    cy.findByLabelText(emailLabel).type(faker.internet.userName());
+    cy.findByLabelText(passwordLabel).type('pwd');
+    cy.findByText(/Email is invalid/i);
+    cy.findByText(/Password too short/i);
   });
 
   it('should shown the error for duplicate user', () => {
-    cy.findByLabelText(firstNameLabel)
-      .type('Jane')
-      .findByLabelText(lastNameLabel)
-      .type('Doe')
-      .findByLabelText(emailLabel)
-      .type('jane@doe.me')
-      .findByLabelText(passwordLabel)
-      .type('!drowssap')
-      .findByText(submitButton)
+    cy.findByLabelText(firstNameLabel).type('Jane');
+    cy.findByLabelText(lastNameLabel).type('Doe');
+    cy.findByLabelText(emailLabel).type('jane@doe.me');
+    cy.findByLabelText(passwordLabel).type('!drowssap');
+    cy.findByText(submitButton)
       .click()
       .wait('@sendRegister')
       .its('status')
-      .should('be', 409)
-      .findByText(/already registered/i);
+      .should('be', 409);
+    cy.findByText(/already registered/i);
   });
 
   it('should go to login', () => {
     cy.findByText(/Log in/i)
       .click()
       .waitUntil(() =>
-        cy.location('pathname').then(pathname => pathname !== '/register'),
+        cy.location('pathname').then((pathname) => pathname !== '/register'),
       )
       .location('pathname')
       .should('equal', '/login');
