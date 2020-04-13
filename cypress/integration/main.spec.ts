@@ -25,17 +25,14 @@ describe('Main page', () => {
     });
 
     it('should show main page', () => {
-      cy.findByText(/Main page/i, { selector: ':not(title)' })
-        .findByTestId('profile-menu')
-        .click({ force: true })
-        .findByTestId('app-menu')
-        .click({ force: true });
+      cy.findByText(/Main page/i, { selector: ':not(title)' });
+      cy.findByTestId('profile-menu').click({ force: true });
+      cy.findByTestId('app-menu').click({ force: true });
     });
 
     it('should allow to logout', () => {
-      cy.findByTestId('profile-menu')
-        .click()
-        .findByText(/Logout/i)
+      cy.findByTestId('profile-menu').click();
+      cy.findByText(/Logout/i)
         .click()
         .location('pathname')
         .should('equal', '/login');

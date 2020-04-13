@@ -16,67 +16,58 @@ describe('Login page', () => {
   });
 
   it('should login', () => {
-    cy.findByLabelText(usernameLabel)
-      .type('admin')
-      .findByLabelText(passwordLabel)
-      .type('Pa$$w0rd!')
-      .findByText(submitButton)
+    cy.findByLabelText(usernameLabel).type('admin');
+    cy.findByLabelText(passwordLabel).type('Pa$$w0rd!');
+    cy.findByText(submitButton)
       .click()
       .wait('@sendLogin')
       .its('status')
       .should('be', 200)
       .waitUntil(() =>
-        cy.location('pathname').then(pathname => pathname !== '/login'),
+        cy.location('pathname').then((pathname) => pathname !== '/login'),
       )
       .location('pathname')
       .should('equal', '/');
   });
 
   it('should validate the credentials', () => {
-    cy.findByText(submitButton)
-      .click()
-      .findByText(/Username should not be empty/i)
-      .findByText(/Password should not be empty/i);
+    cy.findByText(submitButton).click();
+    cy.findByText(/Username should not be empty/i);
+    cy.findByText(/Password should not be empty/i);
 
-    cy.findByLabelText(usernameLabel)
-      .type('user')
-      .findByLabelText(passwordLabel)
-      .type('pwd')
-      .findByText(/Username too short/i)
-      .findByText(/Password too short/i);
+    cy.findByLabelText(usernameLabel).type('user');
+    cy.findByLabelText(passwordLabel).type('pwd');
+    cy.findByText(/Username too short/i);
+    cy.findByText(/Password too short/i);
   });
 
   it('should show incorrect username', () => {
-    cy.findByLabelText(usernameLabel)
-      .type('nobody')
-      .findByLabelText(passwordLabel)
-      .type('Pa$$w0rd!')
-      .findByText(submitButton)
+    cy.findByLabelText(usernameLabel).type('nobody');
+    cy.findByLabelText(passwordLabel).type('Pa$$w0rd!');
+    cy.findByText(submitButton)
       .click()
       .wait('@sendLogin')
       .its('status')
-      .should('be', 401)
-      .findByText(/any user with username/i);
+      .should('be', 401);
+    cy.findByText(/any user with username/i);
   });
 
   it('should show incorrect password', () => {
-    cy.findByLabelText(usernameLabel)
-      .type('admin')
-      .findByLabelText(passwordLabel)
-      .type('Password')
-      .findByText(submitButton)
+    cy.findByLabelText(usernameLabel).type('admin');
+    cy.findByLabelText(passwordLabel).type('Password');
+    cy.findByText(submitButton)
       .click()
       .wait('@sendLogin')
       .its('status')
-      .should('be', 401)
-      .findByText(/Wrong password/i);
+      .should('be', 401);
+    cy.findByText(/Wrong password/i);
   });
 
   it('should go to register', () => {
     cy.findByText(/Register/i)
       .click()
       .waitUntil(() =>
-        cy.location('pathname').then(pathname => pathname !== '/login'),
+        cy.location('pathname').then((pathname) => pathname !== '/login'),
       )
       .location('pathname')
       .should('equal', '/register');
