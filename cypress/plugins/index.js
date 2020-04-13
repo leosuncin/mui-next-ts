@@ -10,7 +10,6 @@
 
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
-const task = require('@cypress/code-coverage/task');
 const wp = require('@cypress/webpack-preprocessor');
 
 const options = {
@@ -34,5 +33,7 @@ module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
   on('file:preprocessor', wp(options));
-  on('task', task);
+  require('@cypress/code-coverage/task')(on, config);
+
+  return config;
 };
