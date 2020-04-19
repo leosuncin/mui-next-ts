@@ -1,0 +1,10 @@
+{
+  ".js": {
+    "parser": "babylon",
+    "style": "wes"
+  },
+  ".ts": {
+    "parser": "typescript",
+    "style": "wes"
+  }
+}
