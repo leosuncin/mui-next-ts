@@ -1,7 +1,6 @@
 import faker from 'faker';
 import HttpStatus from 'http-status-codes';
 import jwt from 'jsonwebtoken';
-
 import { hashPassword } from 'libs/encrypt';
 import { validateRegister } from 'libs/validate';
 import withDB from 'middlewares/with-db';

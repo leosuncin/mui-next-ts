@@ -1,4 +1,4 @@
-import { randomBytes, pbkdf2Sync } from 'crypto';
+import { pbkdf2Sync, randomBytes } from 'crypto';
 
 function genSalt(length = 16): string {
   return randomBytes(Math.ceil(length / 2)).toString('hex');

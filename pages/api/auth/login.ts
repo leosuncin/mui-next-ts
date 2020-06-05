@@ -1,9 +1,8 @@
 import faker from 'faker';
-import jwt from 'jsonwebtoken';
 import HttpStatus from 'http-status-codes';
-
+import jwt from 'jsonwebtoken';
 import { comparePassword } from 'libs/encrypt';
-import { validateLogin, ValidationError } from 'libs/validate';
+import { ValidationError, validateLogin } from 'libs/validate';
 import withDB from 'middlewares/with-db';
 
 export type User = {

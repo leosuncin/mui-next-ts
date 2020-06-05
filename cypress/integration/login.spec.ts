@@ -24,7 +24,7 @@ describe('Login page', () => {
       .its('status')
       .should('be', 200)
       .waitUntil(() =>
-        cy.location('pathname').then((pathname) => pathname !== '/login'),
+        cy.location('pathname').then(pathname => pathname !== '/login'),
       )
       .location('pathname')
       .should('equal', '/');
@@ -67,7 +67,7 @@ describe('Login page', () => {
     cy.findByText(/Register/i)
       .click()
       .waitUntil(() =>
-        cy.location('pathname').then((pathname) => pathname !== '/login'),
+        cy.location('pathname').then(pathname => pathname !== '/login'),
       )
       .location('pathname')
       .should('equal', '/register');
