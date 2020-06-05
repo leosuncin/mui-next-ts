@@ -6,12 +6,12 @@ import {
   Link as MUILink,
   TextField,
 } from '@material-ui/core';
+import Copyright from 'components/copyright';
 import Link from 'next/link';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
-import Copyright from 'components/copyright';
 import useStyles from './styles';
 
 type RegisterFormProps = {
@@ -48,6 +48,7 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
 
   return (
     <form
+      title="register form"
       className={classes.root}
       noValidate
       onSubmit={handleSubmit(props.onSubmit)}

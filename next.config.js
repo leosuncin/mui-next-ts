@@ -6,7 +6,6 @@ module.exports = withFonts({
     config.node = {
       fs: 'empty',
     };
-    config.resolve.modules.push(__dirname);
 
     return config;
   },

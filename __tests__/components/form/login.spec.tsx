@@ -9,10 +9,10 @@ describe('<LoginForm />', () => {
   });
 
   it('should require the fields', async () => {
-    const { getByRole, getByText } = render(<LoginForm onSubmit={jest.fn} />);
+    const { getByTitle, getByText } = render(<LoginForm onSubmit={jest.fn} />);
 
     await act(async () => {
-      fireEvent.submit(getByRole('form'));
+      fireEvent.submit(getByTitle('login form'));
     });
 
     expect(getByText(validations.username.required)).toBeInTheDocument();
@@ -20,14 +20,14 @@ describe('<LoginForm />', () => {
   });
 
   it('should validate the length of fields', async () => {
-    const { getByLabelText, getByRole, getByText } = render(
+    const { getByLabelText, getByTitle, getByText } = render(
       <LoginForm onSubmit={jest.fn} />,
     );
 
     userEvent.type(getByLabelText(/Username/), 'user');
     userEvent.type(getByLabelText(/Password/), 'pwd');
     await act(async () => {
-      fireEvent.submit(getByRole('form'));
+      fireEvent.submit(getByTitle('login form'));
     });
 
     expect(getByText(validations.username.minLength)).toBeInTheDocument();
@@ -36,14 +36,14 @@ describe('<LoginForm />', () => {
 
   it('should submit the form', async () => {
     const handleSubmit = jest.fn();
-    const { getByLabelText, getByRole } = render(
+    const { getByLabelText, getByTitle } = render(
       <LoginForm onSubmit={handleSubmit} />,
     );
 
     userEvent.type(getByLabelText(/Username/), 'admin');
     userEvent.type(getByLabelText(/Password/), 'Pa$$w0rd!');
     await act(async () => {
-      fireEvent.submit(getByRole('form'));
+      fireEvent.submit(getByTitle('login form'));
     });
 
     expect(handleSubmit).toHaveBeenCalledWith(

@@ -6,7 +6,6 @@ import {
 } from 'http-status-codes';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
-
 import loginHandler from 'pages/api/auth/login';
 
 describe('/api/auth/login', () => {

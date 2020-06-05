@@ -1,5 +1,8 @@
-import { act, fireEvent, render, waitForElement } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { AuthProvider } from 'hooks/auth-context';
+import { UserProvider } from 'hooks/user-context';
+import RegisterPage from 'pages/register';
 import React from 'react';
 
 const spyRouterPush = jest.fn();
@@ -10,10 +13,6 @@ jest.mock('next/router', () => ({
     };
   },
 }));
-
-import RegisterPage from 'pages/register';
-import { UserProvider } from 'hooks/user-context';
-import { AuthProvider } from 'hooks/auth-context';
 
 describe('<RegisterPage />', () => {
   /* global fetchMock */
@@ -46,7 +45,7 @@ describe('<RegisterPage />', () => {
     }`,
       { status: 409 },
     );
-    const { getByLabelText, getByRole, getByText } = render(tree);
+    const { getByLabelText, getByTitle, getByText } = render(tree);
 
     userEvent.type(getByLabelText(/First name/i), 'Jane');
     userEvent.type(getByLabelText(/Last name/i), 'Doe');
@@ -54,11 +53,11 @@ describe('<RegisterPage />', () => {
     userEvent.type(getByLabelText(/Password/i), '!drowssap');
 
     await act(async () => {
-      fireEvent.submit(getByRole('form'));
+      fireEvent.submit(getByTitle('register form'));
     });
 
     await expect(
-      waitForElement(() => getByText('Username or Email already registered')),
+      waitFor(() => getByText('Username or Email already registered')),
     ).resolves.toBeInTheDocument();
   });
 
@@ -70,7 +69,7 @@ describe('<RegisterPage />', () => {
       "picture": "https://i.pravatar.cc/200",
       "bio": "Lorem ipsum dolorem"
     }`);
-    const { getByLabelText, getByRole } = render(tree);
+    const { getByLabelText, getByTitle } = render(tree);
 
     userEvent.type(getByLabelText(/First name/i), 'Kristen');
     userEvent.type(getByLabelText(/Last name/i), 'Williams');
@@ -78,7 +77,7 @@ describe('<RegisterPage />', () => {
     userEvent.type(getByLabelText(/Password/i), 'Pa$$w0rd!');
 
     await act(async () => {
-      fireEvent.submit(getByRole('form'));
+      fireEvent.submit(getByTitle('register form'));
     });
 
     expect(spyRouterPush).toHaveBeenCalledTimes(1);

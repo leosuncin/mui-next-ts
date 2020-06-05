@@ -1,5 +1,8 @@
-import { act, fireEvent, render, waitForElement } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { AuthProvider } from 'hooks/auth-context';
+import { UserProvider } from 'hooks/user-context';
+import LoginPage from 'pages/login';
 import React from 'react';
 
 const spyRouterPush = jest.fn();
@@ -10,10 +13,6 @@ jest.mock('next/router', () => ({
     };
   },
 }));
-
-import LoginPage from 'pages/login';
-import { UserProvider } from 'hooks/user-context';
-import { AuthProvider } from 'hooks/auth-context';
 
 describe('<loginPage />', () => {
   /* global fetchMock */
@@ -45,15 +44,15 @@ describe('<loginPage />', () => {
 }`,
       { status: 401 },
     );
-    const { getByLabelText, getByRole, getByText } = render(tree);
+    const { getByLabelText, getByTitle, getByText } = render(tree);
 
     userEvent.type(getByLabelText(/Username/), 'nobody');
     userEvent.type(getByLabelText(/Password/), 'Pa$$w0rd!');
     await act(async () => {
-      fireEvent.submit(getByRole('form'));
+      fireEvent.submit(getByTitle('login form'));
     });
 
-    const errorMessage = await waitForElement(() =>
+    const errorMessage = await waitFor(() =>
       getByText(/any user with username/i),
     );
     expect(errorMessage).toBeVisible();
@@ -68,17 +67,15 @@ describe('<loginPage />', () => {
 }`,
       { status: 401 },
     );
-    const { getByLabelText, getByRole, getByText } = render(tree);
+    const { getByLabelText, getByTitle, getByText } = render(tree);
 
     userEvent.type(getByLabelText(/Username/), 'admin');
     userEvent.type(getByLabelText(/Password/), 'ji32k7au4a83');
     await act(async () => {
-      fireEvent.submit(getByRole('form'));
+      fireEvent.submit(getByTitle('login form'));
     });
 
-    const errorMessage = await waitForElement(() =>
-      getByText(/Wrong password/i),
-    );
+    const errorMessage = await waitFor(() => getByText(/Wrong password/i));
     expect(errorMessage).toBeVisible();
   });
 
@@ -90,12 +87,12 @@ describe('<loginPage />', () => {
   "picture": "https://i.pravatar.cc/200",
   "bio": "Lorem ipsum dolorem"
 }`);
-    const { getByLabelText, getByRole } = render(tree);
+    const { getByLabelText, getByTitle } = render(tree);
 
     userEvent.type(getByLabelText(/Username/), 'admin');
     userEvent.type(getByLabelText(/Password/), 'Pa$$w0rd!');
     await act(async () => {
-      fireEvent.submit(getByRole('form'));
+      fireEvent.submit(getByTitle('login form'));
     });
 
     expect(spyRouterPush).toHaveBeenCalledTimes(1);

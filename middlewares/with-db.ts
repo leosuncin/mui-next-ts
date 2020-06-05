@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-
 import { Error } from 'pages/api/auth/login';
 
 export type NextHttpHandler<T = Record<string, any>> = (
