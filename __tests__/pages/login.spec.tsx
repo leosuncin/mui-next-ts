@@ -1,5 +1,8 @@
-import { act, fireEvent, render, wait } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { AuthProvider } from 'hooks/auth-context';
+import { UserProvider } from 'hooks/user-context';
+import LoginPage from 'pages/login';
 import React from 'react';
 
 const spyRouterPush = jest.fn();
@@ -10,10 +13,6 @@ jest.mock('next/router', () => ({
     };
   },
 }));
-
-import LoginPage from 'pages/login';
-import { UserProvider } from 'hooks/user-context';
-import { AuthProvider } from 'hooks/auth-context';
 
 describe('<loginPage />', () => {
   /* global fetchMock */
@@ -53,7 +52,9 @@ describe('<loginPage />', () => {
       fireEvent.submit(getByTitle('login form'));
     });
 
-    const errorMessage = await wait(() => getByText(/any user with username/i));
+    const errorMessage = await waitFor(() =>
+      getByText(/any user with username/i),
+    );
     expect(errorMessage).toBeVisible();
   });
 
@@ -74,7 +75,7 @@ describe('<loginPage />', () => {
       fireEvent.submit(getByTitle('login form'));
     });
 
-    const errorMessage = await wait(() => getByText(/Wrong password/i));
+    const errorMessage = await waitFor(() => getByText(/Wrong password/i));
     expect(errorMessage).toBeVisible();
   });
 

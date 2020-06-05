@@ -1,5 +1,8 @@
-import { act, fireEvent, render, wait } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { AuthProvider } from 'hooks/auth-context';
+import { UserProvider } from 'hooks/user-context';
+import RegisterPage from 'pages/register';
 import React from 'react';
 
 const spyRouterPush = jest.fn();
@@ -10,10 +13,6 @@ jest.mock('next/router', () => ({
     };
   },
 }));
-
-import RegisterPage from 'pages/register';
-import { UserProvider } from 'hooks/user-context';
-import { AuthProvider } from 'hooks/auth-context';
 
 describe('<RegisterPage />', () => {
   /* global fetchMock */
@@ -58,7 +57,7 @@ describe('<RegisterPage />', () => {
     });
 
     await expect(
-      wait(() => getByText('Username or Email already registered')),
+      waitFor(() => getByText('Username or Email already registered')),
     ).resolves.toBeInTheDocument();
   });
 
