@@ -1,15 +1,13 @@
+import { Theme, createStyles, makeStyles } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
-import Fade from '@material-ui/core/Fade';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import { createStyles, makeStyles, Theme } from '@material-ui/core';
-import { useRouter } from 'next/router';
-import React, { useState } from 'react';
-
 import RegisterForm from 'components/forms/register';
 import { useAuth } from 'hooks/auth-context';
+import { useRouter } from 'next/router';
+import React from 'react';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -44,7 +42,6 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function SignInSide(props) {
-  const [error, setError] = useState<string>();
   const { register } = useAuth();
   const router = useRouter();
   const classes = useStyles(props);
@@ -60,23 +57,10 @@ export default function SignInSide(props) {
           <Typography component="h1" variant="h5">
             Welcome aboard
           </Typography>
-          <Fade in={!!error} aria-expanded={!!error}>
-            <Typography color="secondary" className={classes.errorMessage}>
-              <span role="img" aria-label="sad face">
-                😥
-              </span>
-              &nbsp;{error}
-            </Typography>
-          </Fade>
           <RegisterForm
             onSubmit={async body => {
-              try {
-                setError(null);
-                await register(body);
-                router.push('/');
-              } catch (error) {
-                setError(error.message);
-              }
+              await register(body);
+              router.push('/');
             }}
           />
         </div>

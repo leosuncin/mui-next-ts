@@ -1,8 +1,3 @@
-// enables intelligent code completion for Cypress commands
-// https://on.cypress.io/intelligent-code-completion
-/// <reference types="Cypress" />
-/// <reference types="@types/testing-library__cypress" />
-/// <reference types="cypress-wait-until" />
 import faker from 'faker';
 
 describe('Register page', () => {
@@ -24,9 +19,8 @@ describe('Register page', () => {
     cy.findByLabelText(lastNameLabel).type(faker.name.lastName());
     cy.findByLabelText(emailLabel).type(faker.internet.exampleEmail());
     cy.findByLabelText(passwordLabel).type('Pa$$w0rd!');
-    cy.findByText(submitButton)
-      .click()
-      .wait('@sendRegister')
+    cy.findByText(submitButton).click();
+    cy.wait('@sendRegister')
       .its('status')
       .should('be', 200)
       .waitUntil(() =>
@@ -37,15 +31,22 @@ describe('Register page', () => {
   });
 
   it('should validate the data', () => {
-    cy.findByText(submitButton).click();
+    cy.findByLabelText(firstNameLabel).type('A{backspace}');
     cy.findByText(/First name should not be empty/i);
+    cy.findByLabelText(lastNameLabel).type('Z{backspace}');
     cy.findByText(/Last name should not be empty/i);
+    cy.findByLabelText(emailLabel).type('b{backspace}');
     cy.findByText(/Email should not be empty/i);
+    cy.findByLabelText(passwordLabel).type('q{backspace}');
     cy.findByText(/Password should not be empty/i);
 
+    cy.findByLabelText(firstNameLabel).type('A');
+    cy.findByText(/First name too short/i);
+    cy.findByLabelText(lastNameLabel).type('L');
+    cy.findByText(/Last name too short/i);
     cy.findByLabelText(emailLabel).type(faker.internet.userName());
-    cy.findByLabelText(passwordLabel).type('pwd');
     cy.findByText(/Email is invalid/i);
+    cy.findByLabelText(passwordLabel).type('pwd');
     cy.findByText(/Password too short/i);
   });
 
@@ -54,11 +55,8 @@ describe('Register page', () => {
     cy.findByLabelText(lastNameLabel).type('Doe');
     cy.findByLabelText(emailLabel).type('jane@doe.me');
     cy.findByLabelText(passwordLabel).type('!drowssap');
-    cy.findByText(submitButton)
-      .click()
-      .wait('@sendRegister')
-      .its('status')
-      .should('be', 409);
+    cy.findByText(submitButton).click();
+    cy.wait('@sendRegister').its('status').should('be', 409);
     cy.findByText(/already registered/i);
   });
 
