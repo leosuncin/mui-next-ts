@@ -1,8 +1,3 @@
-// enables intelligent code completion for Cypress commands
-// https://on.cypress.io/intelligent-code-completion
-/// <reference types="Cypress" />
-/// <reference types="@types/testing-library__cypress" />
-
 describe('Login page', () => {
   const usernameLabel = /Username/i;
   const passwordLabel = /Password/i;
@@ -31,13 +26,14 @@ describe('Login page', () => {
   });
 
   it('should validate the credentials', () => {
-    cy.findByText(submitButton).click();
+    cy.findByLabelText(usernameLabel).type('a{backspace}');
     cy.findByText(/Username should not be empty/i);
+    cy.findByLabelText(passwordLabel).type('z{backspace}');
     cy.findByText(/Password should not be empty/i);
 
     cy.findByLabelText(usernameLabel).type('user');
-    cy.findByLabelText(passwordLabel).type('pwd');
     cy.findByText(/Username too short/i);
+    cy.findByLabelText(passwordLabel).type('pwd');
     cy.findByText(/Password too short/i);
   });
 
@@ -49,7 +45,7 @@ describe('Login page', () => {
       .wait('@sendLogin')
       .its('status')
       .should('be', 401);
-    cy.findByText(/any user with username/i);
+    cy.findByText(/Wrong username/i);
   });
 
   it('should show incorrect password', () => {
