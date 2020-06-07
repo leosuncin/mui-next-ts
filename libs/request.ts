@@ -1,4 +1,3 @@
-import fetch from 'cross-fetch';
 import { ValidationError } from 'libs/validate';
 import { Error as ErrorResponse } from 'pages/api/auth/login';
 
