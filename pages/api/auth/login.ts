@@ -47,14 +47,14 @@ export default withDB((req, res) => {
     return res.status(HttpStatus.UNAUTHORIZED).send({
       statusCode: HttpStatus.UNAUTHORIZED,
       error: HttpStatus.getStatusText(HttpStatus.UNAUTHORIZED),
-      message: `There isn't any user with username: ${req.body.username}`,
+      message: `Wrong username: ${req.body.username}`,
     });
 
   if (!comparePassword(req.db.get(req.body.username), req.body.password))
     return res.status(HttpStatus.UNAUTHORIZED).send({
       statusCode: HttpStatus.UNAUTHORIZED,
       error: HttpStatus.getStatusText(HttpStatus.UNAUTHORIZED),
-      message: `Wrong password for user with username: ${req.body.username}`,
+      message: `Wrong password for user: ${req.body.username}`,
     });
 
   const token = jwt.sign(
