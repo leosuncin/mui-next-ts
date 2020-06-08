@@ -1,15 +1,13 @@
+import { Theme, createStyles, makeStyles } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
-import Fade from '@material-ui/core/Fade';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import { createStyles, makeStyles, Theme } from '@material-ui/core';
-import { useRouter } from 'next/router';
-import React, { useState } from 'react';
-
 import LoginForm from 'components/forms/login';
 import { useAuth } from 'hooks/auth-context';
+import { useRouter } from 'next/router';
+import React from 'react';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -36,18 +34,13 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(1),
       backgroundColor: theme.palette.secondary.main,
     },
-    errorMessage: {
-      textAlign: 'center',
-      color: '#e51560',
-    },
   }),
 );
 
 export default function SignInSide(props) {
-  const [error, setError] = useState<string>();
-  const { login } = useAuth();
   const router = useRouter();
   const classes = useStyles(props);
+  const { login } = useAuth();
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -60,23 +53,10 @@ export default function SignInSide(props) {
           <Typography component="h1" variant="h5">
             Welcome back
           </Typography>
-          <Fade in={!!error} aria-expanded={!!error}>
-            <Typography color="secondary" className={classes.errorMessage}>
-              <span role="img" aria-label="sad face">
-                😥
-              </span>
-              &nbsp;{error}
-            </Typography>
-          </Fade>
           <LoginForm
             onSubmit={async body => {
-              try {
-                setError(null);
-                await login(body);
-                router.push('/');
-              } catch (error) {
-                setError(error.message);
-              }
+              await login(body);
+              router.push('/');
             }}
           />
         </div>

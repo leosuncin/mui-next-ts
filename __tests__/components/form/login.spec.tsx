@@ -1,8 +1,7 @@
-import React from 'react';
-import { render, fireEvent, act } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-
 import LoginForm, { validations } from 'components/forms/login';
+import React from 'react';
 
 describe('<LoginForm />', () => {
   it('should render', () => {
@@ -51,12 +50,9 @@ describe('<LoginForm />', () => {
       fireEvent.submit(getByTitle('login form'));
     });
 
-    expect(handleSubmit).toHaveBeenCalledWith(
-      {
-        username: 'admin',
-        password: 'Pa$$w0rd!',
-      },
-      expect.anything(),
-    );
+    expect(handleSubmit).toHaveBeenCalledWith({
+      username: 'admin',
+      password: 'Pa$$w0rd!',
+    });
   });
 });
