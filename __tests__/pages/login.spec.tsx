@@ -1,7 +1,10 @@
-import { act, fireEvent, render, waitFor } from '@testing-library/react';
+/* global fetchMock */
+import { RenderResult, act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { createModel } from '@xstate/test';
 import { AuthProvider } from 'hooks/auth-context';
 import { UserProvider } from 'hooks/user-context';
+import createMachineWithTests, { FillEvent } from 'machines/login-test-machine';
 import LoginPage from 'pages/login';
 import React from 'react';
 
@@ -14,87 +17,159 @@ jest.mock('next/router', () => ({
   },
 }));
 
-describe('<loginPage />', () => {
-  /* global fetchMock */
-  let tree;
+const formTitle = 'login form';
+const usernameLabel = /Username/i;
+const passwordLabel = /Password/i;
+const submitButton = /Log me in/i;
+const usernameErrorMessage = /Username.+(?:empty|too short)/i;
+const passwordErrorMessage = /Password.+(?:empty|too short)/i;
+const credentialsErrorMessage = /Wrong (?:username|password)/i;
+const invalidErrorMessages = /(?:Username|Password).+(?:empty|too short)/i;
+const lockedErrorMessage = /Too many failed attempts/i;
 
-  beforeEach(() => {
-    tree = (
-      <UserProvider>
-        <AuthProvider>
-          <LoginPage />
-        </AuthProvider>
-      </UserProvider>
+const testMachine = createMachineWithTests({
+  pristine: ({ getByLabelText }: RenderResult) => {
+    expect(getByLabelText('sad face').parentElement).toHaveAttribute(
+      'aria-expanded',
+      'false',
     );
-  });
-  afterEach(() => {
-    spyRouterPush.mockReset();
-  });
-
-  it('should render', () => {
-    expect(render(tree)).toBeDefined();
-  });
-
-  it('should show an error for wrong username', async () => {
-    fetchMock.mockResponse(
-      `{
-  "statusCode": 401,
-  "error": "Unauthorized",
-  "message": "There isn't any user with username: nobody"
-}`,
-      { status: 401 },
-    );
-    const { getByLabelText, getByTitle, getByText } = render(tree);
-
-    userEvent.type(getByLabelText(/Username/), 'nobody');
-    userEvent.type(getByLabelText(/Password/), 'Pa$$w0rd!');
-    await act(async () => {
-      fireEvent.submit(getByTitle('login form'));
-    });
-
-    const errorMessage = await waitFor(() =>
-      getByText(/any user with username/i),
-    );
-    expect(errorMessage).toBeVisible();
-  });
-
-  it('should show an error for wrong password', async () => {
-    fetchMock.mockResponse(
-      `{
-  "statusCode": 401,
-  "error": "Unauthorized",
-  "message": "Wrong password for user with username: admin"
-}`,
-      { status: 401 },
-    );
-    const { getByLabelText, getByTitle, getByText } = render(tree);
-
-    userEvent.type(getByLabelText(/Username/), 'admin');
-    userEvent.type(getByLabelText(/Password/), 'ji32k7au4a83');
-    await act(async () => {
-      fireEvent.submit(getByTitle('login form'));
-    });
-
-    const errorMessage = await waitFor(() => getByText(/Wrong password/i));
-    expect(errorMessage).toBeVisible();
-  });
-
-  it('should login the user', async () => {
-    fetchMock.mockResponseOnce(`{
-  "id": "760add88-0a2b-4358-bc3f-7d82245c5dea",
-  "username": "admin",
-  "name": "Administrator",
-  "picture": "https://i.pravatar.cc/200",
-  "bio": "Lorem ipsum dolorem"
-}`);
-    const { getByLabelText, getByTitle } = render(tree);
-
-    userEvent.type(getByLabelText(/Username/), 'admin');
-    userEvent.type(getByLabelText(/Password/), 'Pa$$w0rd!');
-    await act(async () => {
-      fireEvent.submit(getByTitle('login form'));
-    });
-
+  },
+  invalid: async ({ findAllByText }: RenderResult) => {
+    const errorMessages = await findAllByText(invalidErrorMessages);
+    expect(errorMessages.length).toBeGreaterThanOrEqual(1);
+    expect(errorMessages.length).toBeLessThan(3);
+  },
+  'invalid.username': async ({ findByText }: RenderResult) => {
+    await expect(findByText(usernameErrorMessage)).resolves.toBeInTheDocument();
+  },
+  'invalid.password': async ({ findByText }: RenderResult) => {
+    await expect(findByText(passwordErrorMessage)).resolves.toBeInTheDocument();
+  },
+  valid: ({ queryAllByText }: RenderResult) => {
+    expect(queryAllByText(usernameErrorMessage)).toHaveLength(0);
+  },
+  correctCredentials: ({ getByLabelText }: RenderResult) => {
+    expect(getByLabelText(usernameLabel)).toBeValid();
+    expect(getByLabelText(passwordLabel)).toBeValid();
+  },
+  incorrectCredentials: ({ getByText }: RenderResult) => {
+    expect(getByText(credentialsErrorMessage)).toBeInTheDocument();
+  },
+  success: () => {
     expect(spyRouterPush).toHaveBeenCalledTimes(1);
+  },
+  retry: ({ getByText }: RenderResult) => {
+    expect(getByText(submitButton).parentElement).toBeEnabled();
+  },
+  locked: ({ getByLabelText, getByText }: RenderResult) => {
+    expect(getByText(lockedErrorMessage)).toBeInTheDocument();
+    expect(getByLabelText(usernameLabel)).toBeDisabled();
+    expect(getByLabelText(passwordLabel)).toBeDisabled();
+    expect(getByText(submitButton).parentElement).toBeDisabled();
+  },
+});
+const testModel = createModel(testMachine, {
+  events: {
+    FILL_FORM: {
+      async exec({ getByLabelText }: RenderResult, event: FillEvent) {
+        const usernameInput = getByLabelText(usernameLabel) as HTMLInputElement;
+        const passwordInput = getByLabelText(passwordLabel) as HTMLInputElement;
+
+        usernameInput.value = '';
+        passwordInput.value = '';
+
+        await act(async () => {
+          await userEvent.type(usernameInput, event.username);
+          fireEvent.blur(usernameInput);
+
+          await userEvent.type(passwordInput, event.password);
+          fireEvent.blur(passwordInput);
+        });
+
+        // Mock the respond by the payload
+        if (event.username === 'admin' && event.password === 'Pa$$w0rd!') {
+          fetchMock.mockResponse(`{
+            "id": "760add88-0a2b-4358-bc3f-7d82245c5dea",
+            "username": "admin",
+            "name": "Administrator",
+            "picture": "https://i.pravatar.cc/200",
+            "bio": "Lorem ipsum dolorem"
+          }`);
+        } else {
+          fetchMock.mockResponse(
+            JSON.stringify({
+              statusCode: 401,
+              error: 'Unauthorized',
+              message:
+                event.username !== 'admin'
+                  ? `Wrong username: ${event.username}`
+                  : `"Wrong password for user: ${event.username}`,
+            }),
+            {
+              status: 401,
+            },
+          );
+        }
+      },
+      cases: [
+        // Invalid user
+        { username: 'user', password: 'ji32k7au4a83' },
+        // Invalid password
+        { username: 'anonymous', password: 'qwerty' },
+        // Wrong password
+        { username: 'admin', password: '$0rdiDHUm4n8/95' },
+        // Wrong username
+        { username: 'administrator', password: ")miLNZWw43')Uvc1F{" },
+        // Correct credentials
+        { username: 'admin', password: 'Pa$$w0rd!' },
+      ],
+    },
+    SUBMIT({ getByTitle }: RenderResult) {
+      return act(async () => {
+        fireEvent.submit(getByTitle(formTitle));
+      });
+    },
+    RETRY(cy: RenderResult) {
+      return act(async () => {
+        const passwordInput = cy.getByLabelText(
+          passwordLabel,
+        ) as HTMLInputElement;
+
+        userEvent.type(passwordInput, '-l}AIlZx&gEB');
+        fireEvent.submit(cy.getByTitle(formTitle));
+
+        userEvent.type(passwordInput, 'Id"Dqe!um3Z&h}~h\',%*=hlm');
+      });
+    },
+  },
+});
+const testPlans = testModel.getSimplePathPlans();
+
+testPlans.forEach(plan => {
+  describe(`Login page ${plan.description}`, () => {
+    afterEach(() => {
+      spyRouterPush.mockReset();
+      fetchMock.resetMocks();
+    });
+
+    plan.paths.forEach(path => {
+      // eslint-disable-next-line jest/expect-expect
+      it(path.description, () => {
+        return path.test(
+          render(
+            <UserProvider>
+              <AuthProvider>
+                <LoginPage />
+              </AuthProvider>
+            </UserProvider>,
+          ),
+        );
+      });
+    });
   });
+});
+
+// eslint-disable-next-line jest/expect-expect
+it('States coverage', () => {
+  testModel.testCoverage();
 });
