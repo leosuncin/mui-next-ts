@@ -54,9 +54,7 @@ export type NextHttpHandler<T = Record<string, unknown>> = (
   res: NextApiResponse<T | Error>,
 ) => Promise<void> | void;
 
-export default function withDbMiddleware(
-  handler: NextHttpHandler,
-): NextHttpHandler {
+export function withDB(handler: NextHttpHandler): NextHttpHandler {
   return async function withDB(req, res) {
     if (!nSQL().listDatabases().includes(dbConfig.id))
       await nSQL().createDatabase(dbConfig);

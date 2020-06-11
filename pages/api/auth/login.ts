@@ -2,8 +2,8 @@ import { nSQL } from '@nano-sql/core';
 import HttpStatus from 'http-status-codes';
 import jwt from 'jsonwebtoken';
 import { comparePassword } from 'libs/encrypt';
+import { withDB } from 'libs/middleware';
 import { ValidationError, validateLogin } from 'libs/validate';
-import withDB from 'middlewares/with-db';
 
 export type Error = {
   readonly statusCode: number;
