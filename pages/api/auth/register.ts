@@ -1,3 +1,4 @@
+import { nSQL } from '@nano-sql/core';
 import faker from 'faker';
 import HttpStatus from 'http-status-codes';
 import jwt from 'jsonwebtoken';
@@ -5,12 +6,10 @@ import { hashPassword } from 'libs/encrypt';
 import { validateRegister } from 'libs/validate';
 import withDB from 'middlewares/with-db';
 
-faker.seed(6996);
-
 /**
- * Mock backend endpoint
+ * Register a new a user
  */
-export default withDB((req, res) => {
+export default withDB(async (req, res) => {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     res.status(HttpStatus.METHOD_NOT_ALLOWED);
@@ -29,28 +28,34 @@ export default withDB((req, res) => {
       message,
     });
 
-  if (req.db.has(req.body.email)) {
+  const [{ total }] = await nSQL('users')
+    .presetQuery('countByUsername', { username: req.body.email })
+    .exec();
+
+  if (total > 0) {
     return res.status(HttpStatus.CONFLICT).send({
       statusCode: HttpStatus.CONFLICT,
       error: HttpStatus.getStatusText(HttpStatus.CONFLICT),
       message: 'Username or Email already registered',
     });
   }
-  req.db.set(req.body.email, hashPassword(req.body.password));
 
-  const token = jwt.sign(
-    { sub: req.body.email },
-    process.env.APP_SECRET ?? '5€cr3t',
-  );
+  const [user] = await nSQL('users')
+    .query('upsert', {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      username: req.body.email,
+      password: hashPassword(req.body.password),
+      picture: faker.image.avatar(),
+      bio: faker.lorem.paragraph(),
+    })
+    .exec();
+
+  const token = jwt.sign({ sub: user.id }, process.env.APP_SECRET ?? '5€cr3t');
 
   res.setHeader('Authorization', `Bearer ${token}`);
   res.setHeader('Set-Cookie', `token=s%3${token}; Path=/; HttpOnly`);
+  delete user.password;
 
-  res.json({
-    id: faker.random.uuid(),
-    username: req.body.email,
-    name: req.body.firstName + ' ' + req.body.lastName,
-    picture: faker.image.avatar(),
-    bio: faker.lorem.paragraph(),
-  });
+  res.json(user);
 });

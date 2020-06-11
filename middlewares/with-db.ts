@@ -25,6 +25,17 @@ const dbConfig: InanoSQLConfig = {
       indexes: {
         'username:string': { unique: true, ignore_case: true },
       },
+      queries: [
+        {
+          name: 'countByUsername',
+          args: { 'username:string': { notNull: true } },
+          call: (db, args: { username: string }) =>
+            db
+              .query('select', ['COUNT(*) AS total'])
+              .where(['username', 'LIKE', args.username])
+              .emit(),
+        },
+      ],
     },
   ],
 };
