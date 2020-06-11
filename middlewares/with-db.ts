@@ -35,6 +35,15 @@ const dbConfig: InanoSQLConfig = {
               .where(['username', 'LIKE', args.username])
               .emit(),
         },
+        {
+          name: 'getByUsername',
+          args: { 'username:string': { notNull: true } },
+          call: (db, args: { username: string }) =>
+            db
+              .query('select')
+              .where(['username', 'LIKE', args.username])
+              .emit(),
+        },
       ],
     },
   ],
