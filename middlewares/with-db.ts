@@ -1,30 +1,60 @@
+import { tmpdir } from 'os';
+
+import { LevelDB } from '@nano-sql/adapter-leveldb';
+import { nSQL } from '@nano-sql/core';
+import { InanoSQLConfig } from '@nano-sql/core/lib/interfaces';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Error } from 'pages/api/auth/login';
 
-export type NextHttpHandler<T = Record<string, any>> = (
-  req: NextApiRequest & { db: Map<string, string> },
+const dbConfig: InanoSQLConfig = {
+  id: 'mui-next',
+  mode: new LevelDB(tmpdir(), true),
+  version: 1,
+  tables: [
+    {
+      name: 'users',
+      model: {
+        'id:uuid': { pk: true },
+        'firstName:string': { notNull: true },
+        'lastName:string': { notNull: true },
+        'username:string': { notNull: true, immutable: true },
+        'password:string': { notNull: true },
+        'picture:string': {},
+        'bio:string': {},
+      },
+      indexes: {
+        'username:string': { unique: true, ignore_case: true },
+      },
+    },
+  ],
+};
+
+export type NextHttpHandler<T = Record<string, unknown>> = (
+  req: NextApiRequest,
   res: NextApiResponse<T | Error>,
 ) => Promise<void> | void;
-
-const db = new Map<string, string>();
-db.set(
-  'admin',
-  'MTc3NzI2ZmE4ZTUwYThhMWFhNWU0MjBjNzQyNzRjZDI6MzBjY2Y5ZDAxMzFiNmZkNQ==',
-); // Pa$$w0rd!
-db.set(
-  'john_doe',
-  'NWI0YTdhMGZhMjA1NmI3NTJmZjU1YWNmMjVmZTY2YjY6MzJlM2JjYzU3YTIxOTNkZA==',
-); // Pa55w0rd!
-db.set(
-  'jane@doe.me',
-  'MmNmMzhiNTZlZjAwMmY4MTgzNWQ5MzJmMTI2ZGE4MTA6YTAxYjIyMjlkYzIwODhhMQ==',
-); // !drowssap
 
 export default function withDbMiddleware(
   handler: NextHttpHandler,
 ): NextHttpHandler {
-  return function withDB(req, res) {
-    req.db = db;
+  return async function withDB(req, res) {
+    if (!nSQL().listDatabases().includes(dbConfig.id))
+      await nSQL().createDatabase(dbConfig);
+
+    await nSQL('users').loadJS([
+      {
+        id: '760add88-0a2b-4358-bc3f-7d82245c5dea',
+        firstName: 'John',
+        lastName: 'Doe',
+        username: 'admin',
+        password:
+          'MTc3NzI2ZmE4ZTUwYThhMWFhNWU0MjBjNzQyNzRjZDI6MzBjY2Y5ZDAxMzFiNmZkNQ==',
+        name: 'Administrator',
+        picture: 'https://i.pravatar.cc/200',
+        bio:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      },
+    ]);
 
     return handler(req, res);
   };
