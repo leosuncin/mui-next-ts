@@ -29,6 +29,7 @@
     "@material-ui/pickers": "^3.2.10",
     "@nano-sql/adapter-leveldb": "^2.0.5",
     "@nano-sql/core": "^2.3.7",
+    "@nano-sql/plugin-fuzzy-search": "^2.0.2",
     "@xstate/react": "^0.8.1",
     "cypress-terminal-report": "^1.4.2",
     "faker": "^4.1.0",
