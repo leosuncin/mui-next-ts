@@ -3,8 +3,7 @@ import { tmpdir } from 'os';
 import { LevelDB } from '@nano-sql/adapter-leveldb';
 import { nSQL } from '@nano-sql/core';
 import { InanoSQLConfig } from '@nano-sql/core/lib/interfaces';
-import { NextApiRequest, NextApiResponse } from 'next';
-import { Error } from 'pages/api/auth/login';
+import { NextHttpHandler } from 'types';
 
 const dbConfig: InanoSQLConfig = {
   id: 'mui-next',
@@ -48,11 +47,6 @@ const dbConfig: InanoSQLConfig = {
     },
   ],
 };
-
-export type NextHttpHandler<T = Record<string, unknown>> = (
-  req: NextApiRequest,
-  res: NextApiResponse<T | Error>,
-) => Promise<void> | void;
 
 export function withDB(handler: NextHttpHandler): NextHttpHandler {
   return async function withDB(req, res) {

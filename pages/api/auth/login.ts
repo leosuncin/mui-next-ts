@@ -5,12 +5,6 @@ import { comparePassword } from 'libs/encrypt';
 import { validateBody, validateMethod, withDB } from 'libs/middleware';
 import { loginSchema } from 'libs/validation';
 
-export type Error = {
-  readonly statusCode: number;
-  readonly message: string;
-  readonly errors: Record<string, string>;
-};
-
 /**
  * Login a existing user
  */

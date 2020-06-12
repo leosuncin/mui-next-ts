@@ -1,7 +1,6 @@
 import { UNPROCESSABLE_ENTITY, getStatusText } from 'http-status-codes';
+import { NextHttpHandler } from 'types';
 import { ObjectSchema } from 'yup';
-
-import { NextHttpHandler } from './with-db';
 
 export function validateBody(
   schema: ObjectSchema,
