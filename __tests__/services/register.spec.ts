@@ -7,22 +7,24 @@ describe('login', () => {
   it('should allow to send credentials', async () => {
     fetchMock.mockResponseOnce(`{
   "id": "760add88-0a2b-4358-bc3f-7d82245c5dea",
-  "username": "kristen.williams@example.com",
-  "name": "Kristen Williams",
+  "username": "kristen.williams",
+  "firstName": "Kristen",
+  "lastName": "Williams",
   "picture": "https://i.pravatar.cc/200",
   "bio": "Lorem ipsum dolorem"
 }`);
     const body = {
       firstName: 'Kristen',
       lastName: 'Williams',
-      email: 'kristen.williams@example.com',
+      username: 'kristen.williams',
       password: 'Pa$$w0rd!',
     };
 
     await expect(register(body)).resolves.toMatchObject({
       id: expect.any(String),
-      username: body.email,
-      name: `${body.firstName} ${body.lastName}`,
+      username: body.username,
+      firstName: body.firstName,
+      lastName: body.lastName,
       picture: expect.any(String),
       bio: expect.any(String),
     });
@@ -40,7 +42,7 @@ describe('login', () => {
     const body = {
       firstName: 'Jane',
       lastName: 'Doe',
-      email: 'jane@doe.me',
+      username: 'jane_doe',
       password: 'Pa$$w0rd!',
     };
 
@@ -53,55 +55,24 @@ describe('login', () => {
     fetchMock.mockResponseOnce(
       `{
   "statusCode": 422,
-  "error": "Unprocessable Entity",
-  "message": [
-    {
-      "children": [],
-      "constraints": {
-        "isString": "firstName must be a string",
-        "minLength": "firstName must be longer than or equal to 1 characters"
-      },
-      "property": "firstName",
-      "value": ""
-    },
-    {
-      "children": [],
-      "constraints": {
-        "isDefined": "lastName should not be null or undefined",
-        "isString": "lastName must be a string",
-        "minLength": "lastName must be longer than or equal to 1 characters"
-      },
-      "property": "lastName",
-      "value": null
-    },
-    {
-      "children": [],
-      "constraints": {
-        "isEmail": "email must be an email"
-      },
-      "property": "email",
-      "value": "jane_doe"
-    },
-    {
-      "children": [],
-      "constraints": {
-        "minLength": "password must be longer than or equal to 8 characters"
-      },
-      "property": "password",
-      "value": "pwd"
-    }
-  ]
+  "message": "Unprocessable Entity",
+  "errors": {
+    "firstName": "First name is a required field",
+    "lastName": "Last name is a required field",
+    "username": "Username must be at least 5 characters",
+    "password": "Password must be at least 8 characters"
+  }
 }`,
       { status: 422 },
     );
     const body = {
       firstName: '',
       lastName: null,
-      email: 'jane_doe',
+      username: 'jane',
       password: 'pwd',
     };
 
-    await expect(register(body)).rejects.toThrow(/must be an email/);
+    await expect(register(body)).rejects.toThrow(/required field/);
   });
 
   it('should fail for server error', async () => {
@@ -116,7 +87,7 @@ describe('login', () => {
     const body = {
       firstName: 'Jane',
       lastName: 'Doe',
-      email: 'jane@doe.me',
+      username: 'jane_doe',
       password: 'Pa$$w0rd!',
     };
 

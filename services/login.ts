@@ -1,5 +1,5 @@
 import { post } from 'libs/request';
-import { User } from 'pages/api/auth/login';
+import { UserWithoutPassword as User } from 'types';
 
 export type AuthLogin = {
   username: string;

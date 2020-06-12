@@ -49,7 +49,7 @@ describe('<RegisterPage />', () => {
 
     userEvent.type(getByLabelText(/First name/i), 'Jane');
     userEvent.type(getByLabelText(/Last name/i), 'Doe');
-    userEvent.type(getByLabelText(/Email/i), 'jane@doe.me');
+    userEvent.type(getByLabelText(/Username/i), 'jane_doe');
     userEvent.type(getByLabelText(/Password/i), '!drowssap');
 
     await act(async () => {
@@ -64,8 +64,9 @@ describe('<RegisterPage />', () => {
   it('should register a new user', async () => {
     fetchMock.mockResponse(`{
       "id": "760add88-0a2b-4358-bc3f-7d82245c5dea",
-      "username": "kristen.williams@example.com",
-      "name": "Kristen Williams",
+      "username": "kristen.williams",
+      "firstName": "Williams",
+      "lastName": "Williams",
       "picture": "https://i.pravatar.cc/200",
       "bio": "Lorem ipsum dolorem"
     }`);
@@ -73,7 +74,7 @@ describe('<RegisterPage />', () => {
 
     userEvent.type(getByLabelText(/First name/i), 'Kristen');
     userEvent.type(getByLabelText(/Last name/i), 'Williams');
-    userEvent.type(getByLabelText(/Email/i), 'kristen.williams@example.com');
+    userEvent.type(getByLabelText(/Username/i), 'kristen.williams');
     userEvent.type(getByLabelText(/Password/i), 'Pa$$w0rd!');
 
     await act(async () => {

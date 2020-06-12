@@ -1,9 +1,8 @@
-import { NextPageContext, NextPage } from 'next';
-import Router from 'next/router';
+import { NextPage, NextPageContext } from 'next';
 import nextCookie from 'next-cookies';
+import Router from 'next/router';
 import React, { useEffect } from 'react';
-
-import { User } from 'pages/api/auth/login';
+import { UserWithoutPassword as User } from 'types';
 
 export type AuthenticationProps = {
   user: User;

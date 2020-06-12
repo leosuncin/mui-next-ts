@@ -9,3 +9,5 @@ export interface User {
   picture: string;
   bio: string;
 }
+
+export type UserWithoutPassword = Omit<User, 'password'>;

@@ -1,5 +1,4 @@
-import { ValidationError } from 'libs/validate';
-import { Error as ErrorResponse } from 'pages/api/auth/login';
+import { Error as ErrorResponse } from 'types';
 
 const options: RequestInit = { mode: 'cors', credentials: 'include' };
 
@@ -17,14 +16,11 @@ export async function post<Body, Data>(
   });
 
   if (resp.status >= 400) {
-    const error = (await resp.json()) as ErrorResponse;
-    let message = (error.message as string) || resp.statusText;
+    const error: ErrorResponse = await resp.json();
+    let message = error.message ?? resp.statusText;
 
-    if (Array.isArray(error.message)) {
-      message = error.message
-        .map((error: ValidationError) => Object.values(error.constraints))
-        .flat()
-        .join('.\n');
+    if (error.errors) {
+      message = Object.values(error.errors).join('.\n');
     }
 
     throw new Error(message);

@@ -6,12 +6,12 @@ import {
   Link as MUILink,
   TextField,
 } from '@material-ui/core';
+import Copyright from 'components/copyright';
 import Link from 'next/link';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
-import Copyright from 'components/copyright';
 import useStyles from './styles';
 
 type RegisterFormProps = {
@@ -25,11 +25,11 @@ export const validations = {
   lastName: {
     required: 'Last name should not be empty',
   },
-  email: {
-    required: 'Email should not be empty',
-    pattern: {
-      value: /^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
-      message: 'Email is invalid',
+  username: {
+    required: 'Username should not be empty',
+    minLength: {
+      value: 5,
+      message: 'Username too short (at least 5 characters required)',
     },
   },
   password: {
@@ -86,16 +86,16 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
         <Grid item xs={12}>
           <TextField
             variant="outlined"
+            margin="normal"
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            type="email"
-            autoComplete="email"
-            inputRef={register(validations.email)}
-            error={!!errors.email}
-            helperText={errors.email && errors.email.message}
+            id="username"
+            label="Username"
+            name="username"
+            autoComplete="username"
+            inputRef={register(validations.username)}
+            error={!!errors.username}
+            helperText={errors.username && errors.username.message}
           />
         </Grid>
         <Grid item xs={12}>

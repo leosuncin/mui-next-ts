@@ -8,7 +8,7 @@ import faker from 'faker';
 describe('Register page', () => {
   const firstNameLabel = /First nam/i;
   const lastNameLabel = /Last name/i;
-  const emailLabel = /Email/i;
+  const usernameLabel = /Username/i;
   const passwordLabel = /Password/i;
   const submitButton = /Sign Me Up/i;
 
@@ -22,7 +22,7 @@ describe('Register page', () => {
   it('should register', () => {
     cy.findByLabelText(firstNameLabel).type(faker.name.firstName());
     cy.findByLabelText(lastNameLabel).type(faker.name.lastName());
-    cy.findByLabelText(emailLabel).type(faker.internet.exampleEmail());
+    cy.findByLabelText(usernameLabel).type(faker.internet.userName());
     cy.findByLabelText(passwordLabel).type('Pa$$w0rd!');
     cy.findByText(submitButton)
       .click()
@@ -40,20 +40,20 @@ describe('Register page', () => {
     cy.findByText(submitButton).click();
     cy.findByText(/First name should not be empty/i);
     cy.findByText(/Last name should not be empty/i);
-    cy.findByText(/Email should not be empty/i);
+    cy.findByText(/Username should not be empty/i);
     cy.findByText(/Password should not be empty/i);
 
-    cy.findByLabelText(emailLabel).type(faker.internet.userName());
-    cy.findByLabelText(passwordLabel).type('pwd');
-    cy.findByText(/Email is invalid/i);
+    cy.findByLabelText(usernameLabel).type(faker.lorem.word().substr(0, 4));
+    cy.findByLabelText(passwordLabel).type('pwd').blur();
+    cy.findByText(/Username too short/i);
     cy.findByText(/Password too short/i);
   });
 
   it('should shown the error for duplicate user', () => {
     cy.findByLabelText(firstNameLabel).type('Jane');
     cy.findByLabelText(lastNameLabel).type('Doe');
-    cy.findByLabelText(emailLabel).type('jane@doe.me');
-    cy.findByLabelText(passwordLabel).type('!drowssap');
+    cy.findByLabelText(usernameLabel).type('jane_doe');
+    cy.findByLabelText(passwordLabel).type('ji32k7au4a83');
     cy.findByText(submitButton)
       .click()
       .wait('@sendRegister')

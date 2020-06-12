@@ -8,7 +8,8 @@ describe('login', () => {
     fetchMock.mockResponseOnce(`{
   "id": "760add88-0a2b-4358-bc3f-7d82245c5dea",
   "username": "admin",
-  "name": "Administrator",
+  "firstName": "John",
+  "lastName": "Doe",
   "picture": "https://i.pravatar.cc/200",
   "bio": "Lorem ipsum dolorem"
 }`);
@@ -17,7 +18,8 @@ describe('login', () => {
     await expect(login(body)).resolves.toMatchObject({
       id: expect.any(String),
       username: body.username,
-      name: expect.any(String),
+      firstName: expect.any(String),
+      lastName: expect.any(String),
       picture: expect.any(String),
       bio: expect.any(String),
     });
@@ -54,32 +56,18 @@ describe('login', () => {
     fetchMock.mockResponseOnce(
       `{
   "statusCode": 422,
-  "error": "Unprocessable Entity",
-  "message": [
-    {
-      "value": "adm",
-      "property": "username",
-      "children": [],
-      "constraints": {
-        "minLength": "username must be longer than or equal to 5 characters"
-      }
-    },
-    {
-      "value": "Pa$",
-      "property": "password",
-      "children": [],
-      "constraints": {
-        "minLength": "password must be longer than or equal to 8 characters"
-      }
-    }
-  ]
+  "message": "Unprocessable Entity",
+  "errors": {
+    "username": "Username must be at least 5 characters",
+    "password": "Password must be at least 8 characters"
+  }
 }`,
       { status: 422 },
     );
     const body = { username: 'adm', password: 'Pa$' };
 
     await expect(login(body)).rejects.toThrow(
-      /must be longer than or equal to/,
+      /must be at least \d+ characters/,
     );
   });
 

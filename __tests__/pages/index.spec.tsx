@@ -1,4 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
+import { AuthProvider } from 'hooks/auth-context';
+import { UserProvider } from 'hooks/user-context';
+import IndexPage from 'pages/index';
 import React from 'react';
 
 const spyRouterPush = jest.fn();
@@ -10,10 +13,6 @@ jest.mock('next/router', () => ({
   },
 }));
 
-import { UserProvider } from 'hooks/user-context';
-import { AuthProvider } from 'hooks/auth-context';
-import IndexPage from 'pages/index';
-
 describe('<IndexPage />', () => {
   let tree;
 
@@ -21,7 +20,8 @@ describe('<IndexPage />', () => {
     const user = {
       id: '760add88-0a2b-4358-bc3f-7d82245c5dea',
       username: 'admin',
-      name: 'Administrator',
+      firstName: 'John',
+      lastName: 'Doe',
       picture: 'https://i.pravatar.cc/200',
       bio: 'Lorem ipsum dolorem',
     };
