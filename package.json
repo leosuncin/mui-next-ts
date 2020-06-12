@@ -40,6 +40,7 @@
     "next": "^9.4.4",
     "next-cookies": "^2.0.3",
     "next-fonts": "^1.1.0",
+    "nookies": "^2.3.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hook-form": "^6.0.4",

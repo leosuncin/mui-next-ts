@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { hashPassword } from 'libs/encrypt';
 import { validateBody, validateMethod, withDB } from 'libs/middleware';
 import { registerSchema } from 'libs/validation';
+import { setCookie } from 'nookies';
 
 /**
  * Register a new a user
@@ -42,7 +43,11 @@ export default withDB(
       );
 
       res.setHeader('Authorization', `Bearer ${token}`);
-      res.setHeader('Set-Cookie', `token=s%3${token}; Path=/; HttpOnly`);
+      setCookie({ res }, 'token', token, {
+        httpOnly: true,
+        path: '/',
+        sameSite: 'strict',
+      });
       delete user.password;
 
       res.json(user);
