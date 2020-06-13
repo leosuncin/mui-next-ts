@@ -1,8 +1,8 @@
 import { nSQL } from '@nano-sql/core';
 import faker from 'faker';
 import HttpStatus from 'http-status-codes';
-import jwt from 'jsonwebtoken';
 import { hashPassword } from 'libs/encrypt';
+import { signJWT } from 'libs/jwt';
 import { validateBody, validateMethod, withDB } from 'libs/middleware';
 import { registerSchema } from 'libs/validation';
 import { setCookie } from 'nookies';
@@ -35,7 +35,7 @@ const register = async (req, res) => {
     })
     .exec()) as [User];
 
-  const token = jwt.sign({ sub: user.id }, process.env.APP_SECRET ?? '5€cr3t');
+  const token = signJWT(user);
 
   res.setHeader('Authorization', `Bearer ${token}`);
   setCookie({ res }, 'token', token, {

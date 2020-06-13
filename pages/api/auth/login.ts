@@ -1,7 +1,7 @@
 import { nSQL } from '@nano-sql/core';
 import HttpStatus from 'http-status-codes';
-import jwt from 'jsonwebtoken';
 import { comparePassword } from 'libs/encrypt';
+import { signJWT } from 'libs/jwt';
 import { validateBody, validateMethod, withDB } from 'libs/middleware';
 import { loginSchema } from 'libs/validation';
 import { setCookie } from 'nookies';
@@ -29,7 +29,7 @@ const login = async (req, res) => {
       message: `Wrong password for user: ${req.body.username}`,
     });
 
-  const token = jwt.sign({ sub: user.id }, process.env.APP_SECRET ?? '5€cr3t');
+  const token = signJWT(user);
 
   res.setHeader('Authorization', `Bearer ${token}`);
   setCookie({ res }, 'token', token, {
