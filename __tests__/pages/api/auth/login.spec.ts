@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import {
   METHOD_NOT_ALLOWED,
   OK,
@@ -9,26 +12,36 @@ import { createMocks } from 'node-mocks-http';
 import loginHandler from 'pages/api/auth/login';
 
 describe('/api/auth/login', () => {
-  it('should validate the request method', () => {
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>();
-    req._setMethod('PUT');
+  it('should validate the request method', async () => {
+    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+      method: 'PUT',
+    });
 
-    loginHandler(req as any, res);
+    await loginHandler(req as any, res);
 
     expect(res._getStatusCode()).toBe(METHOD_NOT_ALLOWED);
+    expect(res._getHeaders()).toHaveProperty('allow', 'POST');
   });
 
-  it('should validate the body', () => {
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>();
-    req._setMethod('POST');
+  it('should validate the body', async () => {
+    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+      method: 'POST',
+      body: {},
+    });
 
-    loginHandler(req as any, res);
+    await loginHandler(req as any, res);
 
     expect(res._getStatusCode()).toBe(UNPROCESSABLE_ENTITY);
-    expect(Array.isArray(res._getData().message)).toBe(true);
+    expect(res._getJSONData()).toHaveProperty(
+      'errors',
+      expect.objectContaining({
+        username: 'Username is a required field',
+        password: 'Password is a required field',
+      }),
+    );
   });
 
-  it('should validate the username', () => {
+  it('should validate the username', async () => {
     const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
       method: 'POST',
       body: {
@@ -37,13 +50,16 @@ describe('/api/auth/login', () => {
       },
     });
 
-    loginHandler(req as any, res);
+    await loginHandler(req as any, res);
 
     expect(res._getStatusCode()).toBe(UNAUTHORIZED);
-    expect(res._getData().message).toMatch(/username/);
+    expect(res._getData()).toHaveProperty(
+      'message',
+      expect.stringMatching(/Wrong username/),
+    );
   });
 
-  it('should validate the password', () => {
+  it('should validate the password', async () => {
     const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
       method: 'POST',
       body: {
@@ -52,13 +68,16 @@ describe('/api/auth/login', () => {
       },
     });
 
-    loginHandler(req as any, res);
+    await loginHandler(req as any, res);
 
     expect(res._getStatusCode()).toBe(UNAUTHORIZED);
-    expect(res._getData().message).toMatch(/Wrong\s+password/);
+    expect(res._getData()).toHaveProperty(
+      'message',
+      expect.stringMatching(/Wrong password/),
+    );
   });
 
-  it('should validate the correct credentials', () => {
+  it('should validate the correct credentials', async () => {
     const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
       method: 'POST',
       body: {
@@ -67,7 +86,7 @@ describe('/api/auth/login', () => {
       },
     });
 
-    loginHandler(req as any, res);
+    await loginHandler(req as any, res);
 
     expect(res._getStatusCode()).toBe(OK);
     expect(res._getHeaders()).toHaveProperty(
@@ -76,8 +95,11 @@ describe('/api/auth/login', () => {
     );
     expect(res._getHeaders()).toHaveProperty(
       'set-cookie',
-      expect.stringMatching(/token=s%3.+; Path=\/; HttpOnly/),
+      expect.arrayContaining([
+        expect.stringMatching(/token=.+; Path=\/; HttpOnly; SameSite=Strict/),
+      ]),
     );
-    expect(res._getData()).toBeDefined();
+    expect(res._getJSONData()).toBeDefined();
+    expect(res._getJSONData()).not.toHaveProperty('password');
   });
 });
