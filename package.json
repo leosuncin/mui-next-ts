@@ -83,6 +83,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.20.0",
     "eslint-plugin-react-hooks": "^4.0.4",
+    "fast-check": "^1.25.0",
     "husky": "^4.2.5",
     "istanbul-lib-coverage": "^3.0.0",
     "jest": "^26.0.1",

@@ -1,6 +1,7 @@
 /**
  * @jest-environment node
  */
+import fc from 'fast-check';
 import {
   METHOD_NOT_ALLOWED,
   OK,
@@ -10,6 +11,7 @@ import {
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
 import loginHandler from 'pages/api/auth/login';
+import { AuthLogin } from 'services/login';
 
 describe('/api/auth/login', () => {
   it('should validate the request method', async () => {
@@ -23,23 +25,35 @@ describe('/api/auth/login', () => {
     expect(res._getHeaders()).toHaveProperty('allow', 'POST');
   });
 
-  it('should validate the body', async () => {
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-      method: 'POST',
-      body: {},
-    });
+  it('should validate the body', () =>
+    fc.assert(
+      fc.asyncProperty<Partial<AuthLogin>>(
+        fc.record(
+          {
+            username: fc.string(0, 4),
+            password: fc.string(0, 7),
+          },
+          { withDeletedKeys: true },
+        ),
+        async body => {
+          const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+            method: 'POST',
+            body,
+          });
 
-    await loginHandler(req as any, res);
+          await loginHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(UNPROCESSABLE_ENTITY);
-    expect(res._getJSONData()).toHaveProperty(
-      'errors',
-      expect.objectContaining({
-        username: 'Username is a required field',
-        password: 'Password is a required field',
-      }),
-    );
-  });
+          expect(res._getStatusCode()).toBe(UNPROCESSABLE_ENTITY);
+          expect(res._getJSONData()).toHaveProperty(
+            'errors',
+            expect.objectContaining({
+              username: expect.stringMatching(/Username.*/),
+              password: expect.stringMatching(/Password.*/),
+            }),
+          );
+        },
+      ),
+    ));
 
   it('should validate the username', async () => {
     const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
