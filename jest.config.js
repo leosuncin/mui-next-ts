@@ -1,6 +1,7 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
+  setupFiles: ['dotenv/config'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleDirectories: ['node_modules', '.'],
   modulePathIgnorePatterns: ['<rootDir>/cypress'],

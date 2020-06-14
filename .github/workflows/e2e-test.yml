@@ -23,6 +23,7 @@ jobs:
       env:
         CODE_COVERAGE: true
         APP_SECRET: c67d158338b7e5df7ff128228c74de33cb7a23f388d1c57c6b0df8fb1c825fad58d33a1eba4ffb6fcfc638a2470abff1583707a6c9ae076575a0f0639eb1b08e
+        JWT_ISSUER: e2e-test
       with:
         build: npm run build
         start: npm start
