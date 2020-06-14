@@ -1,30 +1,106 @@
-import { Error as ErrorResponse } from 'types';
+import {
+  ACCEPTED,
+  CONFLICT,
+  CREATED,
+  FORBIDDEN,
+  INTERNAL_SERVER_ERROR,
+  METHOD_NOT_ALLOWED,
+  NOT_FOUND,
+  NO_CONTENT,
+  OK,
+  SERVICE_UNAVAILABLE,
+  UNAUTHORIZED,
+  UNPROCESSABLE_ENTITY,
+} from 'http-status-codes';
+import {
+  ConflictError,
+  ForbiddenError,
+  InternalServerError,
+  MethodNotAllowedError,
+  NotFoundError,
+  ServiceUnavailableError,
+  UnauthorizedError,
+  UnprocessableEntityError,
+} from 'types';
 
-const options: RequestInit = { mode: 'cors', credentials: 'include' };
+const defaultOptions: RequestInit = { mode: 'cors', credentials: 'include' };
 
 export async function post<Body, Data>(
   request: RequestInfo,
   body: Body,
 ): Promise<Data> {
   const resp = await fetch(request, {
-    ...options,
+    ...defaultOptions,
     method: 'POST',
     body: JSON.stringify(body),
     headers: {
       'Content-Type': 'application/json',
     },
   });
+  const result = await resp.json();
 
-  if (resp.status >= 400) {
-    const error: ErrorResponse = await resp.json();
-    let message = error.message ?? resp.statusText;
+  switch (resp.status) {
+    case UNAUTHORIZED:
+      throw new UnauthorizedError(result);
 
-    if (error.errors) {
-      message = Object.values(error.errors).join('.\n');
-    }
+    case FORBIDDEN:
+      throw new ForbiddenError(result);
 
-    throw new Error(message);
+    case NOT_FOUND:
+      throw new NotFoundError(result);
+
+    case METHOD_NOT_ALLOWED:
+      throw new MethodNotAllowedError(result);
+
+    case CONFLICT:
+      throw new ConflictError(result);
+
+    case UNPROCESSABLE_ENTITY:
+      throw new UnprocessableEntityError(result);
+
+    case INTERNAL_SERVER_ERROR:
+      throw new InternalServerError(result);
+
+    case SERVICE_UNAVAILABLE:
+      throw new ServiceUnavailableError(result);
+
+    case OK:
+    case CREATED:
+    case ACCEPTED:
+      return result as Data;
   }
+}
 
-  return resp.json();
+export async function get<Data>(
+  request: RequestInfo,
+  signal?: AbortSignal,
+): Promise<Data> {
+  const resp = await fetch(request, { ...defaultOptions, signal });
+  const result = await resp.json();
+
+  switch (resp.status) {
+    case UNAUTHORIZED:
+      throw new UnauthorizedError(result);
+
+    case FORBIDDEN:
+      throw new ForbiddenError(result);
+
+    case NOT_FOUND:
+      throw new NotFoundError(result);
+
+    case METHOD_NOT_ALLOWED:
+      throw new MethodNotAllowedError(result);
+
+    case INTERNAL_SERVER_ERROR:
+      throw new InternalServerError(result);
+
+    case SERVICE_UNAVAILABLE:
+      throw new ServiceUnavailableError(result);
+
+    case OK:
+      return result as Data;
+
+    case NO_CONTENT:
+      return;
+  }
 }

@@ -1,6 +1,10 @@
-import { STATUS_CODES } from 'http';
-
 import register from 'services/register';
+import {
+  ConflictError,
+  InternalServerError,
+  UnprocessableEntityError,
+  UserWithoutPassword,
+} from 'types';
 
 /* global fetchMock */
 describe('login', () => {
@@ -20,7 +24,7 @@ describe('login', () => {
       password: 'Pa$$w0rd!',
     };
 
-    await expect(register(body)).resolves.toMatchObject({
+    await expect(register(body)).resolves.toMatchObject<UserWithoutPassword>({
       id: expect.any(String),
       username: body.username,
       firstName: body.firstName,
@@ -34,7 +38,6 @@ describe('login', () => {
     fetchMock.mockResponse(
       `{
   "statusCode": 409,
-  "error": "Conflict",
   "message": "Username or Email already registered"
 }`,
       { status: 409 },
@@ -46,16 +49,14 @@ describe('login', () => {
       password: 'Pa$$w0rd!',
     };
 
-    await expect(register(body)).rejects.toThrow(
-      'Username or Email already registered',
-    );
+    await expect(register(body)).rejects.toThrow(ConflictError);
   });
 
   it('should fail for validation error', async () => {
     fetchMock.mockResponseOnce(
       `{
   "statusCode": 422,
-  "message": "Unprocessable Entity",
+  "message": "Validation errors",
   "errors": {
     "firstName": "First name is a required field",
     "lastName": "Last name is a required field",
@@ -72,7 +73,7 @@ describe('login', () => {
       password: 'pwd',
     };
 
-    await expect(register(body)).rejects.toThrow(/required field/);
+    await expect(register(body)).rejects.toThrow(UnprocessableEntityError);
   });
 
   it('should fail for server error', async () => {
@@ -91,6 +92,6 @@ describe('login', () => {
       password: 'Pa$$w0rd!',
     };
 
-    await expect(register(body)).rejects.toThrow(STATUS_CODES[500]);
+    await expect(register(body)).rejects.toThrow(InternalServerError);
   });
 });
