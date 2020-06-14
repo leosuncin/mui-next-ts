@@ -1,4 +1,4 @@
-import { act, fireEvent, render, waitFor } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AuthProvider } from 'hooks/auth-context';
 import { UserProvider } from 'hooks/user-context';
@@ -45,7 +45,7 @@ describe('<RegisterPage />', () => {
     }`,
       { status: 409 },
     );
-    const { getByLabelText, getByTitle, getByText } = render(tree);
+    const { getByLabelText, getByTitle, findByText } = render(tree);
 
     userEvent.type(getByLabelText(/First name/i), 'Jane');
     userEvent.type(getByLabelText(/Last name/i), 'Doe');
@@ -57,7 +57,7 @@ describe('<RegisterPage />', () => {
     });
 
     await expect(
-      waitFor(() => getByText('Username or Email already registered')),
+      findByText('Username or Email already registered'),
     ).resolves.toBeInTheDocument();
   });
 

@@ -1,7 +1,7 @@
 {
-  "plugins": ["jest"],
+  "plugins": ["jest", "testing-library"],
   "env": {
     "jest": true
   },
-  "extends": ["plugin:jest/recommended"]
+  "extends": ["plugin:jest/recommended", "plugin:testing-library/react"]
 }
