@@ -1,6 +1,6 @@
 import { nSQL } from '@nano-sql/core';
 import faker from 'faker';
-import HttpStatus from 'http-status-codes';
+import { CONFLICT } from 'http-status-codes';
 import { hashPassword } from 'libs/encrypt';
 import { signJWT } from 'libs/jwt';
 import { validateBody, validateMethod, withDB } from 'libs/middleware';
@@ -17,9 +17,8 @@ const register = async (req, res) => {
     .exec();
 
   if (total > 0) {
-    return res.status(HttpStatus.CONFLICT).send({
-      statusCode: HttpStatus.CONFLICT,
-      error: HttpStatus.getStatusText(HttpStatus.CONFLICT),
+    return res.status(CONFLICT).send({
+      statusCode: CONFLICT,
       message: 'Username or Email already registered',
     });
   }

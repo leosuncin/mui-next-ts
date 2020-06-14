@@ -1,31 +1,29 @@
 import { nSQL } from '@nano-sql/core';
-import HttpStatus from 'http-status-codes';
+import { UNAUTHORIZED } from 'http-status-codes';
 import { comparePassword } from 'libs/encrypt';
 import { signJWT } from 'libs/jwt';
 import { validateBody, validateMethod, withDB } from 'libs/middleware';
 import { loginSchema } from 'libs/validation';
 import { setCookie } from 'nookies';
-import { User } from 'types';
+import { NextHttpHandler, User } from 'types';
 
 /**
  * Login a existing user
  */
-const login = async (req, res) => {
+const login: NextHttpHandler = async (req, res) => {
   const [user] = (await nSQL('users')
     .presetQuery('getByUsername', { username: req.body.username })
     .exec()) as [User];
 
   if (!user)
-    return res.status(HttpStatus.UNAUTHORIZED).send({
-      statusCode: HttpStatus.UNAUTHORIZED,
-      error: HttpStatus.getStatusText(HttpStatus.UNAUTHORIZED),
+    return res.status(UNAUTHORIZED).send({
+      statusCode: UNAUTHORIZED,
       message: `Wrong username: ${req.body.username}`,
     });
 
   if (!comparePassword(user.password, req.body.password))
-    return res.status(HttpStatus.UNAUTHORIZED).send({
-      statusCode: HttpStatus.UNAUTHORIZED,
-      error: HttpStatus.getStatusText(HttpStatus.UNAUTHORIZED),
+    return res.status(UNAUTHORIZED).send({
+      statusCode: UNAUTHORIZED,
       message: `Wrong password for user: ${req.body.username}`,
     });
 
