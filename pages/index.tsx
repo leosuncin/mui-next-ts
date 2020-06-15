@@ -1,27 +1,142 @@
-import { Grid } from '@material-ui/core';
-import { NextPage } from 'next';
-import React from 'react';
-
+import {
+  CircularProgress,
+  Collapse,
+  Grid,
+  TableCell,
+  TableRow,
+  Typography,
+} from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
+import CardUser from 'components/cards/user';
 import withAuthentication, {
   AuthenticationProps,
 } from 'components/hoc/with-authentication';
-import UserCard from 'components/cards/user';
 import Layout from 'components/layout';
+import MUIDataTable, { MUIDataTableColumn } from 'mui-datatables';
+import { NextPage } from 'next';
+import React, { useEffect, useState } from 'react';
+import { listUser } from 'services';
+import { UserWithoutPassword as User } from 'types';
 
-const IndexPage: NextPage<AuthenticationProps> = props => (
-  <Layout>
-    <Grid
-      container
-      spacing={2}
-      justify="center"
-      alignItems="center"
-      style={{ paddingTop: '2em' }}
-    >
-      <Grid item>
-        <UserCard {...props.user} />
+const columns: MUIDataTableColumn[] = [
+  {
+    name: 'id',
+    label: 'ID',
+    options: {
+      display: 'false',
+    },
+  },
+  {
+    name: 'firstName',
+    label: 'First name',
+  },
+  {
+    name: 'lastName',
+    label: 'Last name',
+  },
+  {
+    name: 'username',
+    label: 'User name',
+  },
+  {
+    name: 'picture',
+    options: {
+      display: 'false',
+    },
+  },
+  {
+    name: 'bio',
+    options: {
+      display: 'false',
+    },
+  },
+];
+const IndexPage: NextPage<AuthenticationProps> = () => {
+  const [users, setUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>();
+  const options = {
+    responsive: 'standard',
+    expandableRows: true,
+    expandableRowsOnClick: true,
+    renderExpandableRow(rowData, rowMeta) {
+      const colSpan = rowData.length + 1;
+
+      return (
+        <TableRow>
+          <TableCell colSpan={colSpan}>
+            <CardUser
+              id={rowData[0]}
+              firstName={rowData[1]}
+              lastName={rowData[2]}
+              username={rowData[3]}
+              picture={rowData[4]}
+              bio={rowData[5]}
+            />
+          </TableCell>
+        </TableRow>
+      );
+    },
+  };
+
+  useEffect(() => {
+    const abortController = new AbortController();
+    async function fetchUser() {
+      try {
+        setError(null);
+        setIsLoading(true);
+        const data = await listUser({
+          limit: 100,
+          signal: abortController.signal,
+        });
+        setUsers(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchUser();
+
+    return () => {
+      abortController.abort();
+    };
+  }, []);
+
+  return (
+    <Layout>
+      <Grid
+        container
+        spacing={3}
+        direction="column"
+        style={{ paddingTop: '2em' }}
+      >
+        <Grid item lg style={{ display: Boolean(error) ? 'block' : 'none' }}>
+          <Collapse in={Boolean(error)}>
+            <Alert severity="error">{error}</Alert>
+          </Collapse>
+        </Grid>
+        <Grid item lg>
+          <MUIDataTable
+            title={
+              <Typography variant="h6">
+                User List
+                {isLoading && (
+                  <CircularProgress
+                    size={24}
+                    style={{ marginLeft: 15, position: 'relative', top: 4 }}
+                  />
+                )}
+              </Typography>
+            }
+            columns={columns}
+            options={options as any}
+            data={users}
+          />
+        </Grid>
       </Grid>
-    </Grid>
-  </Layout>
-);
+    </Layout>
+  );
+};
 
 export default withAuthentication(IndexPage);
