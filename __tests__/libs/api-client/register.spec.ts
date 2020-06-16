@@ -1,4 +1,4 @@
-import register from 'services/register';
+import register from 'libs/api-client/register';
 import {
   ConflictError,
   InternalServerError,

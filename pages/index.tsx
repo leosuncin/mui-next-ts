@@ -12,10 +12,10 @@ import withAuthentication, {
   AuthenticationProps,
 } from 'components/hoc/with-authentication';
 import Layout from 'components/layout';
+import { listUser } from 'libs/api-client';
 import MUIDataTable, { MUIDataTableColumn } from 'mui-datatables';
 import { NextPage } from 'next';
 import React, { useEffect, useState } from 'react';
-import { listUser } from 'services';
 import { UserWithoutPassword as User } from 'types';
 
 const columns: MUIDataTableColumn[] = [

@@ -1,5 +1,5 @@
 /* global fetchMock */
-import { listUser } from 'services';
+import listUser from 'libs/api-client/list-user';
 
 const users = [
   {

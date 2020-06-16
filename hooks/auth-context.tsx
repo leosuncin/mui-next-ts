@@ -1,9 +1,8 @@
-import cookie from 'js-cookie';
-import React, { createContext, useContext } from 'react';
-
-import login, { AuthLogin } from 'services/login';
 import { useUserDispatch } from 'hooks/user-context';
-import register, { AuthRegister } from 'services/register';
+import cookie from 'js-cookie';
+import { login, register } from 'libs/api-client';
+import React, { createContext, useContext } from 'react';
+import { AuthLogin, AuthRegister } from 'types';
 
 type AuthContextType = {
   login: (body: AuthLogin) => Promise<void>;

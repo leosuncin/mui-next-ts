@@ -11,7 +11,7 @@ import {
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
 import loginHandler from 'pages/api/auth/login';
-import { AuthLogin } from 'services/login';
+import { AuthLogin } from 'types';
 
 describe('/api/auth/login', () => {
   it('should validate the request method', async () => {

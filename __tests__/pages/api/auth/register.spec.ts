@@ -12,7 +12,7 @@ import {
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
 import registerHandler from 'pages/api/auth/register';
-import { AuthRegister } from 'services/register';
+import { AuthRegister } from 'types';
 
 describe('/api/auth/register', () => {
   it('should validate the request method', async () => {

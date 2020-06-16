@@ -1,3 +1,4 @@
+export * from './auth';
 export * from './error';
 export * from './jwt-payload';
 export * from './next-http-handler';

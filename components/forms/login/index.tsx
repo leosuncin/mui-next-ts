@@ -11,7 +11,7 @@ import Link from 'next/link';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { AuthLogin } from 'services/login';
+import { AuthLogin } from 'types';
 
 import useStyles from './styles';
 
