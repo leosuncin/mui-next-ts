@@ -1,6 +1,6 @@
 import { useUserDispatch } from 'hooks/user-context';
-import cookie from 'js-cookie';
 import { login, register } from 'libs/api-client';
+import { destroyCookie, setCookie } from 'nookies';
 import React, { createContext, useContext } from 'react';
 import { AuthLogin, AuthRegister } from 'types';
 
@@ -17,17 +17,23 @@ export const AuthProvider: React.FC = props => {
   const defaultContextValue: AuthContextType = {
     async login(body) {
       const user = await login(body);
-      cookie.set('sessionUser', user, { sameSite: 'strict' });
+      setCookie(null, 'sessionUser', JSON.stringify(user), {
+        sameSite: 'strict',
+        path: '/',
+      });
       setUser(user);
     },
     logout() {
       setUser(null);
-      cookie.remove('sessionUser');
+      destroyCookie(null, 'sessionUser');
       localStorage.setItem('logoutAt', new Date().toISOString());
     },
     async register(body) {
       const user = await register(body);
-      cookie.set('sessionUser', user, { sameSite: 'strict' });
+      setCookie(null, 'sessionUser', JSON.stringify(user), {
+        sameSite: 'strict',
+        path: '/',
+      });
       setUser(user);
     },
   };
