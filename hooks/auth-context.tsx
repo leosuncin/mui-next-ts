@@ -1,5 +1,5 @@
 import { useUserDispatch } from 'hooks/user-context';
-import { login, register } from 'libs/api-client';
+import { login, logout, register } from 'libs/api-client';
 import { destroyCookie, setCookie } from 'nookies';
 import React, { createContext, useContext } from 'react';
 import { AuthLogin, AuthRegister } from 'types';
@@ -23,7 +23,8 @@ export const AuthProvider: React.FC = props => {
       });
       setUser(user);
     },
-    logout() {
+    async logout() {
+      await logout();
       setUser(null);
       destroyCookie(null, 'sessionUser');
       localStorage.setItem('logoutAt', new Date().toISOString());
