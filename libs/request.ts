@@ -104,3 +104,37 @@ export async function get<Data>(
       return;
   }
 }
+
+export async function remove(
+  request: RequestInfo,
+  signal?: AbortSignal,
+): Promise<void> {
+  const resp = await fetch(request, {
+    ...defaultOptions,
+    method: 'DELETE',
+    signal,
+  });
+
+  if (resp.status < 400) return;
+
+  const error = await resp.json();
+  switch (resp.status) {
+    case UNAUTHORIZED:
+      throw new UnauthorizedError(error);
+
+    case FORBIDDEN:
+      throw new ForbiddenError(error);
+
+    case NOT_FOUND:
+      throw new NotFoundError(error);
+
+    case METHOD_NOT_ALLOWED:
+      throw new MethodNotAllowedError(error);
+
+    case INTERNAL_SERVER_ERROR:
+      throw new InternalServerError(error);
+
+    case SERVICE_UNAVAILABLE:
+      throw new ServiceUnavailableError(error);
+  }
+}
