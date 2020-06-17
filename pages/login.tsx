@@ -57,6 +57,7 @@ export default function SignInSide(props) {
             onSubmit={async body => {
               await login(body);
               router.push('/');
+              window.location.pathname = '/';
             }}
           />
         </div>
