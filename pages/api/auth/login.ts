@@ -28,22 +28,28 @@ const login: NextHttpHandler = async (req, res) => {
     });
 
   const token = signJWT(user);
-
-  res.setHeader('Authorization', `Bearer ${token}`);
-  setCookie({ res }, 'token', token, {
-    httpOnly: true,
-    path: '/',
-    sameSite: 'strict',
-  });
-
-  res.json({
+  const userWithoutPassword = {
     id: user.id,
     firstName: user.firstName,
     lastName: user.lastName,
     username: user.username,
     picture: user.picture,
     bio: user.bio,
+  };
+
+  res.setHeader('Authorization', `Bearer ${token}`);
+  setCookie({ res }, 'token', token, {
+    httpOnly: true,
+    path: '/',
+    sameSite: 'strict',
+    maxAge: 30 * 24 * 3600, // 30 days
   });
+  setCookie({ res }, 'sessionUser', JSON.stringify(userWithoutPassword), {
+    path: '/',
+    sameSite: 'strict',
+  });
+
+  res.json(userWithoutPassword);
 };
 
 export default validateMethod(
