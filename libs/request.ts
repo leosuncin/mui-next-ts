@@ -138,3 +138,47 @@ export async function remove(
       throw new ServiceUnavailableError(error);
   }
 }
+
+export async function put<Body, Data>(
+  request: RequestInfo,
+  body: Body,
+): Promise<Data> {
+  const resp = await fetch(request, {
+    ...defaultOptions,
+    method: 'PUT',
+    body: JSON.stringify(body),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  const result = await resp.json();
+
+  switch (resp.status) {
+    case UNAUTHORIZED:
+      throw new UnauthorizedError(result);
+
+    case FORBIDDEN:
+      throw new ForbiddenError(result);
+
+    case NOT_FOUND:
+      throw new NotFoundError(result);
+
+    case METHOD_NOT_ALLOWED:
+      throw new MethodNotAllowedError(result);
+
+    case CONFLICT:
+      throw new ConflictError(result);
+
+    case UNPROCESSABLE_ENTITY:
+      throw new UnprocessableEntityError(result);
+
+    case INTERNAL_SERVER_ERROR:
+      throw new InternalServerError(result);
+
+    case SERVICE_UNAVAILABLE:
+      throw new ServiceUnavailableError(result);
+
+    case OK:
+      return result as Data;
+  }
+}
