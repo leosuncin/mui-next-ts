@@ -1,4 +1,4 @@
-/* global fetchMock */
+import fetchMock from 'jest-fetch-mock';
 import listUser from 'libs/api-client/list-user';
 
 const users = [
@@ -25,6 +25,7 @@ const users = [
       'She had this enormous capacity for wonder, and lived by the Golden Rule.',
   },
 ];
+fetchMock.enableMocks();
 
 describe('fetch users', () => {
   beforeEach(() => {

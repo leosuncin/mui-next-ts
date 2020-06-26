@@ -2,6 +2,7 @@ import { act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AuthProvider } from 'hooks/auth-context';
 import { UserProvider } from 'hooks/user-context';
+import fetchMock from 'jest-fetch-mock';
 import RegisterPage from 'pages/register';
 import React from 'react';
 
@@ -13,9 +14,9 @@ jest.mock('next/router', () => ({
     };
   },
 }));
+fetchMock.enableMocks();
 
 describe('<RegisterPage />', () => {
-  /* global fetchMock */
   let tree;
 
   beforeEach(() => {

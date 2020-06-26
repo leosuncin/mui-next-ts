@@ -4,18 +4,16 @@ import {
   UnprocessableEntityError,
   UserWithoutPassword,
 } from 'types';
+import server, { respondWithServiceUnavailable } from 'utils/test-server';
 
-/* global fetchMock */
 describe('login', () => {
+  beforeAll(() => server.listen());
+
+  afterEach(() => server.resetHandlers());
+
+  afterAll(() => server.close());
+
   it('should allow to send credentials', async () => {
-    fetchMock.mockResponseOnce(`{
-  "id": "760add88-0a2b-4358-bc3f-7d82245c5dea",
-  "username": "admin",
-  "firstName": "John",
-  "lastName": "Doe",
-  "picture": "https://i.pravatar.cc/200",
-  "bio": "Lorem ipsum dolorem"
-}`);
     const body = { username: 'admin', password: 'Pa$$w0rd!' };
 
     await expect(login(body)).resolves.toMatchObject<UserWithoutPassword>({
@@ -29,62 +27,29 @@ describe('login', () => {
   });
 
   it('should fail for missing credentials', async () => {
-    fetchMock.mockResponseOnce(
-      `{
-  "statusCode": 422,
-  "message": "Validation errors",
-  "errors": {
-    "password": "Password is a required field",
-    "username": "Username must be at least 5 characters"
-  }
-}`,
-      { status: 422 },
-    );
     const body: any = {};
 
     await expect(login(body)).rejects.toThrow(UnprocessableEntityError);
   });
 
   it('should fail for the incorrect credentials', async () => {
-    fetchMock.mockResponse(
-      `{
-  "statusCode": 401,
-  "message": "Wrong password for user: admin"
-}`,
-      { status: 401 },
-    );
-    const body = { username: 'admin', password: 'ji32k7au4a83' };
-
-    await expect(login(body)).rejects.toThrow(UnauthorizedError);
+    await expect(
+      login({ username: 'admin', password: 'ji32k7au4a83' }),
+    ).rejects.toThrow(UnauthorizedError);
+    await expect(
+      login({ username: 'administrator', password: 'ji32k7au4a83' }),
+    ).rejects.toThrow(UnauthorizedError);
   });
 
   it('should fail for validation error', async () => {
-    fetchMock.mockResponseOnce(
-      `{
-  "statusCode": 422,
-  "message": "Validation errors",
-  "errors": {
-    "password": "Password must be at least 8 characters",
-    "username": "Username must be at least 5 characters"
-  }
-}`,
-      { status: 422 },
-    );
     const body = { username: 'adm', password: 'Pa$' };
 
     await expect(login(body)).rejects.toThrow(UnprocessableEntityError);
   });
 
   it('should fail for server error', async () => {
-    fetchMock.mockResponseOnce(
-      `{
-  "statusCode": 503,
-  "message": "Database connection error"
-}`,
-      { status: 503 },
-    );
-
     const body = { username: 'admin', password: 'Pa$$w0rd!' };
+    server.use(respondWithServiceUnavailable('/api/auth/login', 'post'));
 
     await expect(login(body)).rejects.toThrow();
   });

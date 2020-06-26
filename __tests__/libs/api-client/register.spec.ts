@@ -1,22 +1,19 @@
 import register from 'libs/api-client/register';
 import {
   ConflictError,
-  InternalServerError,
   UnprocessableEntityError,
   UserWithoutPassword,
 } from 'types';
+import server, { respondWithServiceUnavailable } from 'utils/test-server';
 
-/* global fetchMock */
-describe('login', () => {
+describe('register', () => {
+  beforeAll(() => server.listen());
+
+  afterEach(() => server.resetHandlers());
+
+  afterAll(() => server.close());
+
   it('should allow to send credentials', async () => {
-    fetchMock.mockResponseOnce(`{
-  "id": "760add88-0a2b-4358-bc3f-7d82245c5dea",
-  "username": "kristen.williams",
-  "firstName": "Kristen",
-  "lastName": "Williams",
-  "picture": "https://i.pravatar.cc/200",
-  "bio": "Lorem ipsum dolorem"
-}`);
     const body = {
       firstName: 'Kristen',
       lastName: 'Williams',
@@ -35,13 +32,6 @@ describe('login', () => {
   });
 
   it('should fail for duplicate user', async () => {
-    fetchMock.mockResponse(
-      `{
-  "statusCode": 409,
-  "message": "Username or Email already registered"
-}`,
-      { status: 409 },
-    );
     const body = {
       firstName: 'Jane',
       lastName: 'Doe',
@@ -53,19 +43,6 @@ describe('login', () => {
   });
 
   it('should fail for validation error', async () => {
-    fetchMock.mockResponseOnce(
-      `{
-  "statusCode": 422,
-  "message": "Validation errors",
-  "errors": {
-    "firstName": "First name is a required field",
-    "lastName": "Last name is a required field",
-    "username": "Username must be at least 5 characters",
-    "password": "Password must be at least 8 characters"
-  }
-}`,
-      { status: 422 },
-    );
     const body = {
       firstName: '',
       lastName: null,
@@ -77,14 +54,7 @@ describe('login', () => {
   });
 
   it('should fail for server error', async () => {
-    fetchMock.mockResponseOnce(
-      `{
-  "statusCode": 500,
-  "error": "Server Error"
-}`,
-      { status: 500 },
-    );
-
+    server.use(respondWithServiceUnavailable('/api/auth/register', 'post'));
     const body = {
       firstName: 'Jane',
       lastName: 'Doe',
@@ -92,6 +62,6 @@ describe('login', () => {
       password: 'Pa$$w0rd!',
     };
 
-    await expect(register(body)).rejects.toThrow(InternalServerError);
+    await expect(register(body)).rejects.toThrow();
   });
 });

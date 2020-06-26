@@ -1,7 +1,8 @@
-/* global fetchMock */
+import fetchMock from 'jest-fetch-mock';
 import getAuthUser from 'libs/api-client/get-auth-user';
 import { UserWithoutPassword as User } from 'types';
 
+fetchMock.enableMocks();
 describe('Fetch authenticated user', () => {
   test('should get authenticated user', async () => {
     fetchMock.mockResponseOnce(`{

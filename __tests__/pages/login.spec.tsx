@@ -1,9 +1,9 @@
-/* global fetchMock */
 import { RenderResult, act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createModel } from '@xstate/test';
 import { AuthProvider } from 'hooks/auth-context';
 import { UserProvider } from 'hooks/user-context';
+import fetchMock from 'jest-fetch-mock';
 import createMachineWithTests, { FillEvent } from 'machines/login-test-machine';
 import LoginPage from 'pages/login';
 import React from 'react';
@@ -16,6 +16,7 @@ jest.mock('next/router', () => ({
     };
   },
 }));
+fetchMock.enableMocks();
 
 const formTitle = 'login form';
 const usernameLabel = /Username/i;
