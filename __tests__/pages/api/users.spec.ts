@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 import { OK } from 'http-status-codes';
-import { users } from 'libs/db';
+import { users } from 'libs/db/users';
 import { signJWT } from 'libs/jwt';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';

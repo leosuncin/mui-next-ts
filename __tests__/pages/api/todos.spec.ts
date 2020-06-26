@@ -10,7 +10,8 @@ import {
   OK,
   UNPROCESSABLE_ENTITY,
 } from 'http-status-codes';
-import { todos, users } from 'libs/db';
+import { todos } from 'libs/db/todos';
+import { users } from 'libs/db/users';
 import { signJWT } from 'libs/jwt';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
