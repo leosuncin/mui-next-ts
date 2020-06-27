@@ -1,8 +1,14 @@
-import { fireEvent, render } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  waitForElementToBeRemoved,
+} from '@testing-library/react';
 import { AuthProvider } from 'hooks/auth-context';
 import { UserProvider } from 'hooks/user-context';
+import { users } from 'libs/db/users';
 import IndexPage from 'pages/index';
 import React from 'react';
+import server from 'utils/test-server';
 
 const spyRouterPush = jest.fn();
 jest.mock('next/router', () => ({
@@ -14,29 +20,22 @@ jest.mock('next/router', () => ({
 }));
 
 describe('<IndexPage />', () => {
-  let tree;
+  const tree = (
+    <UserProvider initialUser={users[0]}>
+      <AuthProvider>
+        <IndexPage user={users[0]} />
+      </AuthProvider>
+    </UserProvider>
+  );
 
-  beforeEach(() => {
-    const user = {
-      id: '760add88-0a2b-4358-bc3f-7d82245c5dea',
-      username: 'admin',
-      firstName: 'John',
-      lastName: 'Doe',
-      picture: 'https://i.pravatar.cc/200',
-      bio: 'Lorem ipsum dolorem',
-    };
-    tree = (
-      <UserProvider initialUser={user}>
-        <AuthProvider>
-          <IndexPage user={user} />
-        </AuthProvider>
-      </UserProvider>
-    );
-  });
+  beforeAll(() => server.listen());
 
   afterEach(() => {
+    server.resetHandlers();
     spyRouterPush.mockReset();
   });
+
+  afterAll(() => server.close());
 
   it('should render', () => {
     expect(render(tree)).toBeDefined();
@@ -49,6 +48,7 @@ describe('<IndexPage />', () => {
 
     fireEvent.click(profileMenu);
     fireEvent.click(logoutItem);
+    await waitForElementToBeRemoved(logoutItem);
 
     expect(logoutItem).not.toBeInTheDocument();
     expect(spyRouterPush).toHaveBeenCalled();

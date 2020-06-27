@@ -81,6 +81,7 @@ const IndexPage: NextPage<AuthenticationProps> = () => {
 
   useEffect(() => {
     const abortController = new AbortController();
+    let isCanceled = false;
     async function fetchUser() {
       try {
         setError(null);
@@ -89,16 +90,17 @@ const IndexPage: NextPage<AuthenticationProps> = () => {
           limit: 100,
           signal: abortController.signal,
         });
-        setUsers(data);
+        if (!isCanceled) setUsers(data);
       } catch (error) {
-        setError(error.message);
+        if (!isCanceled) setError(error.message);
       } finally {
-        setIsLoading(false);
+        if (!isCanceled) setIsLoading(false);
       }
     }
     fetchUser();
 
     return () => {
+      isCanceled = true;
       abortController.abort();
     };
   }, []);
