@@ -17,4 +17,6 @@ import '@rckeller/cypress-unfetch';
 import '@testing-library/cypress/add-commands';
 import 'cypress-wait-until';
 
+import './commands';
+
 require('cypress-terminal-report/src/installLogsCollector')();

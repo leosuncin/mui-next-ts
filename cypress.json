@@ -3,7 +3,9 @@
   "env": {
     "codeCoverage": {
       "url": "/api/__coverage__"
-    }
+    },
+    "username": "admin",
+    "password": "Pa$$w0rd!"
   },
   "projectId": "kbsfrp"
 }
