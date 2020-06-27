@@ -1,116 +1,70 @@
+import {
+  CONFLICT,
+  FORBIDDEN,
+  INTERNAL_SERVER_ERROR,
+  METHOD_NOT_ALLOWED,
+  NOT_FOUND,
+  SERVICE_UNAVAILABLE,
+  UNAUTHORIZED,
+  UNPROCESSABLE_ENTITY,
+} from 'http-status-codes';
+
 export type ErrorResponse = {
   readonly statusCode: number;
   readonly message: string;
   readonly errors?: Record<string, string>;
 };
 
-export type HttpError = Error & {
+export interface HttpError extends Error {
+  readonly name: 'HttpError';
   code: string;
-  error: ErrorResponse;
-};
+  status: number;
+  errors?: ErrorResponse['errors'];
+}
 
-export class UnauthorizedError extends Error {
-  readonly name = 'UnauthorizedError';
-  readonly code = 'UNAUTHORIZED';
-  readonly status = 401;
+export class HttpError extends Error implements HttpError {
+  readonly name = 'HttpError';
 
   constructor(error: ErrorResponse) {
     super(error.message);
     Object.setPrototypeOf(this, new.target.prototype);
 
     if (Error.captureStackTrace) Error.captureStackTrace(this);
-  }
-}
 
-export class ForbiddenError extends Error {
-  readonly name = 'ForbiddenError';
-  readonly code = 'FORBIDDEN';
-  readonly status = 403;
+    this.status = error.statusCode;
+    switch (error.statusCode) {
+      case UNAUTHORIZED:
+        this.code = 'UNAUTHORIZED';
+        break;
 
-  constructor(error: ErrorResponse) {
-    super(error.message);
-    Object.setPrototypeOf(this, new.target.prototype);
+      case FORBIDDEN:
+        this.code = 'FORBIDDEN';
+        break;
 
-    if (Error.captureStackTrace) Error.captureStackTrace(this);
-  }
-}
+      case NOT_FOUND:
+        this.code = 'NOT_FOUND';
+        break;
 
-export class NotFoundError extends Error {
-  readonly name = 'NotFoundError';
-  readonly code = 'NOT_FOUND';
-  readonly status = 404;
+      case METHOD_NOT_ALLOWED:
+        this.code = 'METHOD_NOT_ALLOWED';
+        break;
 
-  constructor(error: ErrorResponse) {
-    super(error.message);
-    Object.setPrototypeOf(this, new.target.prototype);
+      case CONFLICT:
+        this.code = 'CONFLICT';
+        break;
 
-    if (Error.captureStackTrace) Error.captureStackTrace(this);
-  }
-}
+      case UNPROCESSABLE_ENTITY:
+        this.code = 'UNPROCESSABLE_ENTITY';
+        this.errors = error.errors;
+        break;
 
-export class MethodNotAllowedError extends Error {
-  readonly name = 'MethodNotAllowedError';
-  readonly code = 'METHOD_NOT_ALLOWED';
-  readonly status = 405;
+      case INTERNAL_SERVER_ERROR:
+        this.code = 'INTERNAL_SERVER_ERROR';
+        break;
 
-  constructor(error: ErrorResponse) {
-    super(error.message);
-    Object.setPrototypeOf(this, new.target.prototype);
-
-    if (Error.captureStackTrace) Error.captureStackTrace(this);
-  }
-}
-
-export class ConflictError extends Error {
-  readonly name = 'ConflictError';
-  readonly code = 'CONFLICT';
-  readonly status = 409;
-
-  constructor(error: ErrorResponse) {
-    super(error.message);
-    Object.setPrototypeOf(this, new.target.prototype);
-
-    if (Error.captureStackTrace) Error.captureStackTrace(this);
-  }
-}
-
-export class UnprocessableEntityError extends Error {
-  readonly name = 'UnprocessableEntityError';
-  readonly code = 'UNPROCESSABLE_ENTITY';
-  readonly status = 422;
-  errors: ErrorResponse['errors'];
-
-  constructor(error: ErrorResponse) {
-    super(Object.values(error.errors).join('.\n'));
-    Object.setPrototypeOf(this, new.target.prototype);
-    this.errors = error.errors;
-
-    if (Error.captureStackTrace) Error.captureStackTrace(this);
-  }
-}
-
-export class ServiceUnavailableError extends Error {
-  readonly name = 'ServiceUnavailableError';
-  readonly code = 'SERVICE_UNAVAILABLE';
-  readonly status = 503;
-
-  constructor(error: ErrorResponse) {
-    super(error.message);
-    Object.setPrototypeOf(this, new.target.prototype);
-
-    if (Error.captureStackTrace) Error.captureStackTrace(this);
-  }
-}
-
-export class InternalServerError extends Error {
-  readonly name = 'InternalServerError';
-  readonly code = 'INTERNAL_SERVER_ERROR';
-  readonly status = 500;
-
-  constructor(error: ErrorResponse) {
-    super(error.message);
-    Object.setPrototypeOf(this, new.target.prototype);
-
-    if (Error.captureStackTrace) Error.captureStackTrace(this);
+      case SERVICE_UNAVAILABLE:
+        this.code = 'SERVICE_UNAVAILABLE';
+        break;
+    }
   }
 }

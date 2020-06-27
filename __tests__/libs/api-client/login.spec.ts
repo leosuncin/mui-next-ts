@@ -1,9 +1,5 @@
 import login from 'libs/api-client/login';
-import {
-  UnauthorizedError,
-  UnprocessableEntityError,
-  UserWithoutPassword,
-} from 'types';
+import { HttpError, UserWithoutPassword } from 'types';
 import server, { respondWithServiceUnavailable } from 'utils/test-server';
 
 describe('login', () => {
@@ -29,28 +25,28 @@ describe('login', () => {
   it('should fail for missing credentials', async () => {
     const body: any = {};
 
-    await expect(login(body)).rejects.toThrow(UnprocessableEntityError);
+    await expect(login(body)).rejects.toThrow(HttpError);
   });
 
   it('should fail for the incorrect credentials', async () => {
     await expect(
       login({ username: 'admin', password: 'ji32k7au4a83' }),
-    ).rejects.toThrow(UnauthorizedError);
+    ).rejects.toThrow(HttpError);
     await expect(
       login({ username: 'administrator', password: 'ji32k7au4a83' }),
-    ).rejects.toThrow(UnauthorizedError);
+    ).rejects.toThrow(HttpError);
   });
 
   it('should fail for validation error', async () => {
     const body = { username: 'adm', password: 'Pa$' };
 
-    await expect(login(body)).rejects.toThrow(UnprocessableEntityError);
+    await expect(login(body)).rejects.toThrow(HttpError);
   });
 
   it('should fail for server error', async () => {
     const body = { username: 'admin', password: 'Pa$$w0rd!' };
     server.use(respondWithServiceUnavailable('/api/auth/login', 'post'));
 
-    await expect(login(body)).rejects.toThrow();
+    await expect(login(body)).rejects.toThrow(HttpError);
   });
 });

@@ -1,10 +1,6 @@
 import register from 'libs/api-client/register';
-import {
-  ConflictError,
-  UnprocessableEntityError,
-  UserWithoutPassword,
-} from 'types';
-import server, { respondWithServiceUnavailable } from 'utils/test-server';
+import { HttpError, UserWithoutPassword } from 'types';
+import server, { respondWithInternalServerError } from 'utils/test-server';
 
 describe('register', () => {
   beforeAll(() => server.listen());
@@ -39,7 +35,7 @@ describe('register', () => {
       password: 'Pa$$w0rd!',
     };
 
-    await expect(register(body)).rejects.toThrow(ConflictError);
+    await expect(register(body)).rejects.toThrow(HttpError);
   });
 
   it('should fail for validation error', async () => {
@@ -50,11 +46,11 @@ describe('register', () => {
       password: 'pwd',
     };
 
-    await expect(register(body)).rejects.toThrow(UnprocessableEntityError);
+    await expect(register(body)).rejects.toThrow(HttpError);
   });
 
   it('should fail for server error', async () => {
-    server.use(respondWithServiceUnavailable('/api/auth/register', 'post'));
+    server.use(respondWithInternalServerError('/api/auth/register', 'post'));
     const body = {
       firstName: 'Jane',
       lastName: 'Doe',
@@ -62,6 +58,6 @@ describe('register', () => {
       password: 'Pa$$w0rd!',
     };
 
-    await expect(register(body)).rejects.toThrow();
+    await expect(register(body)).rejects.toThrow(HttpError);
   });
 });

@@ -1,4 +1,4 @@
-import { SERVICE_UNAVAILABLE } from 'http-status-codes';
+import { INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE } from 'http-status-codes';
 import { RequestHandler, rest } from 'msw';
 
 export const respondWithServiceUnavailable = (
@@ -13,4 +13,12 @@ export const respondWithServiceUnavailable = (
         message: 'Database connection error',
       }),
     );
+  });
+
+export const respondWithInternalServerError = (
+  endpoint: string,
+  method: keyof typeof rest,
+): RequestHandler =>
+  rest[method](endpoint, (req, res, ctx) => {
+    return res(ctx.status(INTERNAL_SERVER_ERROR));
   });
