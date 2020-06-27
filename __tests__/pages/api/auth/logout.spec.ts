@@ -5,7 +5,7 @@ import logoutHandler from 'pages/api/auth/logout';
 import { User } from 'types';
 
 describe('[DELETE] /api/auth/logout', () => {
-  test('should close the session', () => {
+  it('should close the session', () => {
     const token =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
     const sessionUser =

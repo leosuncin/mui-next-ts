@@ -203,7 +203,7 @@ describe('[GET] /api/todos/:id', () => {
 describe('[PUT] /api/todos/:id', () => {
   const todo = faker.random.arrayElement(testTodos);
 
-  test('should update one todo', async () => {
+  it('should update one todo', async () => {
     const { req, res } = createMocks<
       NextApiRequest & { user: User },
       NextApiResponse

@@ -18,10 +18,10 @@ describe('fetch users', () => {
     expect(users).toHaveLength(limit);
   });
 
-  it('should abort the request before finished', () => {
+  it('should abort the request before finished', async () => {
     const ctrl = new AbortController();
     setTimeout(() => ctrl.abort(), 50);
 
-    return expect(listUser({ signal: ctrl.signal })).rejects.toThrow('Aborted');
+    await expect(listUser({ signal: ctrl.signal })).rejects.toThrow('Aborted');
   });
 });

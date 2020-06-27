@@ -3,8 +3,9 @@ import getAuthUser from 'libs/api-client/get-auth-user';
 import { UserWithoutPassword as User } from 'types';
 
 fetchMock.enableMocks();
+
 describe('Fetch authenticated user', () => {
-  test('should get authenticated user', async () => {
+  it('should get authenticated user', async () => {
     fetchMock.mockResponseOnce(`{
       "id": "760add88-0a2b-4358-bc3f-7d82245c5dea",
       "username": "admin",

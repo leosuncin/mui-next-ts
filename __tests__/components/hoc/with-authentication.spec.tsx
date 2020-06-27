@@ -1,12 +1,12 @@
 import { IncomingMessage, ServerResponse } from 'http';
+
+import withAuthentication from 'components/hoc/with-authentication';
 import { createMocks } from 'node-mocks-http';
 
 const mockPushRoute = jest.fn();
 jest.mock('next/router', () => ({
   push: mockPushRoute,
 }));
-
-import withAuthentication from 'components/hoc/with-authentication';
 
 describe('withAuthentication HOC', () => {
   afterEach(() => {
@@ -20,7 +20,7 @@ describe('withAuthentication HOC', () => {
 
       await withAuthentication(jest.fn()).getInitialProps(ctx);
 
-      expect(res._isEndCalled()).toBeTruthy();
+      expect(res._isEndCalled()).toBe(true);
       expect(res._getStatusCode()).toBe(302);
       expect(mockPushRoute).not.toHaveBeenCalled();
     });

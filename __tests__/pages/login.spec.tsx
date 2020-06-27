@@ -37,6 +37,7 @@ const testMachine = createMachineWithTests({
   },
   invalid: async ({ findAllByText }: RenderResult) => {
     const errorMessages = await findAllByText(invalidErrorMessages);
+
     expect(errorMessages.length).toBeGreaterThanOrEqual(1);
     expect(errorMessages.length).toBeLessThan(3);
   },
@@ -171,6 +172,6 @@ testPlans.forEach(plan => {
 });
 
 // eslint-disable-next-line jest/expect-expect
-it('States coverage', () => {
+it('states coverage', () => {
   testModel.testCoverage();
 });

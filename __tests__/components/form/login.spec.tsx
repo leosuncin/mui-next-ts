@@ -78,6 +78,7 @@ describe('<LoginForm />', () => {
     await expect(
       findByText(/Too many failed attempts/),
     ).resolves.toBeInTheDocument();
+
     expect(getByLabelText(usernameLabel)).toBeDisabled();
     expect(getByLabelText(passwordLabel)).toBeDisabled();
   });

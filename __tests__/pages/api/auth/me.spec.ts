@@ -10,7 +10,7 @@ import authMeHandler from 'pages/api/auth/me';
 import { User } from 'types';
 
 describe('[GET] /api/auth/me', () => {
-  test('should get current session user', async () => {
+  it('should get current session user', async () => {
     const token = signJWT(users[0]);
     const { req, res } = createMocks<
       NextApiRequest & { user: User },
