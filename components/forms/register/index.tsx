@@ -116,7 +116,7 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
       </Grid>
       {formState.isSubmitting ? (
         <div className={classes.loader}>
-          <CircularProgress size={26} />
+          <CircularProgress data-testid="registering-user" size={26} />
         </div>
       ) : (
         <Button
