@@ -1,7 +1,12 @@
 {
-  "plugins": ["jest", "testing-library"],
+  "plugins": ["jest", "jest-formatting", "testing-library"],
   "env": {
     "jest": true
   },
-  "extends": ["plugin:jest/recommended", "plugin:testing-library/react"]
+  "extends": [
+    "plugin:jest/recommended",
+    "plugin:jest/style",
+    "plugin:jest-formatting/strict",
+    "plugin:testing-library/react"
+  ]
 }
