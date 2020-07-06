@@ -1,12 +1,12 @@
-import { IncomingMessage, ServerResponse } from 'http';
-
-import withAuthentication from 'components/hoc/with-authentication';
-import { createMocks } from 'node-mocks-http';
-
 const mockPushRoute = jest.fn();
 jest.mock('next/router', () => ({
   push: mockPushRoute,
 }));
+
+import { IncomingMessage, ServerResponse } from 'http';
+
+import withAuthentication from 'components/hoc/with-authentication';
+import { createMocks } from 'node-mocks-http';
 
 describe('withAuthentication HOC', () => {
   afterEach(() => {
