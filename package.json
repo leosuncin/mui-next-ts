@@ -113,7 +113,9 @@
     "all": true,
     "report-dir": "coverage/e2e",
     "exclude": [
-      "pages/api/__coverage__.ts"
+      "pages/api/__coverage__.ts",
+      "utils/test-server/**/*",
+      "utils/factories.ts"
     ]
   }
 }
