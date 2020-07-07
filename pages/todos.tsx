@@ -173,6 +173,7 @@ const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
     case 'ERROR':
       return {
         ...state,
+        loading: false,
         error: event.payload,
       };
 
@@ -191,9 +192,13 @@ function fetchTodos(
   dispatch: React.Dispatch<TodoEvent>,
 ) {
   const ctrl = new AbortController();
-  listTodo({ limit: 100, signal: ctrl.signal })
+  listTodo({ signal: ctrl.signal })
     .then(todos => dispatch({ type: 'TODOS_FETCHED', payload: todos }))
-    .catch(error => dispatch({ type: 'ERROR', payload: error.message }));
+    .catch(
+      error =>
+        ctrl.signal.aborted ||
+        dispatch({ type: 'ERROR', payload: error.message }),
+    );
 
   return () => ctrl.abort();
 }
@@ -263,11 +268,15 @@ const TodosPage: NextPage<AuthenticationProps> = () => {
   return (
     <Layout title="Todo App">
       <Grid item sm={10} md={8} className={classes.root}>
-        <Grid item style={{ display: Boolean(state.error) ? 'block' : 'none' }}>
-          <Collapse in={Boolean(state.error)}>
-            <Alert severity="error">{state.error}</Alert>
-          </Collapse>
-        </Grid>
+        {Boolean(state.error) && (
+          <Grid item>
+            <Collapse in={Boolean(state.error)}>
+              <Alert severity="error" role="alert">
+                {state.error}
+              </Alert>
+            </Collapse>
+          </Grid>
+        )}
         <AddTodoForm
           onSubmit={todo => dispatch({ type: 'ADD_TODO', payload: todo })}
         />
@@ -294,9 +303,11 @@ const TodosPage: NextPage<AuthenticationProps> = () => {
             dispatch({ type: 'REMOVE_TODO', payload: { todo, position } })
           }
         />
-        <Backdrop open={state.loading} className={classes.backdrop}>
-          <CircularProgress data-testid="loading-todos" />
-        </Backdrop>
+        {state.loading && (
+          <Backdrop open={state.loading} className={classes.backdrop}>
+            <CircularProgress data-testid="loading-todos" />
+          </Backdrop>
+        )}
       </Grid>
     </Layout>
   );

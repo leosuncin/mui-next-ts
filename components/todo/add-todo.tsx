@@ -25,6 +25,7 @@ const TodoForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
         label="Text"
         margin="normal"
         name="text"
+        id="text-input"
         variant="outlined"
         fullWidth
         error={!!errors.text}
