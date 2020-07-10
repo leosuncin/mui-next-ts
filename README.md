@@ -15,6 +15,9 @@
   <a href="https://www.codefactor.io/repository/github/leosuncin/mui-next-ts" target="_blank">
     <img alt="CodeFactor" src="https://www.codefactor.io/repository/github/leosuncin/mui-next-ts/badge" />
   </a>
+  <a href="https://hits.dwyl.com/leosuncin/mui-next-ts" target="_blank">
+    <img alt="HitCount" src="https://hits.dwyl.com/leosuncin/mui-next-ts.svg" />
+  </a>
   <a href="https://twitter.com/jl_suncin" target="_blank">
     <img alt="Twitter: jl_suncin" src="https://img.shields.io/twitter/follow/jl_suncin.svg?style=social" />
   </a>
