@@ -21,6 +21,9 @@
   <a href="https://codeclimate.com/github/leosuncin/mui-next-ts/test_coverage">
     <img src="https://api.codeclimate.com/v1/badges/27600c074641dc64f057/test_coverage" />
   </a>
+  <a href="https://hits.dwyl.com/leosuncin/mui-next-ts" target="_blank">
+    <img alt="HitCount" src="https://hits.dwyl.com/leosuncin/mui-next-ts.svg" />
+  </a>
   <a href="https://twitter.com/jl_suncin" target="_blank">
     <img alt="Twitter: jl_suncin" src="https://img.shields.io/twitter/follow/jl_suncin.svg?style=social" />
   </a>
