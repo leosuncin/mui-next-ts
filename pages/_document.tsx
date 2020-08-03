@@ -1,13 +1,12 @@
-import React from 'react';
+import { ServerStyleSheets } from '@material-ui/core/styles';
 import Document, {
+  DocumentContext,
   DocumentInitialProps,
   Html,
-  Head,
   Main,
   NextScript,
-  DocumentContext,
 } from 'next/document';
-import { ServerStyleSheets } from '@material-ui/core/styles';
+import React from 'react';
 
 type MyDocumentProps = {
   locale: 'en-US' | 'es-SV';
@@ -43,17 +42,6 @@ class MyDocument extends Document<MyDocumentProps & DocumentInitialProps> {
 
     return (
       <Html lang={lang}>
-        <Head>
-          <meta name="charset" content="utf-8" />
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, minimum-scale=1"
-          />
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-          />
-        </Head>
         <body>
           <Main />
           <NextScript />

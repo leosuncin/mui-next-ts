@@ -1,10 +1,9 @@
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { AuthProvider } from 'hooks/auth-context';
+import { UserProvider } from 'hooks/user-context';
 import App from 'next/app';
 import Head from 'next/head';
 import React from 'react';
-
-import { AuthProvider } from 'hooks/auth-context';
-import { UserProvider } from 'hooks/user-context';
 
 class MyApp extends App {
   componentDidMount() {
@@ -21,6 +20,15 @@ class MyApp extends App {
     return (
       <>
         <Head>
+          <meta name="charset" content="utf-8" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, minimum-scale=1"
+          />
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+          />
           <title>MUI + Next.js</title>
         </Head>
         <UserProvider initialUser={pageProps.user}>
