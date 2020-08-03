@@ -40,7 +40,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hook-form": "^6.0.4",
-    "swr": "^0.2.2",
+    "swr": "^0.3.0",
     "xstate": "^4.10.0"
   },
   "devDependencies": {
