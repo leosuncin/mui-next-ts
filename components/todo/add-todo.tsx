@@ -1,5 +1,6 @@
+import { yupResolver } from '@hookform/resolvers';
 import { Button, Grid, TextField } from '@material-ui/core';
-import { createTodoSchema as validationSchema } from 'libs/validation';
+import { createTodoSchema } from 'libs/validation';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -9,7 +10,7 @@ const propTypes = {
 };
 const TodoForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
   const { handleSubmit, register, errors, formState, reset } = useForm({
-    validationSchema,
+    resolver: yupResolver(createTodoSchema),
   });
 
   return (
