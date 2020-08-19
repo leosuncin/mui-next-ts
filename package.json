@@ -28,6 +28,7 @@
     "@material-ui/lab": "^4.0.0-alpha.55",
     "@material-ui/pickers": "^3.2.10",
     "@xstate/react": "^0.8.1",
+    "cypress-terminal-report": "^1.4.2",
     "faker": "^4.1.0",
     "http-status-codes": "^1.4.0",
     "js-cookie": "^2.2.1",

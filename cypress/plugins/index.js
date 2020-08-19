@@ -34,6 +34,7 @@ module.exports = (on, config) => {
   // `config` is the resolved Cypress config
   on('file:preprocessor', wp(options));
   require('@cypress/code-coverage/task')(on, config);
+  require('cypress-terminal-report/src/installLogsPrinter')(on);
 
   return config;
 };
