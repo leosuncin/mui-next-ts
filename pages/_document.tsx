@@ -2,6 +2,7 @@ import { ServerStyleSheets } from '@material-ui/core/styles';
 import Document, {
   DocumentContext,
   DocumentInitialProps,
+  Head,
   Html,
   Main,
   NextScript,
@@ -42,6 +43,7 @@ class MyDocument extends Document<MyDocumentProps & DocumentInitialProps> {
 
     return (
       <Html lang={lang}>
+        <Head />
         <body>
           <Main />
           <NextScript />
