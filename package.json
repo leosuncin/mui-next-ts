@@ -50,6 +50,7 @@
     "yup": "^0.29.1"
   },
   "devDependencies": {
+    "@bahmutov/cy-api": "^1.4.2",
     "@cypress/code-coverage": "3.3.1",
     "@cypress/webpack-preprocessor": "^5.4.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
@@ -106,7 +107,7 @@
     "start-server-and-test": "^1.11.0",
     "ts-jest": "^26.1.1",
     "ts-loader": "^8.0.1",
-    "ts-node": "^8.10.2",
+    "ts-node": "^9.0.0",
     "typescript": "^3.9.5"
   },
   "nyc": {
