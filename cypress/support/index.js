@@ -12,6 +12,7 @@
 // You can read more here:
 // https://on.cypress.io/configuration
 // ***********************************************************
+import '@bahmutov/cy-api/support';
 import '@cypress/code-coverage/support';
 import '@rckeller/cypress-unfetch';
 import '@testing-library/cypress/add-commands';

@@ -9,7 +9,8 @@
     "types": [
       "cypress",
       "@types/testing-library__cypress",
-      "cypress-wait-until"
+      "cypress-wait-until",
+      "@bahmutov/cy-api"
     ]
   }
 }
