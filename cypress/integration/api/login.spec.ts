@@ -20,11 +20,12 @@ describe('Login API', () => {
     cy.api({
       url: '/api/auth/login',
       method: 'POST',
+      body: {},
       failOnStatusCode: false,
     }).then(({ status, body }) => {
       expect(status).to.equal(UNPROCESSABLE_ENTITY);
       expect(body).to.haveOwnProperty('message');
-      expect(Array.isArray(body.message)).to.be.equal(true);
+      expect(body).to.haveOwnProperty('errors');
     });
   });
 
@@ -71,8 +72,12 @@ describe('Login API', () => {
       expect(response.headers).to.haveOwnProperty('authorization');
       expect(response.headers.authorization).to.match(/Bearer \w+/);
       expect(response.headers).to.haveOwnProperty('set-cookie');
-      expect(response.headers['set-cookie']).to.match(
-        /token=s%3.+; Path=\/; HttpOnly/,
+      expect(response.headers['set-cookie']).to.satisfy(cookies =>
+        cookies.some(cookie =>
+          /token=.*; Max-Age=\d+; Path=\/; HttpOnly; SameSite=Strict/.test(
+            cookie,
+          ),
+        ),
       );
       expect(response.body).to.haveOwnProperty('username', 'admin');
       expect(response.body).not.to.haveOwnProperty('password');

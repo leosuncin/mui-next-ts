@@ -20,11 +20,12 @@ describe('Register API', () => {
     cy.api({
       url: '/api/auth/register',
       method: 'POST',
+      body: {},
       failOnStatusCode: false,
     }).then(({ status, body }) => {
       expect(status).to.equal(UNPROCESSABLE_ENTITY);
       expect(body).to.haveOwnProperty('message');
-      expect(Array.isArray(body.message)).to.be.equal(true);
+      expect(body).to.haveOwnProperty('errors');
     });
   });
 
@@ -32,7 +33,7 @@ describe('Register API', () => {
     const body = {
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
-      email: 'jane@doe.me',
+      username: 'jane_doe',
       password: 'ji32k7au4a83',
     };
 
@@ -52,7 +53,7 @@ describe('Register API', () => {
     const body = {
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
-      email: faker.internet.email().toLowerCase(),
+      username: faker.internet.userName().toLowerCase(),
       password: faker.internet.password(),
     };
 
@@ -62,11 +63,17 @@ describe('Register API', () => {
       body,
     }).then(response => {
       expect(response.status).to.equal(OK);
-      expect(response.body).to.haveOwnProperty('username', body.email);
-      expect(response.body).to.haveOwnProperty(
-        'name',
-        `${body.firstName} ${body.lastName}`,
+      expect(response.headers).to.haveOwnProperty('authorization');
+      expect(response.headers.authorization).to.match(/Bearer \w+/);
+      expect(response.headers).to.haveOwnProperty('set-cookie');
+      expect(response.headers['set-cookie']).to.satisfy(cookies =>
+        cookies.some(cookie =>
+          /token=.*; Max-Age=\d+; Path=\/; HttpOnly; SameSite=Strict/.test(
+            cookie,
+          ),
+        ),
       );
+      expect(response.body).to.haveOwnProperty('username', body.username);
       expect(response.body).not.to.haveOwnProperty('password');
     });
   });
