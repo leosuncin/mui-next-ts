@@ -1,3 +1,5 @@
+import os from 'os';
+
 import { LevelDB } from '@nano-sql/adapter-leveldb';
 import {
   InanoSQLConfig,
@@ -7,7 +9,8 @@ import { FuzzySearch, FuzzyUserSanitize } from '@nano-sql/plugin-fuzzy-search';
 
 export const dbConfig: InanoSQLConfig = {
   id: 'mui-next',
-  mode: process.env.NODE_ENV === 'test' ? 'TEMP' : new LevelDB('.next', true),
+  mode:
+    process.env.NODE_ENV === 'test' ? 'TEMP' : new LevelDB(os.tmpdir(), true),
   version: 2,
   tables: [
     {
