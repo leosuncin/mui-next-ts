@@ -1,21 +1,21 @@
 name: Unit test
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - uses: reviewdog/action-eslint@v1
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        eslint_flags: --ext '.js' --ext '.ts' --ext '.tsx' .
+        eslint_flags: --ext .js,ts,tsx .
 
   tsc:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - uses: bahmutov/npm-install@v1
     - uses: icrawl/action-tsc@v1
 
@@ -23,22 +23,31 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - uses: bahmutov/npm-install@v1
-    - uses: actions/cache@v1
+    - uses: actions/cache@v2
       name: Cache Next.js build
       with:
         path: .next/cache
-        key: ${{ runner.os }}-next-build
-        restore-keys: |
-          ${{ runner.os }}-next-build-
-    - name: npm test
-      run: |
-        npm test -- --coverage
+        key: ${{ runner.os }}-next-build-${{ hashFiles('**/next.config.js') }}
+    - name: Test & publish code coverage
+      uses: paambaati/codeclimate-action@v2.6.0
       env:
-        CI: true
+        CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_REPO_TOKEN }}
         APP_SECRET: c67d158338b7e5df7ff128228c74de33cb7a23f388d1c57c6b0df8fb1c825fad58d33a1eba4ffb6fcfc638a2470abff1583707a6c9ae076575a0f0639eb1b08e
-    - uses: actions/upload-artifact@v1
+      with:
+        coverageCommand: npm test -- --coverage
+        coverageLocations: |
+          ${{ github.workspace }}/coverage/unit/lcov.info:lcov
+    - name: Monitor coverage
+      if: "github.event_name == 'pull_request'"
+      uses: slavcodev/coverage-monitor-action@1.1.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        clover_file: coverage/unit/clover.xml
+        threshold_alert: 50
+        threshold_warning: 80
+    - uses: actions/upload-artifact@v2
       with:
         name: unit-coverage
         path: coverage/unit
