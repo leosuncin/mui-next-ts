@@ -6,18 +6,19 @@
 import { createModel } from '@xstate/test';
 import faker from 'faker';
 
+import { users } from '../../libs/db/users';
 import createMachineWithTests, {
   FillEvent,
 } from '../../machines/register-test-machine';
 
 const firstNameLabel = /First name/i;
 const lastNameLabel = /Last name/i;
-const emailLabel = /Email/i;
+const usernameLabel = /Username/i;
 const passwordLabel = /Password/i;
 const submitButton = /Sign Me Up/i;
 const firstNameErrorText = /First name should not be empty/i;
 const lastNameErrorText = /Last name should not be empty/i;
-const emailErrorText = /Email (?:should not be empty|is invalid)/i;
+const usernameErrorText = /Username.+(?:empty|too short)/i;
 const passwordErrorText = /Password.+(?:empty|too short)/i;
 const testMachine = createMachineWithTests({
   pristine(cy: Cypress.cy) {
@@ -29,8 +30,8 @@ const testMachine = createMachineWithTests({
   'invalid.lastName'(cy: Cypress.cy) {
     cy.findByText(lastNameErrorText).should('exist');
   },
-  'invalid.email'(cy: Cypress.cy) {
-    cy.findByText(emailErrorText).should('exist');
+  'invalid.username'(cy: Cypress.cy) {
+    cy.findByText(usernameErrorText).should('exist');
   },
   'invalid.password'(cy: Cypress.cy) {
     cy.findByText(passwordErrorText).should('exist');
@@ -38,7 +39,7 @@ const testMachine = createMachineWithTests({
   valid(cy: Cypress.cy) {
     cy.findByText(firstNameErrorText).should('not.exist');
     cy.findByText(lastNameErrorText).should('not.exist');
-    cy.findByText(emailErrorText).should('not.exist');
+    cy.findByText(usernameErrorText).should('not.exist');
     cy.findByText(passwordErrorText).should('not.exist');
   },
   success(cy: Cypress.cy) {
@@ -61,50 +62,56 @@ const testModel = createModel(testMachine, {
       exec(cy: Cypress.cy, event: FillEvent) {
         cy.findByLabelText(firstNameLabel).clear().type(event.firstName);
         cy.findByLabelText(lastNameLabel).clear().type(event.lastName);
-        cy.findByLabelText(emailLabel).clear().type(event.email);
+        cy.findByLabelText(usernameLabel).clear().type(event.username);
         cy.findByLabelText(passwordLabel).clear().type(event.password);
       },
       cases: [
         {
           firstName: 'a{backspace}{enter}',
           lastName: faker.name.lastName(),
-          email: faker.internet.email(),
+          username: faker.internet.userName(),
           password: 'Pa$$w0rd!',
         },
         {
           firstName: faker.name.firstName(),
           lastName: 'a{backspace}{enter}',
-          email: faker.internet.email(),
+          username: faker.internet.userName(),
           password: 'ji32k7au4a83',
         },
         {
           firstName: faker.name.firstName(),
           lastName: faker.name.lastName(),
-          email: 'a{backspace}{enter}',
+          username: 'a{backspace}{enter}',
           password: '12345678',
         },
         {
           firstName: faker.name.firstName(),
           lastName: faker.name.lastName(),
-          email: faker.internet.email(),
+          username: faker.internet.userName(),
           password: 'a{backspace}{enter}',
         },
         {
           firstName: faker.name.firstName(),
           lastName: faker.name.lastName(),
-          email: faker.internet.exampleEmail(),
+          username: faker.lorem.word().substr(0, 4) + '{enter}',
+          password: faker.internet.password(),
+        },
+        {
+          firstName: faker.name.firstName(),
+          lastName: faker.name.lastName(),
+          username: faker.internet.userName(),
           password: faker.internet.password(7) + '{enter}',
         },
         {
           firstName: faker.name.firstName(),
           lastName: faker.name.lastName(),
-          email: faker.internet.exampleEmail(),
+          username: faker.internet.userName(),
           password: faker.internet.password(12, true),
         },
         {
-          firstName: 'Jane',
-          lastName: 'Doe',
-          email: 'jane@doe.me',
+          firstName: faker.random.arrayElement(users).firstName,
+          lastName: faker.random.arrayElement(users).lastName,
+          username: faker.random.arrayElement(users).username,
           password: faker.internet.password(10, true),
         },
       ],
