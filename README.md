@@ -15,6 +15,12 @@
   <a href="https://www.codefactor.io/repository/github/leosuncin/mui-next-ts" target="_blank">
     <img alt="CodeFactor" src="https://www.codefactor.io/repository/github/leosuncin/mui-next-ts/badge" />
   </a>
+  <a href="https://codeclimate.com/github/leosuncin/mui-next-ts/maintainability">
+    <img src="https://api.codeclimate.com/v1/badges/27600c074641dc64f057/maintainability" />
+  </a>
+  <a href="https://codeclimate.com/github/leosuncin/mui-next-ts/test_coverage">
+    <img src="https://api.codeclimate.com/v1/badges/27600c074641dc64f057/test_coverage" />
+  </a>
   <a href="https://hits.dwyl.com/leosuncin/mui-next-ts" target="_blank">
     <img alt="HitCount" src="https://hits.dwyl.com/leosuncin/mui-next-ts.svg" />
   </a>
