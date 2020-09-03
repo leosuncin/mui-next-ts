@@ -1,3 +1,4 @@
+import { users } from 'libs/db/users';
 import set from 'lodash.set';
 import {
   MachineConfig,
@@ -5,8 +6,6 @@ import {
   StateSchema,
   createMachine,
 } from 'xstate';
-
-import { users } from '../libs/db/users';
 
 export interface RegisterTestStateSchema extends StateSchema<never> {
   states: {

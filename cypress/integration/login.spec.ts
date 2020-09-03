@@ -1,9 +1,6 @@
 import { createModel } from '@xstate/test';
 import faker from 'faker';
-
-import createMachineWithTests, {
-  FillEvent,
-} from '../../machines/login-test-machine';
+import createMachineWithTests, { FillEvent } from 'machines/login-test-machine';
 
 const usernameLabel = /Username/i;
 const passwordLabel = /Password/i;

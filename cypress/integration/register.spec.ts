@@ -5,11 +5,10 @@
 /// <reference types="cypress-wait-until" />
 import { createModel } from '@xstate/test';
 import faker from 'faker';
-
-import { users } from '../../libs/db/users';
+import { users } from 'libs/db/users';
 import createMachineWithTests, {
   FillEvent,
-} from '../../machines/register-test-machine';
+} from 'machines/register-test-machine';
 
 const firstNameLabel = /First name/i;
 const lastNameLabel = /Last name/i;

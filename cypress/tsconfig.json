@@ -6,6 +6,17 @@
     "isolatedModules": false,
     "target": "es6",
     "module": "es6",
+    "baseUrl": "..",
+    "paths": {
+      "components": ["components/*"],
+      "services": ["services/*"],
+      "libs": ["libs/*"],
+      "machines": ["machines/*"],
+      "middlewares": ["middlewares/*"],
+      "hooks": ["hooks/*"],
+      "pages": ["pages/*"],
+      "utils": ["utils/*"]
+    },
     "types": [
       "cypress",
       "@types/testing-library__cypress",
