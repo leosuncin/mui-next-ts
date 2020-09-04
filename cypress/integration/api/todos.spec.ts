@@ -20,11 +20,9 @@ describe('Todo API', () => {
   let authorization: string;
 
   beforeEach(() => {
-    cy.login(users[0].username, Cypress.env('password'))
-      .its('headers')
-      .then(headers => {
-        authorization = headers.authorization;
-      });
+    cy.task('signUser', users[0]).then((jwt: string) => {
+      authorization = `Bearer ${jwt}`;
+    });
   });
 
   it('should create a new todo', () => {
@@ -35,6 +33,7 @@ describe('Todo API', () => {
       body: {
         text,
       },
+      headers: { authorization },
     }).then(({ status, body }) => {
       expect(status).to.be.equal(CREATED);
       expect(body).to.haveOwnProperty('done', false);
@@ -50,6 +49,7 @@ describe('Todo API', () => {
           url,
           method: 'POST',
           body,
+          headers: { authorization },
           failOnStatusCode: false,
         }).then(({ status, body }) => {
           expect(status).to.be.equal(UNPROCESSABLE_ENTITY);
@@ -85,21 +85,20 @@ describe('Todo API', () => {
   });
 
   it('should search by text', () => {
-    cy.clearCookie('token')
-      .api({
-        url,
-        qs: { search: faker.hacker.verb() },
-        headers: { authorization },
-      })
-      .then(({ status, body }) => {
-        expect(status).to.be.equal(OK);
-        expect(body).to.satisfy((body: unknown) => Array.isArray(body));
-      });
+    cy.api({
+      url,
+      qs: { search: faker.hacker.verb() },
+      headers: { authorization },
+    }).then(({ status, body }) => {
+      expect(status).to.be.equal(OK);
+      expect(body).to.satisfy((body: unknown) => Array.isArray(body));
+    });
   });
 
   it('should get one todo', () => {
     cy.api({
       url: url + '/' + todo.id,
+      headers: { authorization },
     }).then(({ status, body }) => {
       expect(status).to.be.equal(OK);
       expect(body).to.have.keys([
@@ -118,9 +117,10 @@ describe('Todo API', () => {
       url: url + '/' + todo.id,
       method: 'PUT',
       body: {
-        text: faker.fake('Buy {{finance.amount}} x {{commerce.product}}'),
+        text: faker.fake('Buy {{commerce.product}}'),
         done: !todo.done,
       },
+      headers: { authorization },
     }).then(({ status, body }) => {
       expect(status).to.be.equal(OK);
       expect(body).to.have.keys([
@@ -135,12 +135,20 @@ describe('Todo API', () => {
   });
 
   it('should remove one todo', () => {
-    cy.request('POST', url, { text: faker.lorem.sentence() })
+    cy.api({
+      url,
+      method: 'POST',
+      body: {
+        text: faker.lorem.sentence(),
+      },
+      headers: { authorization },
+    })
       .its('body')
       .then(body => {
         cy.api({
           url: url + '/' + body.id,
           method: 'DELETE',
+          headers: { authorization },
         })
           .its('status')
           .should('equal', NO_CONTENT);
@@ -152,6 +160,7 @@ describe('Todo API', () => {
       cy.api({
         url: url + '/' + faker.random.uuid(),
         failOnStatusCode: false,
+        headers: { authorization },
       }).then(({ status, body }) => {
         expect(status).to.be.equal(NOT_FOUND);
         expect(body).to.have.keys(['statusCode', 'message']);
@@ -166,6 +175,7 @@ describe('Todo API', () => {
           text: faker.fake('Buy {{finance.amount}} x {{commerce.product}}'),
           done: !todo.done,
         },
+        headers: { authorization },
         failOnStatusCode: false,
       })
         .its('status')
@@ -176,6 +186,7 @@ describe('Todo API', () => {
       cy.api({
         url: url + '/' + faker.random.uuid(),
         method: 'DELETE',
+        headers: { authorization },
         failOnStatusCode: false,
       })
         .its('status')
@@ -184,10 +195,6 @@ describe('Todo API', () => {
   });
 
   context('Without authentication', () => {
-    beforeEach(() => {
-      cy.clearCookie('token').clearCookie('sessionUser');
-    });
-
     it('should fail to create a new todo', () => {
       cy.api({
         url,
@@ -243,14 +250,18 @@ describe('Todo API', () => {
   });
 
   context('With different user', () => {
+    let authorization: string;
+
     beforeEach(() => {
-      cy.clearCookies();
-      cy.login(users[1].username, '!drowssap');
+      cy.task('signUser', users[1]).then((jwt: string) => {
+        authorization = `Bearer ${jwt}`;
+      });
     });
 
     it('should forbid the access one todo that belongs to another', () => {
       cy.api({
         url: url + '/' + todo.id,
+        headers: { authorization },
         failOnStatusCode: false,
       })
         .its('status')
@@ -265,6 +276,7 @@ describe('Todo API', () => {
           text: faker.fake('Buy {{finance.amount}} x {{commerce.product}}'),
           done: !todo.done,
         },
+        headers: { authorization },
         failOnStatusCode: false,
       })
         .its('status')
@@ -275,6 +287,7 @@ describe('Todo API', () => {
       cy.api({
         url: url + '/' + todo.id,
         method: 'DELETE',
+        headers: { authorization },
         failOnStatusCode: false,
       })
         .its('status')

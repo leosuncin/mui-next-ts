@@ -13,6 +13,8 @@
 const wp = require('@cypress/webpack-preprocessor');
 const path = require('path');
 
+import jwtTask from './jwt-task';
+
 const options = {
   webpackOptions: {
     resolve: {
@@ -45,6 +47,10 @@ module.exports = (on, config) => {
   on('file:preprocessor', wp(options));
   require('@cypress/code-coverage/task')(on, config);
   require('cypress-terminal-report/src/installLogsPrinter')(on);
+  on(
+    'task',
+    jwtTask(process.env.APP_SECRET, { expiresIn: '1 min', algorithm: 'HS384' }),
+  );
 
   return config;
 };
