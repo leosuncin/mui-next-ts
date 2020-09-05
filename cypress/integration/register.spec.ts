@@ -42,7 +42,7 @@ const testMachine = createMachineWithTests({
     cy.findByText(passwordErrorText).should('not.exist');
   },
   success(cy: Cypress.cy) {
-    cy.wait('@sendRegister').its('status').should('be', 200);
+    cy.wait('@sendRegister').its('status').should('equal', 200);
     cy.waitUntil(() =>
       cy.location('pathname').then(pathname => pathname !== '/register'),
     )
@@ -50,7 +50,7 @@ const testMachine = createMachineWithTests({
       .should('equal', '/');
   },
   fail(cy: Cypress.cy) {
-    cy.wait('@sendRegister').its('status').should('be', 409);
+    cy.wait('@sendRegister').its('status').should('equal', 409);
     cy.findByRole('img', { name: 'sad face' }).should('be.visible');
     cy.findByText(/Username or Email already registered/i).should('exist');
   },
