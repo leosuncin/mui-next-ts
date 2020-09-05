@@ -1,5 +1,5 @@
 import { bool, build, fake, perBuild } from '@jackfranklin/test-data-bot';
-import { TodoResponse, UserWithoutPassword } from 'types';
+import { AuthLogin, TodoResponse, UserWithoutPassword } from 'types';
 
 export const userBuild = build<UserWithoutPassword>({
   fields: {
@@ -28,5 +28,12 @@ export const todoBuild = build<TodoResponse>({
         updatedAt: fake(f => f.date.past()),
       },
     },
+  },
+});
+
+export const loginBuild = build<AuthLogin>({
+  fields: {
+    username: fake(f => f.internet.userName().toLocaleLowerCase()),
+    password: fake(f => f.internet.password(12, true)),
   },
 });
