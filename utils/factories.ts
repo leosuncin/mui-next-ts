@@ -1,5 +1,10 @@
 import { bool, build, fake, perBuild } from '@jackfranklin/test-data-bot';
-import { AuthLogin, TodoResponse, UserWithoutPassword } from 'types';
+import {
+  AuthLogin,
+  AuthRegister,
+  TodoResponse,
+  UserWithoutPassword,
+} from 'types';
 
 export const userBuild = build<UserWithoutPassword>({
   fields: {
@@ -33,6 +38,15 @@ export const todoBuild = build<TodoResponse>({
 
 export const loginBuild = build<AuthLogin>({
   fields: {
+    username: fake(f => f.internet.userName().toLocaleLowerCase()),
+    password: fake(f => f.internet.password(12, true)),
+  },
+});
+
+export const registerBuild = build<AuthRegister>({
+  fields: {
+    firstName: fake(f => f.name.firstName()),
+    lastName: fake(f => f.name.lastName()),
     username: fake(f => f.internet.userName().toLocaleLowerCase()),
     password: fake(f => f.internet.password(12, true)),
   },
