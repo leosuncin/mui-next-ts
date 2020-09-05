@@ -6,6 +6,26 @@ on:
     - "dependabot/*"
 
 jobs:
+  components:
+    runs-on: ubuntu-16.04
+    if: "!contains(github.event.head_commit.message, 'skip-ci')"
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cypress run
+      uses: cypress-io/github-action@v2
+      timeout-minutes: 10
+      env:
+        CODE_COVERAGE: 'true'
+        APP_SECRET: c67d158338b7e5df7ff128228c74de33cb7a23f388d1c57c6b0df8fb1c825fad58d33a1eba4ffb6fcfc638a2470abff1583707a6c9ae076575a0f0639eb1b08e
+        JWT_ISSUER: e2e-test
+      with:
+        config-file: cypress-unit.json
+    - uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: Cypress screenshots
+        path: cypress/screenshots
+
   e2e:
     runs-on: ubuntu-16.04
     strategy:
