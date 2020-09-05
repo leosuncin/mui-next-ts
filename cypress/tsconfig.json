@@ -6,6 +6,7 @@
     "isolatedModules": false,
     "target": "es6",
     "module": "es6",
+    "jsx": "react",
     "baseUrl": "..",
     "paths": {
       "components": ["components/*"],

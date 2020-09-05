@@ -7,7 +7,8 @@
   "main": "next.config.js",
   "scripts": {
     "build": "next build",
-    "cy:open": "cypress open",
+    "cy:open": "cypress open --config experimentalComponentTesting=true,componentFolder=cypress/component,supportFile=cypress/support/component-test",
+    "cy:open:component": "cypress open",
     "debug": "NODE_OPTIONS='--inspect-brk' next",
     "dev": "next dev",
     "export": "next export",
@@ -17,6 +18,7 @@
     "start": "next start",
     "start:e2e": "start-test dev 3000 test:e2e",
     "test": "jest",
+    "test:component": "cypress run --config-file cypress-unit.json",
     "test:e2e": "cypress run",
     "test:watch": "jest --watch"
   },
@@ -78,6 +80,7 @@
     "babel-plugin-istanbul": "^6.0.0",
     "babel-plugin-typescript-to-proptypes": "^1.3.2",
     "cypress": "^5.0.0",
+    "cypress-react-unit-test": "^4.11.2",
     "cypress-wait-until": "^1.7.1",
     "dotenv": "^8.2.0",
     "eslint": "^7.3.1",

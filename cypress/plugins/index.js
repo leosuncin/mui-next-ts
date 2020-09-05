@@ -46,7 +46,9 @@ module.exports = (on, config) => {
   // `config` is the resolved Cypress config
   on('file:preprocessor', wp(options));
   require('@cypress/code-coverage/task')(on, config);
-  require('cypress-terminal-report/src/installLogsPrinter')(on);
+  if (!config.experimentalComponentTesting) {
+    require('cypress-terminal-report/src/installLogsPrinter')(on);
+  }
   on(
     'task',
     jwtTask(process.env.APP_SECRET, { expiresIn: '1 min', algorithm: 'HS384' }),
