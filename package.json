@@ -55,7 +55,6 @@
     "@cypress/webpack-preprocessor": "^5.4.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@jackfranklin/test-data-bot": "^1.3.0",
-    "@rckeller/cypress-unfetch": "^1.0.1",
     "@testing-library/cypress": "^6.0.0",
     "@testing-library/dom": "^7.21.7",
     "@testing-library/jest-dom": "^5.11.0",
