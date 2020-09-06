@@ -15,15 +15,11 @@ export type ErrorResponse = {
   readonly errors?: Record<string, string>;
 };
 
-export interface HttpError extends Error {
-  readonly name: 'HttpError';
+export class HttpError extends Error {
+  readonly name = 'HttpError';
   code: string;
   status: number;
   errors?: ErrorResponse['errors'];
-}
-
-export class HttpError extends Error implements HttpError {
-  readonly name = 'HttpError';
 
   constructor(error: ErrorResponse) {
     super(error.message);
