@@ -50,7 +50,7 @@
     "@cypress/webpack-preprocessor": "^5.4.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@rckeller/cypress-unfetch": "^1.0.1",
-    "@testing-library/cypress": "^6.0.0",
+    "@testing-library/cypress": "^7.0.0",
     "@testing-library/dom": "^7.21.7",
     "@testing-library/jest-dom": "^5.9.0",
     "@testing-library/react": "^11.0.2",
