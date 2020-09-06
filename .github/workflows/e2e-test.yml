@@ -2,11 +2,10 @@ name: E2E test
 
 on:
   push:
-    branches-ignore:
-    - "dependabot/*"
-  pull_request:
-    branches-ignore:
-    - "dependabot/*"
+    branches:
+    - master
+    - "wip/*"
+    - "feat/*"
 
 jobs:
   e2e:
