@@ -6,6 +6,9 @@
   <a href="#" target="_blank">
     <img alt="E2E test" src="https://github.com/leosuncin/mui-next-ts/workflows/E2E%20test/badge.svg" />
   </a>
+  <a href="https://dashboard.cypress.io/projects/kbsfrp/runs" target="_blank">
+    <img alt="Cypress test runs" src="https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/detailed/kbsfrp/master&style=flat&logo=cypress" />
+  </a>
   <a href="https://david-dm.org/leosuncin/mui-next-ts" target="_blank">
     <img alt="Dependency Status" src="https://img.shields.io/david/leosuncin/mui-next-ts.svg?style=flat" />
   </a>

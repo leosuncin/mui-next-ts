@@ -2,8 +2,10 @@ name: E2E test
 
 on:
   push:
-    branches-ignore:
-    - "dependabot/*"
+    branches:
+    - master
+    - "wip/*"
+    - "feat/*"
 
 jobs:
   components:
@@ -53,11 +55,18 @@ jobs:
         CODE_COVERAGE: true
         APP_SECRET: c67d158338b7e5df7ff128228c74de33cb7a23f388d1c57c6b0df8fb1c825fad58d33a1eba4ffb6fcfc638a2470abff1583707a6c9ae076575a0f0639eb1b08e
         JWT_ISSUER: e2e-test
+        # pass the Dashboard record key as an environment variable
+        CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+        # Recommended: pass the GitHub token lets this action correctly
+        # determine the unique run id necessary to re-run the checks
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         build: npm run build
         start: npm start
         wait-on: 'http://localhost:3000'
         browser: ${{ matrix.browser }}
+        record: true
+        tag: ${{ matrix.browser }}
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
