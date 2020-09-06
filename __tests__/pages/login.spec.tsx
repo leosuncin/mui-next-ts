@@ -155,7 +155,7 @@ testPlans.forEach(plan => {
     });
 
     plan.paths.forEach(path => {
-      // eslint-disable-next-line jest/expect-expect
+      // eslint-disable-next-line jest/expect-expect, jest/valid-title
       it(path.description, () => {
         return path.test(
           render(
