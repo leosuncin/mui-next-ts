@@ -18,10 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
     image: {
       backgroundImage: 'url(https://source.unsplash.com/random)',
       backgroundRepeat: 'no-repeat',
-      backgroundColor:
-        theme.palette.type === 'dark'
-          ? theme.palette.grey[900]
-          : theme.palette.grey[50],
+      backgroundColor: theme.palette.grey[50],
       backgroundSize: 'cover',
       backgroundPosition: 'center',
     },
@@ -42,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function SignInSide(props) {
+export default function RegisterPage(props) {
   const [error, setError] = useState<string>();
   const { register } = useAuth();
   const router = useRouter();
