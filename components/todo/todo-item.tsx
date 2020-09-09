@@ -42,6 +42,19 @@ const TodoItem: React.FC<PropTypes.InferProps<typeof propTypes>> = ({
     }
   }, [text]);
 
+  const saveTodo = () => {
+    const hasError = !!validationError;
+
+    if (todo.text !== text && !hasError) onChangeTodo({ text });
+
+    if (!hasError) setIsEditing(false);
+  };
+
+  const abortEdit = () => {
+    setIsEditing(false);
+    setText(todo.text);
+  };
+
   return (
     <ListItem
       divider
@@ -68,19 +81,15 @@ const TodoItem: React.FC<PropTypes.InferProps<typeof propTypes>> = ({
               error={!!validationError}
               helperText={validationError}
               onChange={event => setText(event.target.value)}
-              onBlur={() => {
-                setIsEditing(false);
-                if (todo.text !== text) onChangeTodo({ text });
-              }}
+              onBlur={saveTodo}
               onKeyUp={event => {
                 switch (event.key) {
                   case 'Escape':
-                    setIsEditing(false);
+                    abortEdit();
                     break;
 
                   case 'Enter':
-                    setIsEditing(false);
-                    if (todo.text !== text) onChangeTodo({ text });
+                    saveTodo();
                     break;
                 }
               }}
@@ -103,7 +112,7 @@ const TodoItem: React.FC<PropTypes.InferProps<typeof propTypes>> = ({
         <IconButton
           edge="end"
           aria-label={`Delete todo: ${todo.text}`}
-          onClick={onRemoveTodo}
+          onClick={() => onRemoveTodo()}
         >
           <DeleteIcon />
         </IconButton>
