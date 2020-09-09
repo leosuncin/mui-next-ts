@@ -22,15 +22,15 @@ export const todoBuild = build<TodoResponse>({
     id: fake(f => f.random.uuid()),
     text: fake(f => f.lorem.sentence()),
     done: bool(),
-    createdAt: perBuild(() => new Date()),
-    updatedAt: perBuild(() => new Date()),
+    createdAt: perBuild(() => new Date().toISOString()),
+    updatedAt: perBuild(() => new Date().toISOString()),
     createdBy: fake(f => f.random.uuid()),
   },
   traits: {
     old: {
       overrides: {
-        createdAt: fake(f => f.date.past()),
-        updatedAt: fake(f => f.date.past()),
+        createdAt: fake(f => f.date.past().toISOString()),
+        updatedAt: fake(f => f.date.past().toISOString()),
       },
     },
   },
