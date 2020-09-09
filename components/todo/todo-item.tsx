@@ -76,6 +76,8 @@ const TodoItem: React.FC<PropTypes.InferProps<typeof propTypes>> = ({
         primary={
           isEditing ? (
             <TextField
+              label="Edit text"
+              id="text-edit"
               fullWidth
               value={text}
               error={!!validationError}
