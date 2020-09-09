@@ -1,11 +1,13 @@
 import { filterTodoBy } from 'components/todo/filter-todo';
 import { createTodo, deleteTodo, listTodo, updateTodo } from 'libs/api-client';
 import { CreateTodo, TodoResponse as Todo, UpdateTodo } from 'types';
-import { EffectReducer } from 'use-effect-reducer';
+import { EffectReducer, useEffectReducer } from 'use-effect-reducer';
 
 export type TodoState = {
   loading: boolean;
-  todos: Todo[];
+  all: Todo[];
+  completed: Todo[];
+  active: Todo[];
   error?: string;
   _todo?: Todo;
   _position?: number;
@@ -64,7 +66,7 @@ type TodoEffect =
   | EditTodoEffect
   | RemoveTodoEffect;
 
-export const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
+const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
   state,
   event,
   exec,
@@ -81,7 +83,9 @@ export const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
       return {
         ...state,
         loading: false,
-        todos: event.payload,
+        all: event.payload,
+        completed: completedSelector(event.payload),
+        active: activeSelector(event.payload),
       };
 
     case 'ADD_TODO':
@@ -96,7 +100,8 @@ export const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
       return {
         ...state,
         loading: false,
-        todos: [event.payload, ...state.todos],
+        all: [event.payload, ...state.all],
+        active: [event.payload, ...state.active],
       };
 
     case 'EDIT_TODO':
@@ -104,7 +109,7 @@ export const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
       return {
         ...state,
         error: undefined,
-        todos: state.todos.map(todo =>
+        all: state.all.map(todo =>
           todo.id === event.payload.id
             ? Object.assign(todo, event.payload.body, {
                 updatedAt: new Date().toISOString(),
@@ -115,13 +120,19 @@ export const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
 
     case 'TODO_CHANGED':
       event.payload.updatedAt = new Date(event.payload.updatedAt).toISOString(); // Solves an issue
+      const all = state.all.map(todo =>
+        todo.id === event.payload.id
+          ? Object.assign(todo, event.payload)
+          : todo,
+      );
+      const completed = completedSelector(all);
+      const active = completedSelector(all);
+
       return {
         ...state,
-        todos: state.todos.map(todo =>
-          todo.id === event.payload.id
-            ? Object.assign(todo, event.payload)
-            : todo,
-        ),
+        all,
+        completed,
+        active,
       };
 
     case 'REMOVE_TODO':
@@ -129,18 +140,30 @@ export const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
       return {
         ...state,
         error: undefined,
-        todos: state.todos.filter(todo => todo.id !== event.payload.todo.id),
+        all: state.all.filter(todo => todo.id !== event.payload.todo.id),
+        completed: event.payload.todo.done
+          ? state.completed.filter(todo => todo.id !== event.payload.todo.id)
+          : state.completed,
+        active: !event.payload.todo.done
+          ? state.active.filter(todo => todo.id !== event.payload.todo.id)
+          : state.active,
         _todo: event.payload.todo,
         _position:
           event.payload.position ??
-          state.todos.findIndex(todo => todo.id === event.payload.todo.id),
+          state.all.findIndex(todo => todo.id === event.payload.todo.id),
       };
 
     case 'REMOVE_TODO_FAILED':
       return {
         ...state,
         error: event.payload,
-        todos: state.todos.splice(state._position, 0, state._todo),
+        all: state.all.splice(state._position, 0, state._todo),
+        completed: [...state.completed, state._todo].sort((a, b) =>
+          a.createdAt.localeCompare(b.createdAt),
+        ),
+        active: [...state.active, state._todo].sort((a, b) =>
+          a.createdAt.localeCompare(b.createdAt),
+        ),
         _todo: undefined,
         _position: undefined,
       };
@@ -162,26 +185,25 @@ export const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
       return state;
   }
 };
+const completedSelector = (todos: Todo[]) => todos.filter(todo => todo.done);
+const activeSelector = (todos: Todo[]) => todos.filter(todo => !todo.done);
 
 function errorAction(error: Error): TodoErrorEvent {
   return { type: 'ERROR', payload: error.message };
 }
-export function fetchTodosAction(): FetchTodosEffect {
+function fetchTodosAction(): FetchTodosEffect {
   return { type: 'fetchTodos' };
 }
 function fecthTodosSuccessAction(todos: Todo[]): TodoFetchSuccessEvent {
   return { type: 'TODOS_FETCHED', payload: todos };
 }
-export function addTodoAction(newTodo: CreateTodo): TodoAddEvent {
+function addTodoAction(newTodo: CreateTodo): TodoAddEvent {
   return { type: 'ADD_TODO', payload: newTodo };
 }
 function addTodoSuccessAction(todo: Todo): TodoAddSuccessEvent {
   return { type: 'TODO_SAVED', payload: todo };
 }
-export function updateTodoAction(
-  id: Todo['id'],
-  body: UpdateTodo,
-): TodoUpdateEvent {
+function updateTodoAction(id: Todo['id'], body: UpdateTodo): TodoUpdateEvent {
   return {
     type: 'EDIT_TODO',
     payload: { id, body },
@@ -190,10 +212,7 @@ export function updateTodoAction(
 function updateTodoSuccessAction(todo: Todo): TodoUpdateSuccessEvent {
   return { type: 'TODO_CHANGED', payload: todo };
 }
-export function removeTodoAction(
-  todo: Todo,
-  position?: number,
-): TodoRemoveEvent {
+function removeTodoAction(todo: Todo, position?: number): TodoRemoveEvent {
   return {
     type: 'REMOVE_TODO',
     payload: { todo, position },
@@ -202,7 +221,7 @@ export function removeTodoAction(
 function removeTodoFailAction(error: Error): TodoRemoveFailEvent {
   return { type: 'REMOVE_TODO_FAILED', payload: error.message };
 }
-export function changeFilterAction(
+function changeFilterAction(
   filter: keyof typeof filterTodoBy,
 ): TodoChangeFilterEvent {
   return {
@@ -211,7 +230,7 @@ export function changeFilterAction(
   };
 }
 
-export function fetchTodosEffect(
+function fetchTodosEffect(
   state: TodoState,
   effect: FetchTodosEffect,
   dispatch: React.Dispatch<TodoEvent>,
@@ -223,7 +242,7 @@ export function fetchTodosEffect(
 
   return () => ctrl.abort();
 }
-export function addTodoEffect(
+function addTodoEffect(
   state: TodoState,
   effect: AddTodoEffect,
   dispatch: React.Dispatch<TodoEvent>,
@@ -232,7 +251,7 @@ export function addTodoEffect(
     .then(todo => dispatch(addTodoSuccessAction(todo)))
     .catch(error => dispatch(errorAction(error)));
 }
-export function editTodoEffect(
+function editTodoEffect(
   state: TodoState,
   effect: EditTodoEffect,
   dispatch: React.Dispatch<TodoEvent>,
@@ -241,7 +260,7 @@ export function editTodoEffect(
     .then(todo => dispatch(updateTodoSuccessAction(todo)))
     .catch(error => dispatch(errorAction(error)));
 }
-export function removeTodoEffect(
+function removeTodoEffect(
   state: TodoState,
   effect: RemoveTodoEffect,
   dispatch: React.Dispatch<TodoEvent>,
@@ -249,4 +268,52 @@ export function removeTodoEffect(
   deleteTodo(effect.payload).catch(error =>
     dispatch(removeTodoFailAction(error)),
   );
+}
+
+type TodoAction = {
+  addTodo(newTodo: CreateTodo): void;
+  changeFilter(filter: keyof typeof filterTodoBy): void;
+  removeTodo(todo: Todo, position?: number): void;
+  updateTodo(id: Todo['id'], updates: UpdateTodo): void;
+};
+
+export function useTodo(): [TodoState, TodoAction] {
+  const [state, dispatch] = useEffectReducer(
+    todoReducer,
+    exec => {
+      exec(fetchTodosAction());
+
+      return {
+        all: [],
+        completed: [],
+        active: [],
+        loading: true,
+        _filter: 'all',
+      } as TodoState;
+    },
+    {
+      fetchTodos: fetchTodosEffect,
+      addTodo: addTodoEffect,
+      editTodo: editTodoEffect,
+      removeTodo: removeTodoEffect,
+    },
+  );
+
+  return [
+    state,
+    {
+      addTodo(newTodo) {
+        dispatch(addTodoAction(newTodo));
+      },
+      changeFilter(filter) {
+        dispatch(changeFilterAction(filter));
+      },
+      removeTodo(todo) {
+        dispatch(removeTodoAction(todo));
+      },
+      updateTodo(id, updates) {
+        dispatch(updateTodoAction(id, updates));
+      },
+    },
+  ];
 }

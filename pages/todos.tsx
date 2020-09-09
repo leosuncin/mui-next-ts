@@ -8,22 +8,9 @@ import Layout from 'components/layout';
 import AddTodoForm from 'components/todo/add-todo';
 import FilterTodo from 'components/todo/filter-todo';
 import ListTodo from 'components/todo/list-todo';
-import {
-  TodoState,
-  addTodoAction,
-  addTodoEffect,
-  changeFilterAction,
-  editTodoEffect,
-  fetchTodosAction,
-  fetchTodosEffect,
-  removeTodoAction,
-  removeTodoEffect,
-  todoReducer,
-  updateTodoAction,
-} from 'hooks/todo-effect-reducer';
+import { useTodo } from 'hooks/use-todo';
 import { NextPage } from 'next';
-import React, { useMemo } from 'react';
-import { useEffectReducer } from 'use-effect-reducer';
+import React from 'react';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,32 +25,11 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 const TodosPage: NextPage<AuthenticationProps> = () => {
   const classes = useStyles();
-  const [state, dispatch] = useEffectReducer(
-    todoReducer,
-    exec => {
-      exec(fetchTodosAction());
-
-      return {
-        todos: [],
-        loading: true,
-        _filter: 'all',
-      } as TodoState;
-    },
-    {
-      fetchTodos: fetchTodosEffect,
-      addTodo: addTodoEffect,
-      editTodo: editTodoEffect,
-      removeTodo: removeTodoEffect,
-    },
-  );
-  const completed = useMemo(() => state.todos.filter(todo => todo.done), [
-    state,
-  ]);
-  const active = useMemo(() => state.todos.filter(todo => !todo.done), [state]);
+  const [state, actions] = useTodo();
   const display = {
-    all: state.todos,
-    completed,
-    active,
+    all: state.all,
+    completed: state.completed,
+    active: state.active,
   };
 
   return (
@@ -78,23 +44,21 @@ const TodosPage: NextPage<AuthenticationProps> = () => {
             </Collapse>
           </Grid>
         )}
-        <AddTodoForm onSubmit={todo => dispatch(addTodoAction(todo))} />
+        <AddTodoForm onSubmit={todo => actions.addTodo(todo)} />
         <FilterTodo
-          all={state.todos.length}
-          completed={completed.length}
-          active={active.length}
+          all={state.all.length}
+          completed={state.completed.length}
+          active={state.active.length}
           filter={state._filter}
-          onChangeFilter={filter => dispatch(changeFilterAction(filter))}
+          onChangeFilter={filter => actions.changeFilter(filter)}
           onClearCompleted={() =>
-            completed.map(todo => dispatch(removeTodoAction(todo)))
+            state.completed.map(todo => actions.removeTodo(todo))
           }
         />
         <ListTodo
           todos={display[state._filter]}
-          onChangeTodo={(id, body) => dispatch(updateTodoAction(id, body))}
-          onRemoveTodo={(todo, position) =>
-            dispatch(removeTodoAction(todo, position))
-          }
+          onChangeTodo={(id, body) => actions.updateTodo(id, body)}
+          onRemoveTodo={(todo, position) => actions.removeTodo(todo, position)}
         />
         {state.loading && (
           <Backdrop open={state.loading} className={classes.backdrop}>
