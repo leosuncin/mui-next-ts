@@ -9,12 +9,17 @@ import AddTodoForm from 'components/todo/add-todo';
 import FilterTodo from 'components/todo/filter-todo';
 import ListTodo from 'components/todo/list-todo';
 import {
-  addTodo,
-  editTodo,
-  fetchTodos,
-  initialState,
-  removeTodo,
+  TodoState,
+  addTodoAction,
+  addTodoEffect,
+  changeFilterAction,
+  editTodoEffect,
+  fetchTodosAction,
+  fetchTodosEffect,
+  removeTodoAction,
+  removeTodoEffect,
   todoReducer,
+  updateTodoAction,
 } from 'hooks/todo-effect-reducer';
 import { NextPage } from 'next';
 import React, { useMemo } from 'react';
@@ -36,14 +41,19 @@ const TodosPage: NextPage<AuthenticationProps> = () => {
   const [state, dispatch] = useEffectReducer(
     todoReducer,
     exec => {
-      exec({ type: 'fetchTodos' });
-      return initialState;
+      exec(fetchTodosAction());
+
+      return {
+        todos: [],
+        loading: true,
+        _filter: 'all',
+      } as TodoState;
     },
     {
-      fetchTodos,
-      addTodo,
-      editTodo,
-      removeTodo,
+      fetchTodos: fetchTodosEffect,
+      addTodo: addTodoEffect,
+      editTodo: editTodoEffect,
+      removeTodo: removeTodoEffect,
     },
   );
   const completed = useMemo(() => state.todos.filter(todo => todo.done), [
@@ -68,30 +78,22 @@ const TodosPage: NextPage<AuthenticationProps> = () => {
             </Collapse>
           </Grid>
         )}
-        <AddTodoForm
-          onSubmit={todo => dispatch({ type: 'ADD_TODO', payload: todo })}
-        />
+        <AddTodoForm onSubmit={todo => dispatch(addTodoAction(todo))} />
         <FilterTodo
           all={state.todos.length}
           completed={completed.length}
           active={active.length}
           filter={state._filter}
-          onChangeFilter={filter =>
-            dispatch({ type: 'SWITCH_FILTER', payload: filter })
-          }
+          onChangeFilter={filter => dispatch(changeFilterAction(filter))}
           onClearCompleted={() =>
-            completed.map(todo =>
-              dispatch({ type: 'REMOVE_TODO', payload: { todo } }),
-            )
+            completed.map(todo => dispatch(removeTodoAction(todo)))
           }
         />
         <ListTodo
           todos={display[state._filter]}
-          onChangeTodo={(id, body) =>
-            dispatch({ type: 'EDIT_TODO', payload: { id, body } })
-          }
+          onChangeTodo={(id, body) => dispatch(updateTodoAction(id, body))}
           onRemoveTodo={(todo, position) =>
-            dispatch({ type: 'REMOVE_TODO', payload: { todo, position } })
+            dispatch(removeTodoAction(todo, position))
           }
         />
         {state.loading && (

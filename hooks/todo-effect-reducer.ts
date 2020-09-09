@@ -1,76 +1,63 @@
+import { filterTodoBy } from 'components/todo/filter-todo';
 import { createTodo, deleteTodo, listTodo, updateTodo } from 'libs/api-client';
 import { CreateTodo, TodoResponse as Todo, UpdateTodo } from 'types';
 import { EffectReducer } from 'use-effect-reducer';
 
-type TodoState = {
+export type TodoState = {
   loading: boolean;
   todos: Todo[];
   error?: string;
   _todo?: Todo;
   _position?: number;
-  _filter: 'all' | 'completed' | 'active';
+  _filter: keyof typeof filterTodoBy;
 };
 
+type TodoErrorEvent = { type: 'ERROR'; payload: string };
+type TodoFetchEvent = { type: 'FETCH_TODOS' };
+type TodoFetchSuccessEvent = { type: 'TODOS_FETCHED'; payload: Todo[] };
+type TodoAddEvent = { type: 'ADD_TODO'; payload: CreateTodo };
+type TodoAddSuccessEvent = { type: 'TODO_SAVED'; payload: Todo };
+type TodoUpdateEvent = {
+  type: 'EDIT_TODO';
+  payload: { id: string; body: UpdateTodo };
+};
+type TodoUpdateSuccessEvent = { type: 'TODO_CHANGED'; payload: Todo };
+type TodoRemoveEvent = {
+  type: 'REMOVE_TODO';
+  payload: { todo: Todo; position?: number };
+};
+type TodoRemoveFailEvent = { type: 'REMOVE_TODO_FAILED'; payload: string };
+type TodoChangeFilterEvent = {
+  type: 'SWITCH_FILTER';
+  payload: keyof typeof filterTodoBy;
+};
 type TodoEvent =
-  | {
-      type: 'ERROR';
-      payload: string;
-    }
-  | {
-      type: 'FETCH_TODOS';
-    }
-  | {
-      type: 'TODOS_FETCHED';
-      payload: Todo[];
-    }
-  | {
-      type: 'ADD_TODO';
-      payload: CreateTodo;
-    }
-  | {
-      type: 'TODO_SAVED';
-      payload: Todo;
-    }
-  | {
-      type: 'EDIT_TODO';
-      payload: { id: string; body: UpdateTodo };
-    }
-  | {
-      type: 'TODO_CHANGED';
-      payload: Todo;
-    }
-  | {
-      type: 'REMOVE_TODO';
-      payload: { todo: Todo; position?: number };
-    }
-  | {
-      type: 'REMOVE_TODO_FAILED';
-      payload: string;
-    }
-  | {
-      type: 'SWITCH_FILTER';
-      payload: 'all' | 'completed' | 'active';
-    };
+  | TodoErrorEvent
+  | TodoFetchEvent
+  | TodoFetchSuccessEvent
+  | TodoAddEvent
+  | TodoAddSuccessEvent
+  | TodoUpdateEvent
+  | TodoUpdateSuccessEvent
+  | TodoRemoveEvent
+  | TodoRemoveFailEvent
+  | TodoChangeFilterEvent;
 
 type FetchTodosEffect = {
   type: 'fetchTodos';
 };
-
 type AddTodoEffect = {
   type: 'addTodo';
   payload: CreateTodo;
 };
-
 type EditTodoEffect = {
   type: 'editTodo';
   payload: { id: string; body: UpdateTodo };
 };
-
 type RemoveTodoEffect = {
   type: 'removeTodo';
   payload: string;
 };
-
 type TodoEffect =
   | FetchTodosEffect
   | AddTodoEffect
@@ -176,55 +163,90 @@ export const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
   }
 };
 
-export const initialState: TodoState = {
-  todos: [],
-  loading: true,
-  _filter: 'all',
-};
+function errorAction(error: Error): TodoErrorEvent {
+  return { type: 'ERROR', payload: error.message };
+}
+export function fetchTodosAction(): FetchTodosEffect {
+  return { type: 'fetchTodos' };
+}
+function fecthTodosSuccessAction(todos: Todo[]): TodoFetchSuccessEvent {
+  return { type: 'TODOS_FETCHED', payload: todos };
+}
+export function addTodoAction(newTodo: CreateTodo): TodoAddEvent {
+  return { type: 'ADD_TODO', payload: newTodo };
+}
+function addTodoSuccessAction(todo: Todo): TodoAddSuccessEvent {
+  return { type: 'TODO_SAVED', payload: todo };
+}
+export function updateTodoAction(
+  id: Todo['id'],
+  body: UpdateTodo,
+): TodoUpdateEvent {
+  return {
+    type: 'EDIT_TODO',
+    payload: { id, body },
+  };
+}
+function updateTodoSuccessAction(todo: Todo): TodoUpdateSuccessEvent {
+  return { type: 'TODO_CHANGED', payload: todo };
+}
+export function removeTodoAction(
+  todo: Todo,
+  position?: number,
+): TodoRemoveEvent {
+  return {
+    type: 'REMOVE_TODO',
+    payload: { todo, position },
+  };
+}
+function removeTodoFailAction(error: Error): TodoRemoveFailEvent {
+  return { type: 'REMOVE_TODO_FAILED', payload: error.message };
+}
+export function changeFilterAction(
+  filter: keyof typeof filterTodoBy,
+): TodoChangeFilterEvent {
+  return {
+    type: 'SWITCH_FILTER',
+    payload: filter,
+  };
+}
 
-export function fetchTodos(
+export function fetchTodosEffect(
   state: TodoState,
   effect: FetchTodosEffect,
   dispatch: React.Dispatch<TodoEvent>,
 ) {
   const ctrl = new AbortController();
   listTodo({ signal: ctrl.signal })
-    .then(todos => dispatch({ type: 'TODOS_FETCHED', payload: todos }))
-    .catch(
-      error =>
-        ctrl.signal.aborted ||
-        dispatch({ type: 'ERROR', payload: error.message }),
-    );
+    .then(todos => dispatch(fecthTodosSuccessAction(todos)))
+    .catch(error => ctrl.signal.aborted || dispatch(errorAction(error)));
 
   return () => ctrl.abort();
 }
-
-export function addTodo(
+export function addTodoEffect(
   state: TodoState,
   effect: AddTodoEffect,
   dispatch: React.Dispatch<TodoEvent>,
 ) {
   createTodo(effect.payload)
-    .then(todo => dispatch({ type: 'TODO_SAVED', payload: todo }))
-    .catch(error => dispatch({ type: 'ERROR', payload: error.message }));
+    .then(todo => dispatch(addTodoSuccessAction(todo)))
+    .catch(error => dispatch(errorAction(error)));
 }
-
-export function editTodo(
+export function editTodoEffect(
   state: TodoState,
   effect: EditTodoEffect,
   dispatch: React.Dispatch<TodoEvent>,
 ) {
   updateTodo(effect.payload.id, effect.payload.body)
-    .then(todo => dispatch({ type: 'TODO_CHANGED', payload: todo }))
-    .catch(error => dispatch({ type: 'ERROR', payload: error.message }));
+    .then(todo => dispatch(updateTodoSuccessAction(todo)))
+    .catch(error => dispatch(errorAction(error)));
 }
-
-export function removeTodo(
+export function removeTodoEffect(
   state: TodoState,
   effect: RemoveTodoEffect,
   dispatch: React.Dispatch<TodoEvent>,
 ) {
   deleteTodo(effect.payload).catch(error =>
-    dispatch({ type: 'REMOVE_TODO_FAILED', payload: error.message }),
+    dispatch(removeTodoFailAction(error)),
   );
 }
