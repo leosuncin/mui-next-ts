@@ -1,5 +1,5 @@
 /// <reference types="Cypress" />
-/// <reference types="@types/testing-library__cypress" />
+/// <reference types="@testing-library/cypress" />
 import { mount } from 'cypress-react-unit-test';
 import fc from 'fast-check';
 import React from 'react';
