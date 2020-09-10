@@ -6,6 +6,5 @@ export default async function updateTodo(
   body: UpdateTodo,
   signal?: AbortSignal,
 ): Promise<Todo> {
-  const req = new Request(`/api/todos/${id}`, { signal });
-  return put<UpdateTodo, Todo>(req, body);
+  return put<UpdateTodo, Todo>(`/api/todos/${id}`, body, signal);
 }

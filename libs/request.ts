@@ -29,6 +29,7 @@ async function fetcher<Data>(
 export function post<Body, Data>(
   request: RequestInfo,
   body: Body,
+  signal?: AbortSignal,
 ): Promise<Data> {
   return fetcher(request, {
     ...defaultOptions,
@@ -38,6 +39,7 @@ export function post<Body, Data>(
       'Content-Type': 'application/json',
       Accept: 'application/json',
     },
+    signal,
   });
 }
 
@@ -62,6 +64,7 @@ export function remove(
 export function put<Body, Data>(
   request: RequestInfo,
   body: Body,
+  signal?: AbortSignal,
 ): Promise<Data> {
   return fetcher(request, {
     ...defaultOptions,
@@ -71,5 +74,6 @@ export function put<Body, Data>(
       'Content-Type': 'application/json',
       Accept: 'application/json',
     },
+    signal,
   });
 }

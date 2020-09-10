@@ -5,6 +5,5 @@ export default async function createTodo(
   body: CreateTodo,
   signal?: AbortSignal,
 ): Promise<Todo> {
-  const req = new Request('/api/todos', { signal });
-  return post<CreateTodo, Todo>(req, body);
+  return post<CreateTodo, Todo>('/api/todos', body, signal);
 }
