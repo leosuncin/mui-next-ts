@@ -8,7 +8,7 @@
     "module": "es6",
     "types": [
       "cypress",
-      "@types/testing-library__cypress",
+      "@testing-library/cypress",
       "cypress-wait-until",
       "@bahmutov/cy-api"
     ]

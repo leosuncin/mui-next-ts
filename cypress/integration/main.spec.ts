@@ -1,5 +1,3 @@
-/// <reference types="Cypress" />
-/// <reference types="@types/testing-library__cypress" />
 const sessionUser = JSON.stringify({
   id: '760add88-0a2b-4358-bc3f-7d82245c5dea',
   username: 'admin',
