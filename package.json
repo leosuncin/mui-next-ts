@@ -79,6 +79,7 @@
     "babel-plugin-istanbul": "^6.0.0",
     "babel-plugin-typescript-to-proptypes": "^1.4.0",
     "cypress": "^5.1.0",
+    "cypress-dotenv": "^1.2.2",
     "cypress-react-unit-test": "^4.11.2",
     "cypress-terminal-report": "^2.0.0",
     "cypress-wait-until": "^1.7.1",

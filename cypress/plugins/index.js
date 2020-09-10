@@ -44,6 +44,7 @@ const options = {
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
+  require('cypress-dotenv')(config, {}, true);
   on('file:preprocessor', wp(options));
   require('@cypress/code-coverage/task')(on, config);
   if (!config.experimentalComponentTesting) {
