@@ -238,7 +238,9 @@ function fetchTodosEffect(
   const ctrl = new AbortController();
   listTodo({ signal: ctrl.signal })
     .then(todos => dispatch(fecthTodosSuccessAction(todos)))
-    .catch(error => ctrl.signal.aborted || dispatch(errorAction(error)));
+    .catch(error => {
+      if (!ctrl.signal.aborted) dispatch(errorAction(error));
+    });
 
   return () => ctrl.abort();
 }
@@ -247,27 +249,40 @@ function addTodoEffect(
   effect: AddTodoEffect,
   dispatch: React.Dispatch<TodoEvent>,
 ) {
-  createTodo(effect.payload)
+  const ctrl = new AbortController();
+  createTodo(effect.payload, ctrl.signal)
     .then(todo => dispatch(addTodoSuccessAction(todo)))
-    .catch(error => dispatch(errorAction(error)));
+    .catch(error => {
+      if (!ctrl.signal.aborted) dispatch(errorAction(error));
+    });
+
+  return () => ctrl.abort();
 }
 function editTodoEffect(
   state: TodoState,
   effect: EditTodoEffect,
   dispatch: React.Dispatch<TodoEvent>,
 ) {
-  updateTodo(effect.payload.id, effect.payload.body)
+  const ctrl = new AbortController();
+  updateTodo(effect.payload.id, effect.payload.body, ctrl.signal)
     .then(todo => dispatch(updateTodoSuccessAction(todo)))
-    .catch(error => dispatch(errorAction(error)));
+    .catch(error => {
+      if (!ctrl.signal.aborted) dispatch(errorAction(error));
+    });
+
+  return () => ctrl.abort();
 }
 function removeTodoEffect(
   state: TodoState,
   effect: RemoveTodoEffect,
   dispatch: React.Dispatch<TodoEvent>,
 ) {
-  deleteTodo(effect.payload).catch(error =>
-    dispatch(removeTodoFailAction(error)),
-  );
+  const ctrl = new AbortController();
+  deleteTodo(effect.payload, ctrl.signal).catch(error => {
+    if (!ctrl.signal.aborted) dispatch(removeTodoFailAction(error));
+  });
+
+  return () => ctrl.abort();
 }
 
 type TodoAction = {
