@@ -1,5 +1,3 @@
-/// <reference types="Cypress" />
-/// <reference types="@types/testing-library__cypress" />
 describe('Main page', () => {
   beforeEach(() => {
     cy.server().route('DELETE', '/api/auth/logout').as('logout').visit('/');

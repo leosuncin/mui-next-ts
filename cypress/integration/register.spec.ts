@@ -1,8 +1,3 @@
-// enables intelligent code completion for Cypress commands
-// https://on.cypress.io/intelligent-code-completion
-/// <reference types="Cypress" />
-/// <reference types="@types/testing-library__cypress" />
-/// <reference types="cypress-wait-until" />
 import { createModel } from '@xstate/test';
 import faker from 'faker';
 import { users } from 'libs/db/users';
