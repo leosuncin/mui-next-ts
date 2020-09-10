@@ -1,24 +1,21 @@
 import jwt from 'jsonwebtoken';
 import { JwtPayload, User } from 'types';
 
-const secret = process.env.APP_SECRET;
-const issuer = process.env.JWT_ISSUER;
-
 export function signJWT(user: User): string {
   return jwt.sign(
     {
       sub: user.id,
-      iss: issuer,
+      iss: process.env.JWT_ISSUER,
     },
-    secret,
+    process.env.APP_SECRET,
     { expiresIn: '30 days', algorithm: 'HS384' },
   );
 }
 
 export function decodeJWT(token: string): JwtPayload {
-  return jwt.verify(token, secret, {
+  return jwt.verify(token, process.env.APP_SECRET, {
     algorithms: ['HS384'],
     ignoreExpiration: false,
-    issuer,
+    issuer: process.env.JWT_ISSUER,
   }) as JwtPayload;
 }
