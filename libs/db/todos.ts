@@ -29,7 +29,7 @@ export const todos: Todo[] = [
     id: '3b3a687a-3be9-4ad7-ab32-8dd2a89b85a8',
     text:
       'This life is a test. Had this been an actual life, you would have received further instructions as to what to do and where to go.',
-    done: false,
+    done: true,
     createdAt: new Date(2020, 5, 9, 9, 0, 0),
     updatedAt: new Date(2020, 5, 9, 9, 0, 0),
     createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
@@ -46,7 +46,7 @@ export const todos: Todo[] = [
     id: '33d31700-e451-4ff8-932a-b824ea7f3aaa',
     text:
       'They are ill discoverers that think there is no land, when they can see nothing but sea.',
-    done: false,
+    done: true,
     createdAt: new Date(2020, 5, 9, 19, 0, 0),
     updatedAt: new Date(2020, 5, 9, 19, 0, 0),
     createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
@@ -63,9 +63,43 @@ export const todos: Todo[] = [
     id: '86a0e075-c3e5-4089-ba9d-9875197fcaa5',
     text:
       'Logic is a systematic method of coming to the wrong conclusion with confidence.',
-    done: false,
+    done: true,
     createdAt: new Date(2020, 5, 11, 11, 0, 0),
     updatedAt: new Date(2020, 5, 11, 11, 0, 0),
+    createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+  },
+  {
+    id: '2d701533-91f3-4f05-8923-f30559d6ffc9',
+    text:
+      'The average, healthy, well-adjusted adult gets up at seven-thirty in the morning feeling just terrible.',
+    done: true,
+    createdAt: new Date(2020, 5, 12, 15, 0, 0),
+    updatedAt: new Date(2020, 5, 12, 15, 0, 0),
+    createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+  },
+  {
+    id: '596ca525-6910-4633-88c9-f9a9b27071ae',
+    text: 'I often quote myself; it adds spice to my conversation.',
+    done: false,
+    createdAt: new Date(2020, 5, 12, 16, 0, 0),
+    updatedAt: new Date(2020, 5, 12, 16, 0, 0),
+    createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+  },
+  {
+    id: '1adc286a-7ac2-48c4-9ef1-aae9b9f502b2',
+    text:
+      'Experiments must be reproducible; they should all fail in the same way.',
+    done: true,
+    createdAt: new Date(2020, 5, 13, 11, 0, 0),
+    updatedAt: new Date(2020, 5, 13, 11, 0, 0),
+    createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+  },
+  {
+    id: 'ac41212a-ea2f-4959-9800-d1d42f1afee4',
+    text: "We've upped our standards, so up yours!",
+    done: false,
+    createdAt: new Date(2020, 5, 13, 12, 0, 0),
+    updatedAt: new Date(2020, 5, 13, 12, 0, 0),
     createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
   },
 ];
