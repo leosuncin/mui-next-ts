@@ -13,6 +13,7 @@ describe('Todo component', () => {
   const allButton = RegExp(`All \\(${todos.length}\\)`, 'i');
   const activeButton = RegExp(`Active \\(${activeCount}\\)`, 'i');
   const completedButton = RegExp(`Completed \\(${completedCount}\\)`, 'i');
+  const clearCompletedButton = /Clear completed/i;
 
   beforeEach(() => {
     cy.server().route('GET', '/api/todos?page=*', todos).as('listTodo');
@@ -39,5 +40,16 @@ describe('Todo component', () => {
 
     cy.findByRole('button', { name: completedButton }).click();
     cy.findAllByRole('listitem').should('have.lengthOf', completedCount);
+  });
+
+  it('should clear the completed ones', () => {
+    cy.route('DELETE', '/api/todos/*', '');
+    mount(<Todo />);
+
+    cy.findByRole('button', { name: clearCompletedButton }).click();
+
+    cy.findAllByRole('listitem').should('have.lengthOf', activeCount);
+    cy.findByRole('button', { name: clearCompletedButton }).should('not.exist');
+    cy.findByRole('button', { name: /Completed \(0\)/i }).should('exist');
   });
 });
