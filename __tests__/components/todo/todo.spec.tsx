@@ -48,7 +48,7 @@ describe('<Todo />', () => {
     await waitForElementToBeRemoved(screen.getByTestId('loading-todos')); // Wait until loader to disappear
 
     await userEvent.type(screen.getByRole('textbox', { name: /Text/ }), text); // Typing the new todo
-    userEvent.click(screen.getByRole('button', { name: /Add/i })); // Submit the form
+    userEvent.click(screen.getByRole('button', { name: /^Add$/i })); // Submit the form
 
     await screen.findByTestId('loading-todos'); // Wait until loader appear
     await waitForElementToBeRemoved(screen.queryByTestId('loading-todos')); // Then, wait until loader to disappear
