@@ -107,4 +107,20 @@ describe('<Todo />', () => {
 
     expect(screen.getAllByRole('listitem')).toHaveLength(5);
   });
+
+  it('should clear the completed ones', async () => {
+    render(<Todo />);
+
+    await waitForElementToBeRemoved(screen.getByTestId('loading-todos')); // Wait until loader to disappear
+
+    const clearButton = screen.getByRole('button', {
+      name: /Clear completed/i,
+    });
+    userEvent.click(clearButton);
+
+    expect(screen.getAllByRole('listitem')).toHaveLength(5);
+    expect(clearButton).not.toBeInTheDocument();
+
+    screen.getByRole('button', { name: /Completed \(0\)/i });
+  });
 });
