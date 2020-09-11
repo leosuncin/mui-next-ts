@@ -36,6 +36,11 @@ describe('<Todo />', () => {
 
     await waitForElementToBeRemoved(screen.getByTestId('loading-todos')); // Wait until loader to disappear
 
+    screen.getByText(/5 items left/i);
+    screen.getByRole('button', { name: /All \(10\)/i });
+    screen.getByRole('button', { name: /Active \(5\)/i });
+    screen.getByRole('button', { name: /Completed \(5\)/i });
+
     expect(
       screen.getByRole('list', { name: 'List of todo' }).children,
     ).toHaveLength(10); // Check all todos are listed, by default 10
@@ -83,5 +88,23 @@ describe('<Todo />', () => {
     userEvent.click(getByRole(element, 'button', { name: /Delete todo/ })); // Delete it
 
     expect(element).not.toBeInTheDocument(); // Check not exist anymore
+  });
+
+  it('should filter the displayed todos', async () => {
+    render(<Todo />);
+
+    await waitForElementToBeRemoved(screen.getByTestId('loading-todos')); // Wait until loader to disappear
+
+    userEvent.click(screen.getByRole('button', { name: /Active \(\d+\)/i })); // Display only active
+
+    expect(screen.getAllByRole('listitem')).toHaveLength(5);
+
+    userEvent.click(screen.getByRole('button', { name: /All \(\d+\)/i })); // Display all
+
+    expect(screen.getAllByRole('listitem')).toHaveLength(10);
+
+    userEvent.click(screen.getByRole('button', { name: /Completed \(\d+\)/i })); // Display only completed
+
+    expect(screen.getAllByRole('listitem')).toHaveLength(5);
   });
 });
