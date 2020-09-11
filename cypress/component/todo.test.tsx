@@ -52,4 +52,17 @@ describe('Todo component', () => {
     cy.findByRole('button', { name: clearCompletedButton }).should('not.exist');
     cy.findByRole('button', { name: /Completed \(0\)/i }).should('exist');
   });
+
+  it('should create a new todo and add to list', () => {
+    const todo = todoBuild();
+    cy.route('POST', '/api/todos', todo).as('saveTodo');
+    mount(<Todo />);
+
+    cy.findByRole('textbox', { name: /Text/ }).type(todo.text);
+    cy.findByRole('button', { name: /^Add$/i }).click();
+
+    cy.wait('@saveTodo');
+
+    cy.findByRole('list').children().first().contains(todo.text);
+  });
 });
