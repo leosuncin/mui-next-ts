@@ -27,4 +27,17 @@ describe('Todo component', () => {
     cy.findByText(activeButton).should('exist');
     cy.findByText(completedButton).should('exist');
   });
+
+  it('should filter the displayed todos', () => {
+    mount(<Todo />);
+
+    cy.findByRole('button', { name: activeButton }).click();
+    cy.findAllByRole('listitem').should('have.lengthOf', activeCount);
+
+    cy.findByRole('button', { name: allButton }).click();
+    cy.findAllByRole('listitem').should('have.lengthOf', todos.length);
+
+    cy.findByRole('button', { name: completedButton }).click();
+    cy.findAllByRole('listitem').should('have.lengthOf', completedCount);
+  });
 });
