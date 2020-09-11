@@ -54,4 +54,22 @@ describe('<Todo />', () => {
 
     expect(screen.getByText(text)).toBeInTheDocument(); // Find the new todo in the list
   });
+
+  it('should edit one todo', async () => {
+    const text = faker.lorem.words();
+    render(<Todo />);
+
+    await waitForElementToBeRemoved(screen.getByTestId('loading-todos')); // Wait until loader to disappear
+
+    userEvent.dblClick(
+      screen.getAllByRole('listitem')[0].querySelector('span + time'),
+    ); // Activate the edit state
+    userEvent.clear(screen.getByRole('textbox', { name: /Edit text/i })); // Clear the input
+    await userEvent.type(
+      screen.getByRole('textbox', { name: /Edit text/i }),
+      text + '{enter}',
+    ); // Type changes and save with Enter
+
+    expect(screen.getByText(text)).toBeInTheDocument(); // Find the change in the list
+  });
 });
