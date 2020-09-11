@@ -19,15 +19,6 @@ const options = {
   webpackOptions: {
     resolve: {
       extensions: ['.ts', '.tsx', '.js'],
-      alias: {
-        components: path.resolve(__dirname, '../../components/'),
-        services: path.resolve(__dirname, '../../services/'),
-        libs: path.resolve(__dirname, '../../libs/'),
-        machines: path.resolve(__dirname, '../../machines/'),
-        middlewares: path.resolve(__dirname, '../../middlewares/'),
-        hooks: path.resolve(__dirname, '../../hooks/'),
-        pages: path.resolve(__dirname, '../../pages/'),
-      },
       modules: [path.resolve(__dirname, '../..'), 'node_modules'],
     },
     module: {
