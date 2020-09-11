@@ -1,12 +1,9 @@
-/// <reference types="Cypress" />
-/// <reference types="@testing-library/cypress" />
+import LoginForm from 'components/forms/login';
 import { mount } from 'cypress-react-unit-test';
 import faker from 'faker';
 import fc from 'fast-check';
 import React from 'react';
-
-import LoginForm from '../../components/forms/login';
-import { loginBuild } from '../../utils/factories';
+import { loginBuild } from 'utils/factories';
 
 describe('LoginForm component', () => {
   const usernameLabel = /Username/i;

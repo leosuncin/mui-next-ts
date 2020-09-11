@@ -1,11 +1,8 @@
-/// <reference types="Cypress" />
-/// <reference types="@testing-library/cypress" />
+import RegisterForm from 'components/forms/register';
 import { mount } from 'cypress-react-unit-test';
 import fc from 'fast-check';
 import React from 'react';
-
-import RegisterForm from '../../components/forms/register';
-import { registerBuild } from '../../utils/factories';
+import { registerBuild } from 'utils/factories';
 
 describe('RegisterForm component', () => {
   const firstNameLabel = /First name/i;
