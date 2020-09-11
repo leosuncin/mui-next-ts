@@ -14,6 +14,7 @@ const createTodoHandler: RequestHandler = rest.post(
       });
 
       return res(
+        ctx.delay(30),
         ctx.status(CREATED),
         ctx.json(
           todoBuild({
