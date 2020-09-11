@@ -1,4 +1,5 @@
 import {
+  getByRole,
   render,
   screen,
   waitForElementToBeRemoved,
@@ -71,5 +72,16 @@ describe('<Todo />', () => {
     ); // Type changes and save with Enter
 
     expect(screen.getByText(text)).toBeInTheDocument(); // Find the change in the list
+  });
+
+  it('should remove one todo', async () => {
+    render(<Todo />);
+
+    await waitForElementToBeRemoved(screen.getByTestId('loading-todos')); // Wait until loader to disappear
+
+    const element = faker.random.arrayElement(screen.getAllByRole('listitem')); // Get one random todo item
+    userEvent.click(getByRole(element, 'button', { name: /Delete todo/ })); // Delete it
+
+    expect(element).not.toBeInTheDocument(); // Check not exist anymore
   });
 });
