@@ -1,5 +1,6 @@
 import Todo from 'components/todo';
 import { mount } from 'cypress-react-unit-test';
+import faker from 'faker';
 import React from 'react';
 import { todoBuild } from 'utils/factories';
 
@@ -64,5 +65,31 @@ describe('Todo component', () => {
     cy.wait('@saveTodo');
 
     cy.findByRole('list').children().first().contains(todo.text);
+  });
+
+  it('should edit one todo', () => {
+    const todo = faker.random.arrayElement(todos);
+    const text = faker.lorem.words();
+    cy.route(
+      'PUT',
+      '/api/todos/*',
+      Object.assign(
+        {},
+        todo,
+        { text },
+        { updatedAt: new Date().toISOString() },
+      ),
+    );
+    mount(<Todo />);
+
+    cy.findByRole('listitem', { name: `Double click to edit ${todo.text}` })
+      .scrollIntoView()
+      .dblclick();
+    cy.findByRole('textbox', { name: /Edit text/i })
+      .clear()
+      .type(text)
+      .type('{enter}');
+
+    cy.findByText(text).should('exist');
   });
 });
