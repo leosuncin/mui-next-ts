@@ -33,7 +33,7 @@ type TodoChangeFilterEvent = {
   type: 'SWITCH_FILTER';
   payload: keyof typeof filterTodoBy;
 };
-type TodoEvent =
+export type TodoEvent =
   | TodoErrorEvent
   | TodoFetchEvent
   | TodoFetchSuccessEvent
@@ -60,14 +60,22 @@ type RemoveTodoEffect = {
   type: 'removeTodo';
   payload: string;
 };
-type TodoEffect =
+export type TodoEffect =
   | FetchTodosEffect
   | AddTodoEffect
   | EditTodoEffect
   | RemoveTodoEffect;
 
-const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
-  state,
+const defaultState: TodoState = {
+  all: [],
+  completed: [],
+  active: [],
+  loading: false,
+  _filter: 'all',
+};
+
+export const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
+  state = defaultState,
   event,
   exec,
 ) => {
@@ -161,13 +169,21 @@ const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
       return {
         ...state,
         error: event.payload,
-        all: state.all.splice(state._position, 0, state._todo),
-        completed: [...state.completed, state._todo].sort((a, b) =>
-          a.createdAt.localeCompare(b.createdAt),
-        ),
-        active: [...state.active, state._todo].sort((a, b) =>
-          a.createdAt.localeCompare(b.createdAt),
-        ),
+        all: [
+          ...state.all.slice(0, state._position),
+          state._todo,
+          ...state.all.slice(state._position),
+        ],
+        active: !state._todo.done
+          ? [...state.active, state._todo].sort((a, b) =>
+              a.createdAt.localeCompare(b.createdAt),
+            )
+          : state.active,
+        completed: state._todo.done
+          ? [...state.completed, state._todo].sort((a, b) =>
+              a.createdAt.localeCompare(b.createdAt),
+            )
+          : state.completed,
         _todo: undefined,
         _position: undefined,
       };
@@ -302,13 +318,7 @@ export function useTodo(): [TodoState, TodoAction] {
     exec => {
       exec(fetchTodosAction());
 
-      return {
-        all: [],
-        completed: [],
-        active: [],
-        loading: true,
-        _filter: 'all',
-      } as TodoState;
+      return { ...defaultState, loading: true };
     },
     {
       fetchTodos: fetchTodosEffect,
