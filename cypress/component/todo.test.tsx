@@ -92,4 +92,19 @@ describe('Todo component', () => {
 
     cy.findByText(text).should('exist');
   });
+
+  it('should remove one todo', () => {
+    const todo = faker.random.arrayElement(todos);
+    cy.route('DELETE', '/api/todos/*', '');
+    mount(<Todo />);
+
+    cy.findByRole('listitem', { name: RegExp(todo.text) })
+      .findByRole('button', { name: /Delete todo/ })
+      .click();
+
+    cy.findByText(todo.text).should('not.exist');
+    cy.findAllByRole('listitem')
+      .its('length')
+      .should('equal', todos.length - 1);
+  });
 });
