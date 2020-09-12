@@ -93,6 +93,35 @@ describe('Todo component', () => {
     cy.findByText(text).should('exist');
   });
 
+  it('should change status of one todo', () => {
+    const todo = faker.random.arrayElement(todos);
+    const newActiveCount = activeCount + (todo.done ? 1 : -1);
+    const newCompletedCount = completedCount + (todo.done ? -1 : 1);
+    cy.route(
+      'PUT',
+      '/api/todos/*',
+      Object.assign(
+        {},
+        todo,
+        { done: !todo.done },
+        { updatedAt: new Date().toISOString() },
+      ),
+    );
+    mount(<Todo />);
+
+    cy.findByRole('listitem', { name: RegExp(todo.text) })
+      .findByRole('checkbox')
+      .click();
+
+    cy.findByText(RegExp(`${newActiveCount} items left`, 'i')).should('exist');
+    cy.findByRole('button', {
+      name: RegExp(`Active \\(${newActiveCount}\\)`, 'i'),
+    }).should('exist');
+    cy.findByRole('button', {
+      name: RegExp(`Completed \\(${newCompletedCount}\\)`, 'i'),
+    }).should('exist');
+  });
+
   it('should remove one todo', () => {
     const todo = faker.random.arrayElement(todos);
     cy.route('DELETE', '/api/todos/*', '');
