@@ -106,33 +106,37 @@ const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
 
     case 'EDIT_TODO':
       exec({ type: 'editTodo', payload: event.payload });
+      const all = state.all.map(todo =>
+        todo.id === event.payload.id
+          ? Object.assign(todo, event.payload.body, {
+              updatedAt: new Date().toISOString(),
+            })
+          : todo,
+      );
+      const completed = completedSelector(all);
+      const active = activeSelector(all);
       return {
         ...state,
         error: undefined,
-        all: state.all.map(todo =>
-          todo.id === event.payload.id
-            ? Object.assign(todo, event.payload.body, {
-                updatedAt: new Date().toISOString(),
-              })
-            : todo,
-        ),
+        all,
+        completed,
+        active,
       };
 
     case 'TODO_CHANGED':
       event.payload.updatedAt = new Date(event.payload.updatedAt).toISOString(); // Solves an issue
-      const all = state.all.map(todo =>
+      const _all = state.all.map(todo =>
         todo.id === event.payload.id
           ? Object.assign(todo, event.payload)
           : todo,
       );
-      const completed = completedSelector(all);
-      const active = completedSelector(all);
-
       return {
         ...state,
-        all,
-        completed,
-        active,
+        all: _all,
+        completed: event.payload.done
+          ? completedSelector(_all)
+          : state.completed,
+        active: !event.payload.done ? activeSelector(_all) : state.active,
       };
 
     case 'REMOVE_TODO':
