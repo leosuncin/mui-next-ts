@@ -24,6 +24,7 @@ type TodoUpdateEvent = {
   payload: { id: string; body: UpdateTodo };
 };
 type TodoUpdateSuccessEvent = { type: 'TODO_CHANGED'; payload: Todo };
+type TodoUpdateFailEvent = { type: 'TODO_REVERT_CHANGE'; payload: string };
 type TodoRemoveEvent = {
   type: 'REMOVE_TODO';
   payload: { todo: Todo; position?: number };
@@ -41,6 +42,7 @@ export type TodoEvent =
   | TodoAddSuccessEvent
   | TodoUpdateEvent
   | TodoUpdateSuccessEvent
+  | TodoUpdateFailEvent
   | TodoRemoveEvent
   | TodoRemoveFailEvent
   | TodoChangeFilterEvent;
@@ -114,9 +116,12 @@ export const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
 
     case 'EDIT_TODO':
       exec({ type: 'editTodo', payload: event.payload });
+      const _position = state.all.findIndex(
+        todo => todo.id === event.payload.id,
+      );
       const all = state.all.map(todo =>
         todo.id === event.payload.id
-          ? Object.assign(todo, event.payload.body, {
+          ? Object.assign({}, todo, event.payload.body, {
               updatedAt: new Date().toISOString(),
             })
           : todo,
@@ -129,6 +134,8 @@ export const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
         all,
         completed,
         active,
+        _todo: state.all[_position],
+        _position,
       };
 
     case 'TODO_CHANGED':
@@ -145,6 +152,20 @@ export const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
           ? completedSelector(_all)
           : state.completed,
         active: !event.payload.done ? activeSelector(_all) : state.active,
+      };
+
+    case 'TODO_REVERT_CHANGE':
+      const restoredAll = state.all.map(todo =>
+        todo.id === state._todo.id ? state._todo : todo,
+      );
+      return {
+        ...state,
+        error: event.payload,
+        all: restoredAll,
+        active: activeSelector(restoredAll),
+        completed: completedSelector(restoredAll),
+        _todo: undefined,
+        _position: undefined,
       };
 
     case 'REMOVE_TODO':
@@ -232,6 +253,9 @@ function updateTodoAction(id: Todo['id'], body: UpdateTodo): TodoUpdateEvent {
 function updateTodoSuccessAction(todo: Todo): TodoUpdateSuccessEvent {
   return { type: 'TODO_CHANGED', payload: todo };
 }
+function updateTodoFailAction(error: Error): TodoUpdateFailEvent {
+  return { type: 'TODO_REVERT_CHANGE', payload: error.message };
+}
 function removeTodoAction(todo: Todo, position?: number): TodoRemoveEvent {
   return {
     type: 'REMOVE_TODO',
@@ -287,7 +311,7 @@ function editTodoEffect(
   updateTodo(effect.payload.id, effect.payload.body, ctrl.signal)
     .then(todo => dispatch(updateTodoSuccessAction(todo)))
     .catch(error => {
-      if (!ctrl.signal.aborted) dispatch(errorAction(error));
+      if (!ctrl.signal.aborted) dispatch(updateTodoFailAction(error));
     });
 
   return () => ctrl.abort();
