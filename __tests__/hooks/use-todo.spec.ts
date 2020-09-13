@@ -312,7 +312,10 @@ describe('useTodo Hook', () => {
         type: 'EDIT_TODO',
         payload: {
           id: '68a552ea-b3d8-4af5-9bce-fb73e6870296',
-          body: { done: true },
+          body: {
+            done: true,
+            text: 'Do every night: Try to take over the world',
+          },
         },
       };
       const mockExec = jest.fn();
@@ -323,17 +326,16 @@ describe('useTodo Hook', () => {
         type: 'editTodo',
         payload: {
           id: '68a552ea-b3d8-4af5-9bce-fb73e6870296',
-          body: { done: true },
+          body: {
+            done: true,
+            text: 'Do every night: Try to take over the world',
+          },
         },
       });
       expect(nextState.all).toHaveLength(6);
       expect(nextState.active).toHaveLength(2);
       expect(nextState.completed).toHaveLength(4);
-      expect(
-        nextState.all.filter(
-          todo => todo.id === '68a552ea-b3d8-4af5-9bce-fb73e6870296',
-        )[0],
-      ).toHaveProperty('done', true);
+      expect(nextState.all[3]).toHaveProperty('done', true);
     });
 
     it('should handle TODO_CHANGED event', () => {
@@ -367,7 +369,7 @@ describe('useTodo Hook', () => {
           },
           {
             id: '68a552ea-b3d8-4af5-9bce-fb73e6870296',
-            text: 'Never do today what you can put off until tomorrow.',
+            text: 'Do every night: Try to take over the world',
             done: true,
             createdAt: '2020-06-11T13:00:00.000Z',
             updatedAt: '2020-06-11T15:00:00.000Z',
@@ -422,7 +424,7 @@ describe('useTodo Hook', () => {
           },
           {
             id: '68a552ea-b3d8-4af5-9bce-fb73e6870296',
-            text: 'Never do today what you can put off until tomorrow.',
+            text: 'Do every night: Try to take over the world',
             done: true,
             createdAt: '2020-06-11T13:00:00.000Z',
             updatedAt: '2020-06-11T15:00:00.000Z',
@@ -453,7 +455,7 @@ describe('useTodo Hook', () => {
         type: 'TODO_CHANGED',
         payload: {
           id: '68a552ea-b3d8-4af5-9bce-fb73e6870296',
-          text: 'Never do today what you can put off until tomorrow.',
+          text: 'Do every night: Try to take over the world',
           done: true,
           createdAt: '2020-06-11T13:00:00.000Z',
           updatedAt: '2020-06-11T15:00:00.000Z',
@@ -466,6 +468,159 @@ describe('useTodo Hook', () => {
       expect(nextState.all).toHaveLength(6);
       expect(nextState.active).toHaveLength(2);
       expect(nextState.completed).toHaveLength(4);
+    });
+
+    it('should handle TODO_REVERT_CHANGE event', () => {
+      const prevState: TodoState = {
+        _filter: 'all',
+        all: [
+          {
+            id: '0f81d175-11b8-40d4-82da-b74e7ffbd2a4',
+            text: 'Absence makes the heart grow fonder -- of somebody else.',
+            done: false,
+            createdAt: '2020-06-08T16:00:00.000Z',
+            updatedAt: '2020-06-08T16:00:00.000Z',
+            createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+          },
+          {
+            id: '3b3a687a-3be9-4ad7-ab32-8dd2a89b85a8',
+            text:
+              'This life is a test. Had this been an actual life, you would have received further instructions as to what to do and where to go.',
+            done: true,
+            createdAt: '2020-06-09T15:00:00.000Z',
+            updatedAt: '2020-06-09T15:00:00.000Z',
+            createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+          },
+          {
+            id: '74817834-8cdc-4c52-9e60-6a3916c8640a',
+            text: 'War is peace.  Freedom is slavery.  Ketchup is a vegetable.',
+            done: false,
+            createdAt: '2020-06-10T01:00:00.000Z',
+            updatedAt: '2020-06-10T01:00:00.000Z',
+            createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+          },
+          {
+            id: '68a552ea-b3d8-4af5-9bce-fb73e6870296',
+            text: 'Do every night: Try to take over the world',
+            done: true,
+            createdAt: '2020-06-11T13:00:00.000Z',
+            updatedAt: '2020-06-11T15:00:00.000Z',
+            createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+          },
+          {
+            id: '2d701533-91f3-4f05-8923-f30559d6ffc9',
+            text:
+              'The average, healthy, well-adjusted adult gets up at seven-thirty in the morning feeling just terrible.',
+            done: true,
+            createdAt: '2020-06-12T21:00:00.000Z',
+            updatedAt: '2020-06-12T21:00:00.000Z',
+            createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+          },
+          {
+            id: '1adc286a-7ac2-48c4-9ef1-aae9b9f502b2',
+            text:
+              'Experiments must be reproducible; they should all fail in the same way.',
+            done: true,
+            createdAt: '2020-06-13T17:00:00.000Z',
+            updatedAt: '2020-06-13T17:00:00.000Z',
+            createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+          },
+        ],
+        active: [
+          {
+            id: '0f81d175-11b8-40d4-82da-b74e7ffbd2a4',
+            text: 'Absence makes the heart grow fonder -- of somebody else.',
+            done: false,
+            createdAt: '2020-06-08T16:00:00.000Z',
+            updatedAt: '2020-06-08T16:00:00.000Z',
+            createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+          },
+          {
+            id: '74817834-8cdc-4c52-9e60-6a3916c8640a',
+            text: 'War is peace.  Freedom is slavery.  Ketchup is a vegetable.',
+            done: false,
+            createdAt: '2020-06-10T01:00:00.000Z',
+            updatedAt: '2020-06-10T01:00:00.000Z',
+            createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+          },
+        ],
+        completed: [
+          {
+            id: '3b3a687a-3be9-4ad7-ab32-8dd2a89b85a8',
+            text:
+              'This life is a test. Had this been an actual life, you would have received further instructions as to what to do and where to go.',
+            done: true,
+            createdAt: '2020-06-09T15:00:00.000Z',
+            updatedAt: '2020-06-09T15:00:00.000Z',
+            createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+          },
+          {
+            id: '68a552ea-b3d8-4af5-9bce-fb73e6870296',
+            text: 'Do every night: Try to take over the world',
+            done: true,
+            createdAt: '2020-06-11T13:00:00.000Z',
+            updatedAt: '2020-06-11T15:00:00.000Z',
+            createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+          },
+          {
+            id: '2d701533-91f3-4f05-8923-f30559d6ffc9',
+            text:
+              'The average, healthy, well-adjusted adult gets up at seven-thirty in the morning feeling just terrible.',
+            done: true,
+            createdAt: '2020-06-12T21:00:00.000Z',
+            updatedAt: '2020-06-12T21:00:00.000Z',
+            createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+          },
+          {
+            id: '1adc286a-7ac2-48c4-9ef1-aae9b9f502b2',
+            text:
+              'Experiments must be reproducible; they should all fail in the same way.',
+            done: true,
+            createdAt: '2020-06-13T17:00:00.000Z',
+            updatedAt: '2020-06-13T17:00:00.000Z',
+            createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+          },
+        ],
+        loading: false,
+        _position: 3,
+        _todo: {
+          id: '68a552ea-b3d8-4af5-9bce-fb73e6870296',
+          text: 'Never do today what you can put off until tomorrow.',
+          done: false,
+          createdAt: '2020-06-11T13:00:00.000Z',
+          updatedAt: '2020-06-11T13:00:00.000Z',
+          createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+        },
+      };
+      const event: TodoEvent = {
+        type: 'TODO_REVERT_CHANGE',
+        payload: 'Database connection error',
+      };
+
+      const nextState = todoReducer(prevState, event, jest.fn() as any);
+
+      expect(nextState).toHaveProperty('error', 'Database connection error');
+      expect(nextState._position).toBeUndefined();
+      expect(nextState._todo).toBeUndefined();
+      expect(nextState.all).toHaveLength(6);
+      expect(nextState.active).toHaveLength(3);
+      expect(nextState.completed).toHaveLength(3);
+      expect(nextState.all[3]).toStrictEqual({
+        id: '68a552ea-b3d8-4af5-9bce-fb73e6870296',
+        text: 'Never do today what you can put off until tomorrow.',
+        done: false,
+        createdAt: '2020-06-11T13:00:00.000Z',
+        updatedAt: '2020-06-11T13:00:00.000Z',
+        createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+      });
+      expect(nextState.active[2]).toStrictEqual({
+        id: '68a552ea-b3d8-4af5-9bce-fb73e6870296',
+        text: 'Never do today what you can put off until tomorrow.',
+        done: false,
+        createdAt: '2020-06-11T13:00:00.000Z',
+        updatedAt: '2020-06-11T13:00:00.000Z',
+        createdBy: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
+      });
     });
 
     it('should handle REMOVE_TODO event', () => {
