@@ -136,4 +136,36 @@ describe('Todo component', () => {
       .its('length')
       .should('equal', todos.length - 1);
   });
+
+  it('should revert remove on error', () => {
+    const todo = faker.random.arrayElement(todos);
+    cy.route({
+      method: 'DELETE',
+      url: '/api/todos/*',
+      status: 503,
+      response: {
+        statusCode: 503,
+        message: 'Database connection error',
+      },
+      delay: 500,
+    });
+    mount(<Todo />);
+
+    cy.findByRole('listitem', { name: RegExp(todo.text) })
+      .findByRole('button', { name: /Delete todo/ })
+      .click();
+
+    cy.findByText(todo.text).should('not.exist');
+    cy.findAllByRole('listitem')
+      .its('length')
+      .should('equal', todos.length - 1);
+
+    cy.findByRole('alert').should('contain.text', 'Database connection error');
+    cy.findByText(todo.text).should('exist');
+    cy.findAllByRole('listitem').should('have.length', todos.length);
+    cy.findByText(RegExp(`${activeCount} items left`, 'i')).should('exist');
+    cy.findByText(allButton).should('exist');
+    cy.findByText(activeButton).should('exist');
+    cy.findByText(completedButton).should('exist');
+  });
 });
