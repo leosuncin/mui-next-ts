@@ -168,4 +168,33 @@ describe('Todo component', () => {
     cy.findByText(activeButton).should('exist');
     cy.findByText(completedButton).should('exist');
   });
+
+  it('should revert changes when update request fail', () => {
+    const todo = faker.random.arrayElement(todos);
+    const text = faker.lorem.words();
+    cy.route({
+      method: 'PUT',
+      url: '/api/todos/*',
+      status: 503,
+      response: {
+        statusCode: 503,
+        message: 'Database connection error',
+      },
+      delay: 500,
+    });
+    mount(<Todo />);
+
+    cy.findByRole('listitem', { name: `Double click to edit ${todo.text}` })
+      .scrollIntoView()
+      .dblclick();
+    cy.findByRole('textbox', { name: /Edit text/i })
+      .clear()
+      .type(text)
+      .type('{enter}');
+    cy.findByText(text).should('exist');
+
+    cy.findByRole('alert').should('contain.text', 'Database connection error');
+    cy.findByText(todo.text).should('exist');
+    cy.findByText(RegExp(`${activeCount} items left`, 'i')).should('exist');
+  });
 });
