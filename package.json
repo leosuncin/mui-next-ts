@@ -23,6 +23,9 @@
     "test:watch": "jest --watch"
   },
   "keywords": [],
+  "optionalDependencies": {
+    "whatwg-fetch": "^3.4.1"
+  },
   "dependencies": {
     "@date-io/luxon": "^2.9.0",
     "@hookform/resolvers": "^0.1.0",
