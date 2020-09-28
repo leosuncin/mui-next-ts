@@ -96,6 +96,8 @@ const TodoItem: React.FC<PropTypes.InferProps<typeof propTypes>> = ({
                 }
               }}
             />
+          ) : todo.done ? (
+            <s>{todo.text}</s>
           ) : (
             todo.text
           )
