@@ -5,6 +5,7 @@ import { EffectReducer, useEffectReducer } from 'use-effect-reducer';
 
 export type TodoState = {
   loading: boolean;
+  saving?: boolean;
   all: Todo[];
   completed: Todo[];
   active: Todo[];
@@ -130,6 +131,7 @@ export const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
       const active = activeSelector(all);
       return {
         ...state,
+        saving: true,
         error: undefined,
         all,
         completed,
@@ -145,6 +147,7 @@ export const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
       );
       return {
         ...state,
+        saving: false,
         all: _all,
         completed: event.payload.done
           ? completedSelector(_all)
@@ -158,6 +161,7 @@ export const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
       );
       return {
         ...state,
+        saving: false,
         error: event.payload,
         all: restoredAll,
         active: activeSelector(restoredAll),

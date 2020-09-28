@@ -48,6 +48,7 @@ function Todo({ className }: TodoProps) {
       />
       <ListTodo
         todos={state[state._filter]}
+        saving={state.saving}
         onChangeTodo={(id, body) => actions.updateTodo(id, body)}
         onRemoveTodo={(todo, position) => actions.removeTodo(todo, position)}
       />
