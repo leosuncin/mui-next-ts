@@ -5,6 +5,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleDirectories: ['node_modules', '.'],
   modulePathIgnorePatterns: ['<rootDir>/cypress'],
+  testPathIgnorePatterns: ['/node_modules/', '/cypress/'],
   coverageDirectory: '<rootDir>/coverage/unit',
   coveragePathIgnorePatterns: [
     '/node_modules/',
