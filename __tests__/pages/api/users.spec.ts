@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import { OK } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { users } from 'libs/db/users';
 import { signJWT } from 'libs/jwt';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -42,7 +42,7 @@ describe('[GET] /api/users', () => {
 
       await indexHandler(req, res);
 
-      expect(res._getStatusCode()).toBe(OK);
+      expect(res._getStatusCode()).toBe(StatusCodes.OK);
       expect(Array.isArray(res._getJSONData())).toBe(true);
       expect(res._getJSONData().length).toBeLessThanOrEqual(10);
     },

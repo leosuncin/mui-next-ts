@@ -1,5 +1,5 @@
 import { nSQL } from '@nano-sql/core';
-import { SERVICE_UNAVAILABLE } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { dbConfig, todos, users } from 'libs/db';
 import { NextHttpHandler } from 'types';
 
@@ -16,8 +16,8 @@ export function withDB(handler: NextHttpHandler): NextHttpHandler {
       return handler(req, res);
     } catch (error) {
       console.error(error);
-      res.status(SERVICE_UNAVAILABLE).json({
-        statusCode: SERVICE_UNAVAILABLE,
+      res.status(StatusCodes.SERVICE_UNAVAILABLE).json({
+        statusCode: StatusCodes.SERVICE_UNAVAILABLE,
         message: 'Database connection error',
       });
     }

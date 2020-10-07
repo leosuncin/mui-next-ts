@@ -1,5 +1,5 @@
 import { nSQL } from '@nano-sql/core';
-import { FORBIDDEN, NOT_FOUND, NO_CONTENT } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import {
   validateBody,
   validateMethod,
@@ -19,14 +19,14 @@ export default validateMethod(
         .exec()) as [Todo];
 
       if (!todo)
-        return res.status(NOT_FOUND).json({
-          statusCode: NOT_FOUND,
+        return res.status(StatusCodes.NOT_FOUND).json({
+          statusCode: StatusCodes.NOT_FOUND,
           message: `Not found any ToDo with id: ${req.query.id}`,
         });
 
       if (todo.createdBy !== req.user.id)
-        return res.status(FORBIDDEN).json({
-          statusCode: FORBIDDEN,
+        return res.status(StatusCodes.FORBIDDEN).json({
+          statusCode: StatusCodes.FORBIDDEN,
           message: "ToDo doesn't belong to you",
         });
 
@@ -57,7 +57,7 @@ export default validateMethod(
             .query('delete')
             .where(['id', '=', req.query.id])
             .exec();
-          return res.status(NO_CONTENT).send(Buffer.alloc(0));
+          return res.status(StatusCodes.NO_CONTENT).send(Buffer.alloc(0));
       }
     }),
   ),

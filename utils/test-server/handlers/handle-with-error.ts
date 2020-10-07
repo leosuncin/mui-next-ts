@@ -1,4 +1,4 @@
-import { INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { RequestHandler, rest } from 'msw';
 
 export const respondWithServiceUnavailable = (
@@ -7,9 +7,9 @@ export const respondWithServiceUnavailable = (
 ): RequestHandler =>
   rest[method](endpoint, (req, res, ctx) => {
     return res(
-      ctx.status(SERVICE_UNAVAILABLE),
+      ctx.status(StatusCodes.SERVICE_UNAVAILABLE),
       ctx.json({
-        statusCode: SERVICE_UNAVAILABLE,
+        statusCode: StatusCodes.SERVICE_UNAVAILABLE,
         message: 'Database connection error',
       }),
     );
@@ -20,5 +20,5 @@ export const respondWithInternalServerError = (
   method: keyof typeof rest,
 ): RequestHandler =>
   rest[method](endpoint, (req, res, ctx) => {
-    return res(ctx.status(INTERNAL_SERVER_ERROR));
+    return res(ctx.status(StatusCodes.INTERNAL_SERVER_ERROR));
   });

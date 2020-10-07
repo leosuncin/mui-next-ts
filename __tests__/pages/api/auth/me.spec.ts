@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import { OK } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { users } from 'libs/db/users';
 import { signJWT } from 'libs/jwt';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -26,7 +26,7 @@ describe('[GET] /api/auth/me', () => {
 
     await authMeHandler(req, res);
 
-    expect(res._getStatusCode()).toBe(OK);
+    expect(res._getStatusCode()).toBe(StatusCodes.OK);
     expect(res._getJSONData()).toHaveProperty('id', users[0].id);
   });
 });

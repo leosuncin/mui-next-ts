@@ -1,14 +1,6 @@
 import faker from 'faker';
 import fc from 'fast-check';
-import {
-  CREATED,
-  FORBIDDEN,
-  NOT_FOUND,
-  NO_CONTENT,
-  OK,
-  UNAUTHORIZED,
-  UNPROCESSABLE_ENTITY,
-} from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { todos } from 'libs/db/todos';
 import { users } from 'libs/db/users';
 
@@ -35,7 +27,7 @@ describe('Todo API', () => {
       },
       headers: { authorization },
     }).then(({ status, body }) => {
-      expect(status).to.be.equal(CREATED);
+      expect(status).to.be.equal(StatusCodes.CREATED);
       expect(body).to.haveOwnProperty('done', false);
       expect(body).to.haveOwnProperty('text', text);
     });
@@ -52,7 +44,7 @@ describe('Todo API', () => {
           headers: { authorization },
           failOnStatusCode: false,
         }).then(({ status, body }) => {
-          expect(status).to.be.equal(UNPROCESSABLE_ENTITY);
+          expect(status).to.be.equal(StatusCodes.UNPROCESSABLE_ENTITY);
           expect(body).to.have.keys(['statusCode', 'message', 'errors']);
         });
       }),
@@ -75,7 +67,7 @@ describe('Todo API', () => {
             qs,
             headers: { authorization },
           }).then(({ status, body }) => {
-            expect(status).to.be.equal(OK);
+            expect(status).to.be.equal(StatusCodes.OK);
             expect(body).to.satisfy((body: unknown) => Array.isArray(body));
           });
         },
@@ -90,7 +82,7 @@ describe('Todo API', () => {
       qs: { search: faker.hacker.verb() },
       headers: { authorization },
     }).then(({ status, body }) => {
-      expect(status).to.be.equal(OK);
+      expect(status).to.be.equal(StatusCodes.OK);
       expect(body).to.satisfy((body: unknown) => Array.isArray(body));
     });
   });
@@ -100,7 +92,7 @@ describe('Todo API', () => {
       url: url + '/' + todo.id,
       headers: { authorization },
     }).then(({ status, body }) => {
-      expect(status).to.be.equal(OK);
+      expect(status).to.be.equal(StatusCodes.OK);
       expect(body).to.have.keys([
         'id',
         'text',
@@ -122,7 +114,7 @@ describe('Todo API', () => {
       },
       headers: { authorization },
     }).then(({ status, body }) => {
-      expect(status).to.be.equal(OK);
+      expect(status).to.be.equal(StatusCodes.OK);
       expect(body).to.have.keys([
         'id',
         'text',
@@ -151,7 +143,7 @@ describe('Todo API', () => {
           headers: { authorization },
         })
           .its('status')
-          .should('equal', NO_CONTENT);
+          .should('equal', StatusCodes.NO_CONTENT);
       });
   });
 
@@ -162,7 +154,7 @@ describe('Todo API', () => {
         failOnStatusCode: false,
         headers: { authorization },
       }).then(({ status, body }) => {
-        expect(status).to.be.equal(NOT_FOUND);
+        expect(status).to.be.equal(StatusCodes.NOT_FOUND);
         expect(body).to.have.keys(['statusCode', 'message']);
       });
     });
@@ -179,7 +171,7 @@ describe('Todo API', () => {
         failOnStatusCode: false,
       })
         .its('status')
-        .should('equal', NOT_FOUND);
+        .should('equal', StatusCodes.NOT_FOUND);
     });
 
     it('should fail to remove', () => {
@@ -190,7 +182,7 @@ describe('Todo API', () => {
         failOnStatusCode: false,
       })
         .its('status')
-        .should('equal', NOT_FOUND);
+        .should('equal', StatusCodes.NOT_FOUND);
     });
   });
 
@@ -203,7 +195,7 @@ describe('Todo API', () => {
         failOnStatusCode: false,
       })
         .its('status')
-        .should('equal', UNAUTHORIZED);
+        .should('equal', StatusCodes.UNAUTHORIZED);
     });
 
     it('should fail to list the todos', () => {
@@ -212,7 +204,7 @@ describe('Todo API', () => {
         failOnStatusCode: false,
       })
         .its('status')
-        .should('equal', UNAUTHORIZED);
+        .should('equal', StatusCodes.UNAUTHORIZED);
     });
 
     it('should fail to get one todo', () => {
@@ -221,7 +213,7 @@ describe('Todo API', () => {
         failOnStatusCode: false,
       })
         .its('status')
-        .should('equal', UNAUTHORIZED);
+        .should('equal', StatusCodes.UNAUTHORIZED);
     });
 
     it('should fail to update one todo', () => {
@@ -235,7 +227,7 @@ describe('Todo API', () => {
         failOnStatusCode: false,
       })
         .its('status')
-        .should('equal', UNAUTHORIZED);
+        .should('equal', StatusCodes.UNAUTHORIZED);
     });
 
     it('should fail to remove one todo', () => {
@@ -245,7 +237,7 @@ describe('Todo API', () => {
         failOnStatusCode: false,
       })
         .its('status')
-        .should('equal', UNAUTHORIZED);
+        .should('equal', StatusCodes.UNAUTHORIZED);
     });
   });
 
@@ -265,7 +257,7 @@ describe('Todo API', () => {
         failOnStatusCode: false,
       })
         .its('status')
-        .should('equal', FORBIDDEN);
+        .should('equal', StatusCodes.FORBIDDEN);
     });
 
     it('should forbid the update of one that belongs to another', () => {
@@ -280,7 +272,7 @@ describe('Todo API', () => {
         failOnStatusCode: false,
       })
         .its('status')
-        .should('equal', FORBIDDEN);
+        .should('equal', StatusCodes.FORBIDDEN);
     });
 
     it('should forbid the remove of one todo that belongs to another', () => {
@@ -291,7 +283,7 @@ describe('Todo API', () => {
         failOnStatusCode: false,
       })
         .its('status')
-        .should('equal', FORBIDDEN);
+        .should('equal', StatusCodes.FORBIDDEN);
     });
   });
 });

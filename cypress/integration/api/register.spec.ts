@@ -1,10 +1,5 @@
 import faker from 'faker';
-import {
-  CONFLICT,
-  METHOD_NOT_ALLOWED,
-  OK,
-  UNPROCESSABLE_ENTITY,
-} from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 
 describe('Register API', () => {
   it('should validate the request method', () => {
@@ -13,7 +8,7 @@ describe('Register API', () => {
       failOnStatusCode: false,
     })
       .its('status')
-      .should('equal', METHOD_NOT_ALLOWED);
+      .should('equal', StatusCodes.METHOD_NOT_ALLOWED);
   });
 
   it('should validate the body', () => {
@@ -23,7 +18,7 @@ describe('Register API', () => {
       body: {},
       failOnStatusCode: false,
     }).then(({ status, body }) => {
-      expect(status).to.equal(UNPROCESSABLE_ENTITY);
+      expect(status).to.equal(StatusCodes.UNPROCESSABLE_ENTITY);
       expect(body).to.haveOwnProperty('message');
       expect(body).to.haveOwnProperty('errors');
     });
@@ -43,7 +38,7 @@ describe('Register API', () => {
       body,
       failOnStatusCode: false,
     }).then(response => {
-      expect(response.status).to.equal(CONFLICT);
+      expect(response.status).to.equal(StatusCodes.CONFLICT);
       expect(response.body).to.haveOwnProperty('message');
       expect(response.body.message).to.match(/already registered/);
     });
@@ -62,7 +57,7 @@ describe('Register API', () => {
       method: 'POST',
       body,
     }).then(response => {
-      expect(response.status).to.equal(OK);
+      expect(response.status).to.equal(StatusCodes.OK);
       expect(response.headers).to.haveOwnProperty('authorization');
       expect(response.headers.authorization).to.match(/Bearer \w+/);
       expect(response.headers).to.haveOwnProperty('set-cookie');

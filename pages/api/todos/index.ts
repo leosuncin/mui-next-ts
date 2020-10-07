@@ -1,5 +1,5 @@
 import { nSQL } from '@nano-sql/core';
-import { CREATED } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import {
   validateBody,
   validateMethod,
@@ -14,7 +14,7 @@ const saveNote: NextHttpHandler = async (req, res) => {
     .query('upsert', { ...req.body, createdBy: req.user.id })
     .exec()) as [Todo];
 
-  res.status(CREATED).json(note);
+  res.status(StatusCodes.CREATED).json(note);
 };
 
 const findNotes: NextHttpHandler = async (req, res) => {

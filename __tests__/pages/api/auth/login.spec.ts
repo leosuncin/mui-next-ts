@@ -2,12 +2,7 @@
  * @jest-environment node
  */
 import fc from 'fast-check';
-import {
-  METHOD_NOT_ALLOWED,
-  OK,
-  UNAUTHORIZED,
-  UNPROCESSABLE_ENTITY,
-} from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
 import loginHandler from 'pages/api/auth/login';
@@ -21,7 +16,7 @@ describe('/api/auth/login', () => {
 
     await loginHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(METHOD_NOT_ALLOWED);
+    expect(res._getStatusCode()).toBe(StatusCodes.METHOD_NOT_ALLOWED);
     expect(res._getHeaders()).toHaveProperty('allow', 'POST');
   });
 
@@ -43,7 +38,7 @@ describe('/api/auth/login', () => {
 
           await loginHandler(req as any, res);
 
-          expect(res._getStatusCode()).toBe(UNPROCESSABLE_ENTITY);
+          expect(res._getStatusCode()).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
           expect(res._getJSONData()).toHaveProperty(
             'errors',
             expect.objectContaining({
@@ -66,7 +61,7 @@ describe('/api/auth/login', () => {
 
     await loginHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(UNAUTHORIZED);
+    expect(res._getStatusCode()).toBe(StatusCodes.UNAUTHORIZED);
     expect(res._getData()).toHaveProperty(
       'message',
       expect.stringMatching(/Wrong username/),
@@ -84,7 +79,7 @@ describe('/api/auth/login', () => {
 
     await loginHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(UNAUTHORIZED);
+    expect(res._getStatusCode()).toBe(StatusCodes.UNAUTHORIZED);
     expect(res._getData()).toHaveProperty(
       'message',
       expect.stringMatching(/Wrong password/),
@@ -102,7 +97,7 @@ describe('/api/auth/login', () => {
 
     await loginHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(OK);
+    expect(res._getStatusCode()).toBe(StatusCodes.OK);
     expect(res._getHeaders()).toHaveProperty(
       'authorization',
       expect.stringMatching(/Bearer \w+/),

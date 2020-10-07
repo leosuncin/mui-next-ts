@@ -1,4 +1,4 @@
-import { UNPROCESSABLE_ENTITY } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { NextHttpHandler } from 'types';
 import { ObjectSchema } from 'yup';
 
@@ -14,8 +14,8 @@ export function validateBody(
       });
       return handler(req, res);
     } catch (error) {
-      return res.status(UNPROCESSABLE_ENTITY).json({
-        statusCode: UNPROCESSABLE_ENTITY,
+      return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
+        statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
         message: 'Validation errors',
         errors: error.inner.reduce(
           (prev, error) => ({ ...prev, [error.path]: error.errors[0] }),

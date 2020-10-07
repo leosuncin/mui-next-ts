@@ -1,5 +1,5 @@
 import { nSQL } from '@nano-sql/core';
-import { UNAUTHORIZED } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { comparePassword } from 'libs/encrypt';
 import { signJWT } from 'libs/jwt';
 import { validateBody, validateMethod, withDB } from 'libs/middleware';
@@ -16,14 +16,14 @@ const login: NextHttpHandler = async (req, res) => {
     .exec()) as [User];
 
   if (!user)
-    return res.status(UNAUTHORIZED).send({
-      statusCode: UNAUTHORIZED,
+    return res.status(StatusCodes.UNAUTHORIZED).send({
+      statusCode: StatusCodes.UNAUTHORIZED,
       message: `Wrong username: ${req.body.username}`,
     });
 
   if (!comparePassword(user.password, req.body.password))
-    return res.status(UNAUTHORIZED).send({
-      statusCode: UNAUTHORIZED,
+    return res.status(StatusCodes.UNAUTHORIZED).send({
+      statusCode: StatusCodes.UNAUTHORIZED,
       message: `Wrong password for user: ${req.body.username}`,
     });
 

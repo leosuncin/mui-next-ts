@@ -3,7 +3,7 @@
  */
 import { nSQL } from '@nano-sql/core';
 import faker from 'faker';
-import { UNAUTHORIZED } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { sign } from 'jsonwebtoken';
 import { dbConfig, users } from 'libs/db';
 import { signJWT } from 'libs/jwt';
@@ -53,7 +53,7 @@ describe('withAuthentication middleware', () => {
 
       await withAuthentication(handler)(req as any, res);
 
-      expect(res._getStatusCode()).toBe(UNAUTHORIZED);
+      expect(res._getStatusCode()).toBe(StatusCodes.UNAUTHORIZED);
       expect(res._getJSONData()).toHaveProperty('message', expect.any(String));
       expect(handler).not.toHaveBeenCalled();
     },
@@ -73,7 +73,7 @@ describe('withAuthentication middleware', () => {
 
       await withAuthentication(handler)(req as any, res);
 
-      expect(res._getStatusCode()).toBe(UNAUTHORIZED);
+      expect(res._getStatusCode()).toBe(StatusCodes.UNAUTHORIZED);
       expect(res._getJSONData()).toHaveProperty('message', expect.any(String));
       expect(handler).not.toHaveBeenCalled();
     },

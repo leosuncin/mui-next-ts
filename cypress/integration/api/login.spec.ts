@@ -1,10 +1,5 @@
 import faker from 'faker';
-import {
-  METHOD_NOT_ALLOWED,
-  OK,
-  UNAUTHORIZED,
-  UNPROCESSABLE_ENTITY,
-} from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 
 describe('Login API', () => {
   it('should validate the request method', () => {
@@ -13,7 +8,7 @@ describe('Login API', () => {
       failOnStatusCode: false,
     })
       .its('status')
-      .should('be.equal', METHOD_NOT_ALLOWED);
+      .should('be.equal', StatusCodes.METHOD_NOT_ALLOWED);
   });
 
   it('should validate the body', () => {
@@ -23,7 +18,7 @@ describe('Login API', () => {
       body: {},
       failOnStatusCode: false,
     }).then(({ status, body }) => {
-      expect(status).to.equal(UNPROCESSABLE_ENTITY);
+      expect(status).to.equal(StatusCodes.UNPROCESSABLE_ENTITY);
       expect(body).to.haveOwnProperty('message');
       expect(body).to.haveOwnProperty('errors');
     });
@@ -39,7 +34,7 @@ describe('Login API', () => {
       },
       failOnStatusCode: false,
     }).then(({ status, body }) => {
-      expect(status).to.equal(UNAUTHORIZED);
+      expect(status).to.equal(StatusCodes.UNAUTHORIZED);
       expect(body.message).to.match(/username/);
     });
   });
@@ -54,7 +49,7 @@ describe('Login API', () => {
       },
       failOnStatusCode: false,
     }).then(({ status, body }) => {
-      expect(status).to.equal(UNAUTHORIZED);
+      expect(status).to.equal(StatusCodes.UNAUTHORIZED);
       expect(body.message).to.match(/Wrong\s+password/);
     });
   });
@@ -68,7 +63,7 @@ describe('Login API', () => {
         password: 'Pa$$w0rd!',
       },
     }).then(response => {
-      expect(response.status).to.equal(OK);
+      expect(response.status).to.equal(StatusCodes.OK);
       expect(response.headers).to.haveOwnProperty('authorization');
       expect(response.headers.authorization).to.match(/Bearer \w+/);
       expect(response.headers).to.haveOwnProperty('set-cookie');

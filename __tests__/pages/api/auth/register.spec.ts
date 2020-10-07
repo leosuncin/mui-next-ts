@@ -3,12 +3,7 @@
  */
 import faker from 'faker';
 import fc from 'fast-check';
-import {
-  CONFLICT,
-  METHOD_NOT_ALLOWED,
-  OK,
-  UNPROCESSABLE_ENTITY,
-} from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
 import registerHandler from 'pages/api/auth/register';
@@ -22,7 +17,7 @@ describe('/api/auth/register', () => {
 
     await registerHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(METHOD_NOT_ALLOWED);
+    expect(res._getStatusCode()).toBe(StatusCodes.METHOD_NOT_ALLOWED);
     expect(res._getHeaders()).toHaveProperty('allow', 'POST');
   });
 
@@ -46,7 +41,7 @@ describe('/api/auth/register', () => {
 
           await registerHandler(req as any, res);
 
-          expect(res._getStatusCode()).toBe(UNPROCESSABLE_ENTITY);
+          expect(res._getStatusCode()).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
           expect(res._getJSONData()).toHaveProperty(
             'errors',
             expect.objectContaining({
@@ -73,7 +68,7 @@ describe('/api/auth/register', () => {
 
     await registerHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(CONFLICT);
+    expect(res._getStatusCode()).toBe(StatusCodes.CONFLICT);
     expect(res._getData().message).toMatch(/already registered/);
   });
 
@@ -90,7 +85,7 @@ describe('/api/auth/register', () => {
 
     await registerHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(OK);
+    expect(res._getStatusCode()).toBe(StatusCodes.OK);
     expect(res._getHeaders()).toHaveProperty(
       'authorization',
       expect.stringMatching(/Bearer \w+/),

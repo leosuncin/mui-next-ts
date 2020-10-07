@@ -1,13 +1,4 @@
-import {
-  CONFLICT,
-  FORBIDDEN,
-  INTERNAL_SERVER_ERROR,
-  METHOD_NOT_ALLOWED,
-  NOT_FOUND,
-  SERVICE_UNAVAILABLE,
-  UNAUTHORIZED,
-  UNPROCESSABLE_ENTITY,
-} from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 
 export type ErrorResponse = {
   readonly statusCode: number;
@@ -29,36 +20,36 @@ export class HttpError extends Error {
 
     this.status = error.statusCode;
     switch (error.statusCode) {
-      case UNAUTHORIZED:
+      case StatusCodes.UNAUTHORIZED:
         this.code = 'UNAUTHORIZED';
         break;
 
-      case FORBIDDEN:
+      case StatusCodes.FORBIDDEN:
         this.code = 'FORBIDDEN';
         break;
 
-      case NOT_FOUND:
+      case StatusCodes.NOT_FOUND:
         this.code = 'NOT_FOUND';
         break;
 
-      case METHOD_NOT_ALLOWED:
+      case StatusCodes.METHOD_NOT_ALLOWED:
         this.code = 'METHOD_NOT_ALLOWED';
         break;
 
-      case CONFLICT:
+      case StatusCodes.CONFLICT:
         this.code = 'CONFLICT';
         break;
 
-      case UNPROCESSABLE_ENTITY:
+      case StatusCodes.UNPROCESSABLE_ENTITY:
         this.code = 'UNPROCESSABLE_ENTITY';
         this.errors = error.errors;
         break;
 
-      case INTERNAL_SERVER_ERROR:
+      case StatusCodes.INTERNAL_SERVER_ERROR:
         this.code = 'INTERNAL_SERVER_ERROR';
         break;
 
-      case SERVICE_UNAVAILABLE:
+      case StatusCodes.SERVICE_UNAVAILABLE:
         this.code = 'SERVICE_UNAVAILABLE';
         break;
     }

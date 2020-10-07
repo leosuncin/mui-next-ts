@@ -1,5 +1,5 @@
 import faker from 'faker';
-import { CONFLICT, OK, UNPROCESSABLE_ENTITY } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { signJWT } from 'libs/jwt';
 import { registerSchema as validationSchema } from 'libs/validation';
 import { RequestHandler, rest } from 'msw';
@@ -26,9 +26,9 @@ const registerHandler: RequestHandler = rest.post(
       });
     } catch (error) {
       return res(
-        ctx.status(UNPROCESSABLE_ENTITY),
+        ctx.status(StatusCodes.UNPROCESSABLE_ENTITY),
         ctx.json({
-          statusCode: UNPROCESSABLE_ENTITY,
+          statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
           message: 'Validation errors',
           errors: error.inner.reduce(
             (prev, error) => ({ ...prev, [error.path]: error.errors[0] }),
@@ -40,9 +40,9 @@ const registerHandler: RequestHandler = rest.post(
 
     if (username === user.username) {
       return res(
-        ctx.status(CONFLICT),
+        ctx.status(StatusCodes.CONFLICT),
         ctx.json({
-          statusCode: CONFLICT,
+          statusCode: StatusCodes.CONFLICT,
           message: 'Username or Email already registered',
         }),
       );
@@ -59,7 +59,7 @@ const registerHandler: RequestHandler = rest.post(
     const token = signJWT(newUser as any);
 
     return res(
-      ctx.status(OK),
+      ctx.status(StatusCodes.OK),
       ctx.set('Authorization', `Bearer ${token}`),
       ctx.cookie('token', token, {
         httpOnly: true,

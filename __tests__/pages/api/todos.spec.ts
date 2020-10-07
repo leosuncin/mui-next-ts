@@ -2,14 +2,7 @@
  * @jest-environment node
  */
 import faker from 'faker';
-import {
-  CREATED,
-  FORBIDDEN,
-  NOT_FOUND,
-  NO_CONTENT,
-  OK,
-  UNPROCESSABLE_ENTITY,
-} from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { todos } from 'libs/db/todos';
 import { users } from 'libs/db/users';
 import { signJWT } from 'libs/jwt';
@@ -41,7 +34,7 @@ describe('[POST] /api/todos', () => {
 
     await indexHandler(req, res);
 
-    expect(res._getStatusCode()).toBe(CREATED);
+    expect(res._getStatusCode()).toBe(StatusCodes.CREATED);
     expect(res._getJSONData()).toHaveProperty('done', false);
   });
 
@@ -62,7 +55,7 @@ describe('[POST] /api/todos', () => {
 
       await indexHandler(req, res);
 
-      expect(res._getStatusCode()).toBe(UNPROCESSABLE_ENTITY);
+      expect(res._getStatusCode()).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
       expect(res._getJSONData()).toHaveProperty(
         'errors',
         expect.objectContaining({
@@ -103,7 +96,7 @@ describe('[GET] /api/todos', () => {
 
       await indexHandler(req, res);
 
-      expect(res._getStatusCode()).toBe(OK);
+      expect(res._getStatusCode()).toBe(StatusCodes.OK);
       expect(Array.isArray(res._getJSONData())).toBe(true);
       expect(res._getJSONData().length).toBeLessThanOrEqual(10);
     },
@@ -126,7 +119,7 @@ describe('[GET] /api/todos', () => {
 
     await indexHandler(req, res);
 
-    expect(res._getStatusCode()).toBe(OK);
+    expect(res._getStatusCode()).toBe(StatusCodes.OK);
     expect(Array.isArray(res._getJSONData())).toBe(true);
   });
 });
@@ -150,7 +143,7 @@ describe('[GET] /api/todos/:id', () => {
 
     await byIdHandler(req, res);
 
-    expect(res._getStatusCode()).toBe(OK);
+    expect(res._getStatusCode()).toBe(StatusCodes.OK);
     expect(res._getJSONData()).toBeDefined();
   });
 
@@ -174,7 +167,7 @@ describe('[GET] /api/todos/:id', () => {
 
     await byIdHandler(req, res);
 
-    expect(res._getStatusCode()).toBe(FORBIDDEN);
+    expect(res._getStatusCode()).toBe(StatusCodes.FORBIDDEN);
     expect(res._getJSONData()).toHaveProperty('message');
   });
 
@@ -195,7 +188,7 @@ describe('[GET] /api/todos/:id', () => {
 
     await byIdHandler(req, res);
 
-    expect(res._getStatusCode()).toBe(NOT_FOUND);
+    expect(res._getStatusCode()).toBe(StatusCodes.NOT_FOUND);
     expect(res._getJSONData()).toHaveProperty('message');
   });
 });
@@ -224,7 +217,7 @@ describe('[PUT] /api/todos/:id', () => {
 
     await byIdHandler(req, res);
 
-    expect(res._getStatusCode()).toBe(OK);
+    expect(res._getStatusCode()).toBe(StatusCodes.OK);
     expect(res._getJSONData()).toBeDefined();
   });
 
@@ -250,7 +243,7 @@ describe('[PUT] /api/todos/:id', () => {
 
     await byIdHandler(req, res);
 
-    expect(res._getStatusCode()).toBe(UNPROCESSABLE_ENTITY);
+    expect(res._getStatusCode()).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
     expect(res._getJSONData()).toHaveProperty(
       'errors',
       expect.objectContaining({
@@ -280,6 +273,6 @@ describe('[DELETE] /api/todos/:id', () => {
 
     await byIdHandler(req, res);
 
-    expect(res._getStatusCode()).toBe(NO_CONTENT);
+    expect(res._getStatusCode()).toBe(StatusCodes.NO_CONTENT);
   });
 });

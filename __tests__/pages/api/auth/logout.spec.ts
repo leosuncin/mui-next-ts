@@ -1,4 +1,4 @@
-import { NO_CONTENT } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
 import logoutHandler from 'pages/api/auth/logout';
@@ -24,7 +24,7 @@ describe('[DELETE] /api/auth/logout', () => {
 
     logoutHandler(req, res);
 
-    expect(res._getStatusCode()).toBe(NO_CONTENT);
+    expect(res._getStatusCode()).toBe(StatusCodes.NO_CONTENT);
     expect(res._getHeaders()).toMatchInlineSnapshot(`
       Object {
         "set-cookie": Array [

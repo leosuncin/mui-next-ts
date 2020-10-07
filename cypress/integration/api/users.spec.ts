@@ -1,5 +1,5 @@
 import fc from 'fast-check';
-import { OK } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { users } from 'libs/db/users';
 
 describe('Users API', () => {
@@ -27,7 +27,7 @@ describe('Users API', () => {
             headers: { authorization },
             failOnStatusCode: false,
           }).then(({ status, body }) => {
-            expect(status).to.be.equal(OK);
+            expect(status).to.be.equal(StatusCodes.OK);
             expect(body).to.satisfy((body: unknown) => Array.isArray(body));
           });
         },

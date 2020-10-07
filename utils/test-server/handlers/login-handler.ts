@@ -1,4 +1,4 @@
-import { OK, UNAUTHORIZED, UNPROCESSABLE_ENTITY } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { signJWT } from 'libs/jwt';
 import { loginSchema as validationSchema } from 'libs/validation';
 import { RequestHandler, rest } from 'msw';
@@ -24,9 +24,9 @@ const loginHandler: RequestHandler = rest.post(
       });
     } catch (error) {
       return res(
-        ctx.status(UNPROCESSABLE_ENTITY),
+        ctx.status(StatusCodes.UNPROCESSABLE_ENTITY),
         ctx.json({
-          statusCode: UNPROCESSABLE_ENTITY,
+          statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
           message: 'Validation errors',
           errors: error.inner.reduce(
             (prev, error) => ({ ...prev, [error.path]: error.errors[0] }),
@@ -39,7 +39,7 @@ const loginHandler: RequestHandler = rest.post(
     if (username === user.username && password === 'Pa$$w0rd!') {
       const token = signJWT(user as any);
       return res(
-        ctx.status(OK),
+        ctx.status(StatusCodes.OK),
         ctx.set('Authorization', `Bearer ${token}`),
         ctx.cookie('token', token, {
           httpOnly: true,
@@ -57,17 +57,17 @@ const loginHandler: RequestHandler = rest.post(
 
     if (username === user.username)
       return res(
-        ctx.status(UNAUTHORIZED),
+        ctx.status(StatusCodes.UNAUTHORIZED),
         ctx.json({
-          statusCode: UNAUTHORIZED,
+          statusCode: StatusCodes.UNAUTHORIZED,
           message: `Wrong password for user: ${username}`,
         }),
       );
 
     return res(
-      ctx.status(UNAUTHORIZED),
+      ctx.status(StatusCodes.UNAUTHORIZED),
       ctx.json({
-        statusCode: UNAUTHORIZED,
+        statusCode: StatusCodes.UNAUTHORIZED,
         message: `Wrong username: ${username}`,
       }),
     );
