@@ -1,0 +1,73 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run development server",
+      "detail": "next dev",
+      "type": "npm",
+      "script": "dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "Build for production",
+      "detail": "next build",
+      "type": "npm",
+      "script": "build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run production server",
+      "detail": "next start",
+      "dependsOn": ["Build for production"],
+      "type": "npm",
+      "script": "start",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run unit tests",
+      "detail": "jest",
+      "type": "npm",
+      "script": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Watch unit tests",
+      "detail": "jest",
+      "type": "npm",
+      "script": "test:watch",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run E2E tests",
+      "detail": "cypress run",
+      "type": "npm",
+      "script": "test:e2e",
+      "problemMatcher": []
+    },
+    {
+      "label": "Open cypress",
+      "detail": "cypress open",
+      "type": "npm",
+      "script": "cy:open",
+      "isBackground": true
+    },
+    {
+      "label": "Run tsc",
+      "detail": "tsc",
+      "type": "npm",
+      "script": "lint:tsc",
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "Run eslint",
+      "detail": "eslint",
+      "type": "npm",
+      "script": "lint:eslint",
+      "problemMatcher": ["$eslint-compact"]
+    }
+  ]
+}

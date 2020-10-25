@@ -1,10 +1,13 @@
 {
-  "emmet.triggerExpansionOnTab": true,
   "typescript.tsdk": "node_modules/typescript/lib",
   "json.schemas": [
     {
       "fileMatch": ["cypress.json"],
       "url": "https://on.cypress.io/cypress.schema.json"
     }
-  ]
+  ],
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact"
+  }
 }
