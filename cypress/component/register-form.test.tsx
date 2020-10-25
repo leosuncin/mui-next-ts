@@ -45,8 +45,8 @@ describe('RegisterForm component', () => {
           fc.record({
             firstName: fc.char(),
             lastName: fc.char(),
-            username: fc.string(1, 4),
-            password: fc.string(1, 7),
+            username: fc.string({ minLength: 1, maxLength: 4 }),
+            password: fc.string({ minLength: 1, maxLength: 7 }),
           }),
           data => {
             cy.findByLabelText(firstNameLabel)

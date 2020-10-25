@@ -40,8 +40,8 @@ describe('LoginForm component', () => {
       fc
         .property(
           fc.record({
-            username: fc.string(1, 4),
-            password: fc.string(1, 7),
+            username: fc.string({ minLength: 1, maxLength: 4 }),
+            password: fc.string({ minLength: 1, maxLength: 7 }),
           }),
           data => {
             cy.findByLabelText(usernameLabel).type(data.username);

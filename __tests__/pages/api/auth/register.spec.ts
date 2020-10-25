@@ -26,10 +26,10 @@ describe('/api/auth/register', () => {
       fc.asyncProperty<Partial<AuthRegister>>(
         fc.record(
           {
-            firstName: fc.unicodeString(0, 1),
-            lastName: fc.unicodeString(0, 1),
-            username: fc.string(0, 4),
-            password: fc.string(0, 7),
+            firstName: fc.unicodeString({ minLength: 0, maxLength: 1 }),
+            lastName: fc.unicodeString({ minLength: 0, maxLength: 1 }),
+            username: fc.string({ minLength: 0, maxLength: 4 }),
+            password: fc.string({ minLength: 0, maxLength: 7 }),
           },
           { withDeletedKeys: true },
         ),

@@ -25,8 +25,8 @@ describe('/api/auth/login', () => {
       fc.asyncProperty<Partial<AuthLogin>>(
         fc.record(
           {
-            username: fc.string(0, 4),
-            password: fc.string(0, 7),
+            username: fc.string({ minLength: 0, maxLength: 4 }),
+            password: fc.string({ minLength: 0, maxLength: 7 }),
           },
           { withDeletedKeys: true },
         ),
