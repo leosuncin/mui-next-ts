@@ -77,6 +77,9 @@ describe('<Todo />', () => {
     ); // Type changes and save with Enter
 
     expect(screen.getByText(text)).toBeInTheDocument(); // Find the change in the list
+
+    await screen.findByTestId('saving-todos'); // Wait until loader appear
+    await waitForElementToBeRemoved(screen.queryByTestId('saving-todos')); // Then, wait until loader to disappear
   });
 
   it('should remove one todo', async () => {
