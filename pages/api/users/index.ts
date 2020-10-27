@@ -30,5 +30,5 @@ const findUsers: NextHttpHandler = async (req, res) => {
 };
 
 export default catchErrors(
-  validateMethod(['GET'], withDB(withAuthentication(findUsers))),
+  validateMethod(['GET'])(withDB(withAuthentication(findUsers))),
 );

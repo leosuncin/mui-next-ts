@@ -11,8 +11,7 @@ import { editTodoSchema } from 'libs/validation';
 import { ForbiddenError, NotFoundError, Todo } from 'types';
 
 export default catchErrors(
-  validateMethod(
-    ['GET', 'PUT', 'DELETE'],
+  validateMethod(['GET', 'PUT', 'DELETE'])(
     withDB(
       withAuthentication(async (req, res) => {
         const [todo] = (await nSQL('todos')
@@ -33,7 +32,7 @@ export default catchErrors(
             return res.json(todo);
 
           case 'PUT':
-            return validateBody(editTodoSchema, async (req, res) => {
+            return validateBody(editTodoSchema)(async (req, res) => {
               const [updates] = await nSQL('todos')
                 /*
                  * Solves issue with @nano-sql/plugin-fuzzy-search,

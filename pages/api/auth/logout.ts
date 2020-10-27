@@ -10,4 +10,4 @@ const logout: NextHttpHandler = (_, res) => {
   res.status(StatusCodes.NO_CONTENT).send(Buffer.alloc(0));
 };
 
-export default catchErrors(validateMethod(['DELETE'], logout));
+export default catchErrors(validateMethod(['DELETE'])(logout));

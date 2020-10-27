@@ -36,8 +36,7 @@ const findNotes: NextHttpHandler = async (req, res) => {
 };
 
 export default catchErrors(
-  validateMethod(
-    ['GET', 'POST'],
+  validateMethod(['GET', 'POST'])(
     withDB(
       withAuthentication((req, res) => {
         switch (req.method) {
@@ -45,7 +44,7 @@ export default catchErrors(
             return findNotes(req, res);
 
           case 'POST':
-            return validateBody(createTodoSchema, saveNote)(req, res);
+            return validateBody(createTodoSchema)(saveNote)(req, res);
         }
       }),
     ),

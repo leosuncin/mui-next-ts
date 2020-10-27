@@ -53,5 +53,5 @@ const login: NextHttpHandler = async (req, res) => {
 };
 
 export default catchErrors(
-  validateMethod(['POST'], validateBody(loginSchema, withDB(login))),
+  validateMethod(['POST'])(validateBody(loginSchema)(withDB(login))),
 );

@@ -60,5 +60,5 @@ const register: NextHttpHandler = async (req, res) => {
 };
 
 export default catchErrors(
-  validateMethod(['POST'], validateBody(registerSchema, withDB(register))),
+  validateMethod(['POST'])(validateBody(registerSchema)(withDB(register))),
 );
