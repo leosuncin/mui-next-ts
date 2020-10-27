@@ -62,7 +62,7 @@ describe('/api/auth/login', () => {
     await loginHandler(req as any, res);
 
     expect(res._getStatusCode()).toBe(StatusCodes.UNAUTHORIZED);
-    expect(res._getData()).toHaveProperty(
+    expect(res._getJSONData()).toHaveProperty(
       'message',
       expect.stringMatching(/Wrong username/),
     );
@@ -80,7 +80,7 @@ describe('/api/auth/login', () => {
     await loginHandler(req as any, res);
 
     expect(res._getStatusCode()).toBe(StatusCodes.UNAUTHORIZED);
-    expect(res._getData()).toHaveProperty(
+    expect(res._getJSONData()).toHaveProperty(
       'message',
       expect.stringMatching(/Wrong password/),
     );

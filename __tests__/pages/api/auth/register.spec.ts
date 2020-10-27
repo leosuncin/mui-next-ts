@@ -69,7 +69,7 @@ describe('/api/auth/register', () => {
     await registerHandler(req as any, res);
 
     expect(res._getStatusCode()).toBe(StatusCodes.CONFLICT);
-    expect(res._getData().message).toMatch(/already registered/);
+    expect(res._getJSONData().message).toMatch(/already registered/);
   });
 
   it('should register a new user', async () => {

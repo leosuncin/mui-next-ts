@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { StatusCodes } from 'http-status-codes';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';

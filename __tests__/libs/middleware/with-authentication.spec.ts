@@ -3,16 +3,16 @@
  */
 import { nSQL } from '@nano-sql/core';
 import faker from 'faker';
-import { StatusCodes } from 'http-status-codes';
 import { sign } from 'jsonwebtoken';
 import { dbConfig, users } from 'libs/db';
 import { signJWT } from 'libs/jwt';
 import { withAuthentication } from 'libs/middleware';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
+import { UnauthorizedError } from 'types';
 
-const toBase64 = str => Buffer.from(str).toString('base64');
-const toBase64UrlSafe = str =>
+const toBase64 = (str: unknown) => Buffer.from(str).toString('base64');
+const toBase64UrlSafe = (str: unknown) =>
   Buffer.from(str).toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
 
 describe('withAuthentication middleware', () => {
@@ -51,10 +51,10 @@ describe('withAuthentication middleware', () => {
         },
       });
 
-      await withAuthentication(handler)(req as any, res);
+      await expect(
+        withAuthentication(handler)(req as any, res),
+      ).rejects.toThrow(UnauthorizedError);
 
-      expect(res._getStatusCode()).toBe(StatusCodes.UNAUTHORIZED);
-      expect(res._getJSONData()).toHaveProperty('message', expect.any(String));
       expect(handler).not.toHaveBeenCalled();
     },
   );
@@ -71,10 +71,10 @@ describe('withAuthentication middleware', () => {
         },
       });
 
-      await withAuthentication(handler)(req as any, res);
+      await expect(
+        withAuthentication(handler)(req as any, res),
+      ).rejects.toThrow(UnauthorizedError);
 
-      expect(res._getStatusCode()).toBe(StatusCodes.UNAUTHORIZED);
-      expect(res._getJSONData()).toHaveProperty('message', expect.any(String));
       expect(handler).not.toHaveBeenCalled();
     },
   );
