@@ -1,9 +1,8 @@
 import { nSQL } from '@nano-sql/core';
-import { StatusCodes } from 'http-status-codes';
 import { decodeJWT } from 'libs/jwt';
 import { NextApiRequest } from 'next';
 import { parseCookies } from 'nookies';
-import { NextHttpHandler, User } from 'types';
+import { NextHttpHandler, UnauthorizedError, User } from 'types';
 
 function extractTokenFromCookies(req: NextApiRequest) {
   const cookies = parseCookies({ req });
@@ -60,10 +59,7 @@ export function withAuthentication(handler: NextHttpHandler): NextHttpHandler {
     const token = extractTokenFromCookies(req) ?? extractTokenFromHeaders(req);
 
     if (!isJWT(token))
-      return res.status(StatusCodes.UNAUTHORIZED).json({
-        statusCode: StatusCodes.UNAUTHORIZED,
-        message: 'Missing or invalid authorization token',
-      });
+      throw new UnauthorizedError('Missing or invalid authorization token');
 
     try {
       const payload = decodeJWT(token);
@@ -79,20 +75,13 @@ export function withAuthentication(handler: NextHttpHandler): NextHttpHandler {
         .where(['id', '=', payload.sub])
         .exec()) as User[];
 
-      if (!user)
-        return res.status(StatusCodes.UNAUTHORIZED).json({
-          statusCode: StatusCodes.UNAUTHORIZED,
-          message: 'Invalid user from token',
-        });
+      if (!user) throw new UnauthorizedError('Invalid user from token');
 
       req.user = user;
 
       return handler(req, res);
-    } catch {
-      res.status(StatusCodes.UNAUTHORIZED).json({
-        statusCode: StatusCodes.UNAUTHORIZED,
-        message: 'Invalid authorization JWT',
-      });
+    } catch (error) {
+      throw new UnauthorizedError('Invalid authorization token', error);
     }
   };
 }

@@ -1,6 +1,13 @@
-import { validateMethod, withAuthentication, withDB } from 'libs/middleware';
+import {
+  catchErrors,
+  validateMethod,
+  withAuthentication,
+  withDB,
+} from 'libs/middleware';
 
-export default validateMethod(
-  ['GET'],
-  withDB(withAuthentication((req, res) => res.json(req.user))),
+export default catchErrors(
+  validateMethod(
+    ['GET'],
+    withDB(withAuthentication((req, res) => res.json(req.user))),
+  ),
 );

@@ -1,5 +1,10 @@
 import { nSQL } from '@nano-sql/core';
-import { validateMethod, withAuthentication, withDB } from 'libs/middleware';
+import {
+  catchErrors,
+  validateMethod,
+  withAuthentication,
+  withDB,
+} from 'libs/middleware';
 import { NextHttpHandler, UserWithoutPassword as User } from 'types';
 
 const findUsers: NextHttpHandler = async (req, res) => {
@@ -24,4 +29,6 @@ const findUsers: NextHttpHandler = async (req, res) => {
   res.json(users);
 };
 
-export default validateMethod(['GET'], withDB(withAuthentication(findUsers)));
+export default catchErrors(
+  validateMethod(['GET'], withDB(withAuthentication(findUsers))),
+);

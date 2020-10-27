@@ -1,57 +1,104 @@
 import { StatusCodes } from 'http-status-codes';
+import type { ValidationError } from 'yup';
 
-export type ErrorResponse = {
-  readonly statusCode: number;
+export interface ErrorResponse {
   readonly message: string;
+  readonly statusCode: number;
   readonly errors?: Record<string, string>;
-};
+}
 
-export class HttpError extends Error {
-  readonly name = 'HttpError';
-  code: string;
-  status: number;
-  errors?: ErrorResponse['errors'];
+export class HttpApiError extends Error {
+  readonly name = 'HttpApiError';
 
-  constructor(error: ErrorResponse) {
-    super(error.message);
+  constructor(
+    public readonly message: string,
+    public readonly statusCode: number,
+    public readonly context?: Error | Record<string, string>,
+  ) {
+    super(message);
     Object.setPrototypeOf(this, new.target.prototype);
 
     if (Error.captureStackTrace) Error.captureStackTrace(this);
+  }
 
-    this.status = error.statusCode;
-    switch (error.statusCode) {
-      case StatusCodes.UNAUTHORIZED:
-        this.code = 'UNAUTHORIZED';
-        break;
+  static isHttpApiError(error: Error): error is HttpApiError {
+    return (
+      error.name === this.name &&
+      Object.prototype.hasOwnProperty.call(error, 'statusCode')
+    );
+  }
+}
 
-      case StatusCodes.FORBIDDEN:
-        this.code = 'FORBIDDEN';
-        break;
+export class ServiceUnavailableError extends HttpApiError {
+  constructor(message: string, error: Error) {
+    super(message, StatusCodes.SERVICE_UNAVAILABLE, error);
+  }
+}
 
-      case StatusCodes.NOT_FOUND:
-        this.code = 'NOT_FOUND';
-        break;
+export class MethodNotAllowedError extends HttpApiError {
+  constructor(methods: string[]) {
+    super(
+      `Allowed method(s): ${methods.join(', ')}`,
+      StatusCodes.METHOD_NOT_ALLOWED,
+    );
+  }
+}
 
-      case StatusCodes.METHOD_NOT_ALLOWED:
-        this.code = 'METHOD_NOT_ALLOWED';
-        break;
+export class UnprocessableEntityError extends HttpApiError {
+  constructor(message: string, errors: Record<string, string>) {
+    super(message, StatusCodes.UNPROCESSABLE_ENTITY, errors);
+  }
 
-      case StatusCodes.CONFLICT:
-        this.code = 'CONFLICT';
-        break;
+  static transformValidationError(
+    error: ValidationError,
+  ): Record<string, string> {
+    return error.inner.reduce(
+      (prev, error) => ({ ...prev, [error.path]: error.errors[0] }),
+      {},
+    );
+  }
+}
 
-      case StatusCodes.UNPROCESSABLE_ENTITY:
-        this.code = 'UNPROCESSABLE_ENTITY';
-        this.errors = error.errors;
-        break;
+export class UnauthorizedError extends HttpApiError {
+  constructor(message: string, context?: Error) {
+    super(message, StatusCodes.UNAUTHORIZED, context);
+  }
+}
 
-      case StatusCodes.INTERNAL_SERVER_ERROR:
-        this.code = 'INTERNAL_SERVER_ERROR';
-        break;
+export class ForbiddenError extends HttpApiError {
+  constructor(message: string) {
+    super(message, StatusCodes.FORBIDDEN);
+  }
+}
 
-      case StatusCodes.SERVICE_UNAVAILABLE:
-        this.code = 'SERVICE_UNAVAILABLE';
-        break;
-    }
+export class ConflictError extends HttpApiError {
+  constructor(message: string) {
+    super(message, StatusCodes.CONFLICT);
+  }
+}
+
+export class NotFoundError extends HttpApiError {
+  constructor(message: string) {
+    super(message, StatusCodes.NOT_FOUND);
+  }
+}
+
+export class HttpError extends Error implements ErrorResponse {
+  readonly name = 'HttpError';
+  readonly statusCode: number;
+  readonly errors?: Record<string, string>;
+
+  constructor({ message, statusCode, errors }: ErrorResponse) {
+    super(message);
+    this.statusCode = statusCode;
+    this.errors = errors;
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+
+  static isHttpError(error: Error): error is HttpError {
+    return (
+      error.name === this.name &&
+      Object.prototype.hasOwnProperty.call(error, 'statusCode')
+    );
   }
 }

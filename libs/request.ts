@@ -1,4 +1,4 @@
-import { HttpError } from 'types';
+import { ErrorResponse, HttpError } from 'types';
 
 const defaultOptions: RequestInit = { mode: 'cors', credentials: 'include' };
 
@@ -7,7 +7,7 @@ async function fetcher<Data>(
   options: RequestInit,
 ): Promise<Data> {
   const resp = await fetch(input, options);
-  let result;
+  let result: Data | ErrorResponse;
 
   if (resp.status === 204) return;
 
@@ -18,12 +18,12 @@ async function fetcher<Data>(
     result = {
       statusCode: resp.status,
       message: resp.statusText,
-    };
+    } as ErrorResponse;
   }
 
-  if (resp.status < 400) return result;
+  if (resp.status < 400) return result as Data;
 
-  throw new HttpError(result);
+  throw new HttpError(result as ErrorResponse);
 }
 
 export function post<Body, Data>(

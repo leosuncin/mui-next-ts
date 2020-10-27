@@ -1,27 +1,27 @@
 import { nSQL } from '@nano-sql/core';
 import faker from 'faker';
-import { StatusCodes } from 'http-status-codes';
 import { hashPassword } from 'libs/encrypt';
 import { signJWT } from 'libs/jwt';
-import { validateBody, validateMethod, withDB } from 'libs/middleware';
+import {
+  catchErrors,
+  validateBody,
+  validateMethod,
+  withDB,
+} from 'libs/middleware';
 import { registerSchema } from 'libs/validation';
 import { setCookie } from 'nookies';
-import { User } from 'types';
+import { ConflictError, NextHttpHandler, User } from 'types';
 
 /**
  * Register a new a user
  */
-const register = async (req, res) => {
+const register: NextHttpHandler = async (req, res) => {
   const [{ total }] = await nSQL('users')
     .presetQuery('countByUsername', { username: req.body.username })
     .exec();
 
-  if (total > 0) {
-    return res.status(StatusCodes.CONFLICT).send({
-      statusCode: StatusCodes.CONFLICT,
-      message: 'Username or Email already registered',
-    });
-  }
+  if (total > 0)
+    throw new ConflictError('Username or Email already registered');
 
   const [user] = (await nSQL('users')
     .query('upsert', {
@@ -59,7 +59,6 @@ const register = async (req, res) => {
   res.json(userWithoutPassword);
 };
 
-export default validateMethod(
-  ['POST'],
-  validateBody(registerSchema, withDB(register)),
+export default catchErrors(
+  validateMethod(['POST'], validateBody(registerSchema, withDB(register))),
 );

@@ -1,5 +1,4 @@
-import { StatusCodes } from 'http-status-codes';
-import { NextHttpHandler } from 'types';
+import { NextHttpHandler, UnprocessableEntityError } from 'types';
 import { ObjectSchema } from 'yup';
 
 export function validateBody(
@@ -12,16 +11,13 @@ export function validateBody(
         abortEarly: false,
         stripUnknown: true,
       });
+
       return handler(req, res);
     } catch (error) {
-      return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
-        statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
-        message: 'Validation errors',
-        errors: error.inner.reduce(
-          (prev, error) => ({ ...prev, [error.path]: error.errors[0] }),
-          {},
-        ),
-      });
+      throw new UnprocessableEntityError(
+        'Validation errors',
+        UnprocessableEntityError.transformValidationError(error),
+      );
     }
   };
 }

@@ -1,6 +1,7 @@
 import { nSQL } from '@nano-sql/core';
 import { StatusCodes } from 'http-status-codes';
 import {
+  catchErrors,
   validateBody,
   validateMethod,
   withAuthentication,
@@ -34,17 +35,19 @@ const findNotes: NextHttpHandler = async (req, res) => {
   res.json(notes);
 };
 
-export default validateMethod(
-  ['GET', 'POST'],
-  withDB(
-    withAuthentication((req, res) => {
-      switch (req.method) {
-        case 'GET':
-          return findNotes(req, res);
+export default catchErrors(
+  validateMethod(
+    ['GET', 'POST'],
+    withDB(
+      withAuthentication((req, res) => {
+        switch (req.method) {
+          case 'GET':
+            return findNotes(req, res);
 
-        case 'POST':
-          return validateBody(createTodoSchema, saveNote)(req, res);
-      }
-    }),
+          case 'POST':
+            return validateBody(createTodoSchema, saveNote)(req, res);
+        }
+      }),
+    ),
   ),
 );
