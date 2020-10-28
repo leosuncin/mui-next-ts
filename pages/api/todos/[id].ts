@@ -24,7 +24,13 @@ const putHandler: NextHttpHandler = async (req, res) => {
     .where(['id', '=', req.query.id])
     .exec();
 
-  res.json(updates);
+  res.json({
+    ...updates,
+    /* `updates.updatedAt` is returned as string,
+     * but to return a ISO 8601 first cast to date
+     */
+    updatedAt: new Date(updates.updatedAt),
+  });
 };
 
 const deleteHandler: NextHttpHandler = async (req, res) => {

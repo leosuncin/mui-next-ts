@@ -141,7 +141,6 @@ export const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
       };
 
     case 'TODO_CHANGED':
-      event.payload.updatedAt = new Date(event.payload.updatedAt).toISOString(); // Solves an issue
       const _all = state.all.map(todo =>
         todo.id === event.payload.id ? event.payload : todo,
       );
