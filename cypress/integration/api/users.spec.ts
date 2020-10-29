@@ -25,11 +25,10 @@ describe('Users API', () => {
             url,
             qs,
             headers: { authorization },
-            failOnStatusCode: false,
-          }).then(({ status, body }) => {
-            expect(status).to.be.equal(StatusCodes.OK);
-            expect(body).to.satisfy((body: unknown) => Array.isArray(body));
-          });
+          })
+            .validateResponse(StatusCodes.OK, 'User')
+            .its('body')
+            .should('have.length.lte', Math.abs(qs.limit ?? 10));
         },
       ),
       { numRuns: 10 },

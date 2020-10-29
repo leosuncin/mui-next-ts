@@ -26,11 +26,13 @@ describe('Todo API', () => {
         text,
       },
       headers: { authorization },
-    }).then(({ status, body }) => {
-      expect(status).to.be.equal(StatusCodes.CREATED);
-      expect(body).to.haveOwnProperty('done', false);
-      expect(body).to.haveOwnProperty('text', text);
-    });
+    })
+      .validateResponse(StatusCodes.CREATED, 'Todo')
+      .its('body')
+      .should(body => {
+        expect(body).have.property('done', false);
+        expect(body).have.property('text', text);
+      });
   });
 
   it('should validate the body', () => {
@@ -43,16 +45,13 @@ describe('Todo API', () => {
           body,
           headers: { authorization },
           failOnStatusCode: false,
-        }).then(({ status, body }) => {
-          expect(status).to.be.equal(StatusCodes.UNPROCESSABLE_ENTITY);
-          expect(body).to.have.keys(['statusCode', 'message', 'errors']);
-        });
+        }).validateResponse(StatusCodes.UNPROCESSABLE_ENTITY, 'ApiError');
       }),
       { numRuns: 10 },
     );
   });
 
-  it('should list the todos', () => {
+  it.only('should list the todos', () => {
     cy.clearCookie('token');
     fc.assert(
       fc.property(
@@ -68,7 +67,8 @@ describe('Todo API', () => {
             headers: { authorization },
           }).then(({ status, body }) => {
             expect(status).to.be.equal(StatusCodes.OK);
-            expect(body).to.satisfy((body: unknown) => Array.isArray(body));
+            expect(body).to.be.an('array');
+            expect(body).to.have.length.lte(Math.abs(qs.limit ?? 10));
           });
         },
       ),
@@ -81,27 +81,14 @@ describe('Todo API', () => {
       url,
       qs: { search: faker.hacker.verb() },
       headers: { authorization },
-    }).then(({ status, body }) => {
-      expect(status).to.be.equal(StatusCodes.OK);
-      expect(body).to.satisfy((body: unknown) => Array.isArray(body));
-    });
+    }).validateResponse(StatusCodes.OK, 'Todo');
   });
 
   it('should get one todo', () => {
     cy.api({
       url: url + '/' + todo.id,
       headers: { authorization },
-    }).then(({ status, body }) => {
-      expect(status).to.be.equal(StatusCodes.OK);
-      expect(body).to.have.keys([
-        'id',
-        'text',
-        'done',
-        'createdAt',
-        'updatedAt',
-        'createdBy',
-      ]);
-    });
+    }).validateResponse(StatusCodes.OK, 'Todo');
   });
 
   it('should update one todo', () => {
@@ -113,17 +100,7 @@ describe('Todo API', () => {
         done: !todo.done,
       },
       headers: { authorization },
-    }).then(({ status, body }) => {
-      expect(status).to.be.equal(StatusCodes.OK);
-      expect(body).to.have.keys([
-        'id',
-        'text',
-        'done',
-        'createdAt',
-        'updatedAt',
-        'createdBy',
-      ]);
-    });
+    }).validateResponse(StatusCodes.OK, 'Todo');
   });
 
   it('should remove one todo', () => {
@@ -153,10 +130,7 @@ describe('Todo API', () => {
         url: url + '/' + faker.random.uuid(),
         failOnStatusCode: false,
         headers: { authorization },
-      }).then(({ status, body }) => {
-        expect(status).to.be.equal(StatusCodes.NOT_FOUND);
-        expect(body).to.have.keys(['statusCode', 'message']);
-      });
+      }).validateResponse(StatusCodes.NOT_FOUND, 'ApiError');
     });
 
     it('should fail to update', () => {
@@ -169,9 +143,7 @@ describe('Todo API', () => {
         },
         headers: { authorization },
         failOnStatusCode: false,
-      })
-        .its('status')
-        .should('equal', StatusCodes.NOT_FOUND);
+      }).validateResponse(StatusCodes.NOT_FOUND, 'ApiError');
     });
 
     it('should fail to remove', () => {
@@ -180,9 +152,7 @@ describe('Todo API', () => {
         method: 'DELETE',
         headers: { authorization },
         failOnStatusCode: false,
-      })
-        .its('status')
-        .should('equal', StatusCodes.NOT_FOUND);
+      }).validateResponse(StatusCodes.NOT_FOUND, 'ApiError');
     });
   });
 
@@ -193,27 +163,21 @@ describe('Todo API', () => {
         method: 'POST',
         body: { text: faker.lorem.sentence() },
         failOnStatusCode: false,
-      })
-        .its('status')
-        .should('equal', StatusCodes.UNAUTHORIZED);
+      }).validateResponse(StatusCodes.UNAUTHORIZED, 'ApiError');
     });
 
     it('should fail to list the todos', () => {
       cy.api({
         url,
         failOnStatusCode: false,
-      })
-        .its('status')
-        .should('equal', StatusCodes.UNAUTHORIZED);
+      }).validateResponse(StatusCodes.UNAUTHORIZED, 'ApiError');
     });
 
     it('should fail to get one todo', () => {
       cy.api({
         url: url + '/' + todo.id,
         failOnStatusCode: false,
-      })
-        .its('status')
-        .should('equal', StatusCodes.UNAUTHORIZED);
+      }).validateResponse(StatusCodes.UNAUTHORIZED, 'ApiError');
     });
 
     it('should fail to update one todo', () => {
@@ -225,9 +189,7 @@ describe('Todo API', () => {
           done: !todo.done,
         },
         failOnStatusCode: false,
-      })
-        .its('status')
-        .should('equal', StatusCodes.UNAUTHORIZED);
+      }).validateResponse(StatusCodes.UNAUTHORIZED, 'ApiError');
     });
 
     it('should fail to remove one todo', () => {
@@ -235,9 +197,7 @@ describe('Todo API', () => {
         url: url + '/' + todo.id,
         method: 'DELETE',
         failOnStatusCode: false,
-      })
-        .its('status')
-        .should('equal', StatusCodes.UNAUTHORIZED);
+      }).validateResponse(StatusCodes.UNAUTHORIZED, 'ApiError');
     });
   });
 
@@ -255,9 +215,7 @@ describe('Todo API', () => {
         url: url + '/' + todo.id,
         headers: { authorization },
         failOnStatusCode: false,
-      })
-        .its('status')
-        .should('equal', StatusCodes.FORBIDDEN);
+      }).validateResponse(StatusCodes.FORBIDDEN, 'ApiError');
     });
 
     it('should forbid the update of one that belongs to another', () => {
@@ -270,9 +228,7 @@ describe('Todo API', () => {
         },
         headers: { authorization },
         failOnStatusCode: false,
-      })
-        .its('status')
-        .should('equal', StatusCodes.FORBIDDEN);
+      }).validateResponse(StatusCodes.FORBIDDEN, 'ApiError');
     });
 
     it('should forbid the remove of one todo that belongs to another', () => {
@@ -281,9 +237,7 @@ describe('Todo API', () => {
         method: 'DELETE',
         headers: { authorization },
         failOnStatusCode: false,
-      })
-        .its('status')
-        .should('equal', StatusCodes.FORBIDDEN);
+      }).validateResponse(StatusCodes.FORBIDDEN, 'ApiError');
     });
   });
 });

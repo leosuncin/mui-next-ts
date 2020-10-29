@@ -6,9 +6,7 @@ describe('Register API', () => {
     cy.api({
       url: '/api/auth/register',
       failOnStatusCode: false,
-    })
-      .its('status')
-      .should('equal', StatusCodes.METHOD_NOT_ALLOWED);
+    }).validateResponse(StatusCodes.METHOD_NOT_ALLOWED, 'ApiError');
   });
 
   it('should validate the body', () => {
@@ -17,11 +15,7 @@ describe('Register API', () => {
       method: 'POST',
       body: {},
       failOnStatusCode: false,
-    }).then(({ status, body }) => {
-      expect(status).to.equal(StatusCodes.UNPROCESSABLE_ENTITY);
-      expect(body).to.haveOwnProperty('message');
-      expect(body).to.haveOwnProperty('errors');
-    });
+    }).validateResponse(StatusCodes.UNPROCESSABLE_ENTITY, 'ApiError');
   });
 
   it('should reject duplicate user', () => {
@@ -37,11 +31,7 @@ describe('Register API', () => {
       method: 'POST',
       body,
       failOnStatusCode: false,
-    }).then(response => {
-      expect(response.status).to.equal(StatusCodes.CONFLICT);
-      expect(response.body).to.haveOwnProperty('message');
-      expect(response.body.message).to.match(/already registered/);
-    });
+    }).validateResponse(StatusCodes.CONFLICT, 'ApiError');
   });
 
   it('should register a new user', () => {
@@ -56,20 +46,20 @@ describe('Register API', () => {
       url: '/api/auth/register',
       method: 'POST',
       body,
-    }).then(response => {
-      expect(response.status).to.equal(StatusCodes.OK);
-      expect(response.headers).to.haveOwnProperty('authorization');
-      expect(response.headers.authorization).to.match(/Bearer \w+/);
-      expect(response.headers).to.haveOwnProperty('set-cookie');
-      expect(response.headers['set-cookie']).to.satisfy(cookies =>
-        cookies.some(cookie =>
-          /token=.*; Max-Age=\d+; Path=\/; HttpOnly; SameSite=Strict/.test(
-            cookie,
+    })
+      .validateResponse(StatusCodes.OK, 'User')
+      .then(response => {
+        expect(response.headers).to.haveOwnProperty('authorization');
+        expect(response.headers.authorization).to.match(/Bearer \w+/);
+        expect(response.headers).to.haveOwnProperty('set-cookie');
+        expect(response.headers['set-cookie']).to.satisfy((cookies: string[]) =>
+          cookies.some(cookie =>
+            /token=.*; Max-Age=\d+; Path=\/; HttpOnly; SameSite=Strict/.test(
+              cookie,
+            ),
           ),
-        ),
-      );
-      expect(response.body).to.haveOwnProperty('username', body.username);
-      expect(response.body).not.to.haveOwnProperty('password');
-    });
+        );
+        expect(response.body).to.haveOwnProperty('username', body.username);
+      });
   });
 });

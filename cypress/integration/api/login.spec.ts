@@ -6,9 +6,7 @@ describe('Login API', () => {
     cy.api({
       url: '/api/auth/login',
       failOnStatusCode: false,
-    })
-      .its('status')
-      .should('be.equal', StatusCodes.METHOD_NOT_ALLOWED);
+    }).validateResponse(StatusCodes.METHOD_NOT_ALLOWED, 'ApiError');
   });
 
   it('should validate the body', () => {
@@ -17,11 +15,7 @@ describe('Login API', () => {
       method: 'POST',
       body: {},
       failOnStatusCode: false,
-    }).then(({ status, body }) => {
-      expect(status).to.equal(StatusCodes.UNPROCESSABLE_ENTITY);
-      expect(body).to.haveOwnProperty('message');
-      expect(body).to.haveOwnProperty('errors');
-    });
+    }).validateResponse(StatusCodes.UNPROCESSABLE_ENTITY, 'ApiError');
   });
 
   it('should validate the username', () => {
@@ -33,10 +27,7 @@ describe('Login API', () => {
         password: faker.internet.password(),
       },
       failOnStatusCode: false,
-    }).then(({ status, body }) => {
-      expect(status).to.equal(StatusCodes.UNAUTHORIZED);
-      expect(body.message).to.match(/username/);
-    });
+    }).validateResponse(StatusCodes.UNAUTHORIZED, 'ApiError');
   });
 
   it('should validate the password', () => {
@@ -48,10 +39,7 @@ describe('Login API', () => {
         password: 'ji32k7au4a83',
       },
       failOnStatusCode: false,
-    }).then(({ status, body }) => {
-      expect(status).to.equal(StatusCodes.UNAUTHORIZED);
-      expect(body.message).to.match(/Wrong\s+password/);
-    });
+    }).validateResponse(StatusCodes.UNAUTHORIZED, 'ApiError');
   });
 
   it('should validate the correct credentials', () => {
@@ -62,20 +50,20 @@ describe('Login API', () => {
         username: 'admin',
         password: 'Pa$$w0rd!',
       },
-    }).then(response => {
-      expect(response.status).to.equal(StatusCodes.OK);
-      expect(response.headers).to.haveOwnProperty('authorization');
-      expect(response.headers.authorization).to.match(/Bearer \w+/);
-      expect(response.headers).to.haveOwnProperty('set-cookie');
-      expect(response.headers['set-cookie']).to.satisfy(cookies =>
-        cookies.some(cookie =>
-          /token=.*; Max-Age=\d+; Path=\/; HttpOnly; SameSite=Strict/.test(
-            cookie,
+    })
+      .validateResponse(StatusCodes.OK, 'User')
+      .then(response => {
+        expect(response.headers).to.haveOwnProperty('authorization');
+        expect(response.headers.authorization).to.match(/Bearer \w+/);
+        expect(response.headers).to.haveOwnProperty('set-cookie');
+        expect(response.headers['set-cookie']).to.satisfy(cookies =>
+          cookies.some(cookie =>
+            /token=.*; Max-Age=\d+; Path=\/; HttpOnly; SameSite=Strict/.test(
+              cookie,
+            ),
           ),
-        ),
-      );
-      expect(response.body).to.haveOwnProperty('username', 'admin');
-      expect(response.body).not.to.haveOwnProperty('password');
-    });
+        );
+        expect(response.body).to.haveOwnProperty('username', 'admin');
+      });
   });
 });
