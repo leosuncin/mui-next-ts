@@ -18,7 +18,7 @@ jobs:
       timeout-minutes: 10
       env:
         CODE_COVERAGE: 'true'
-        APP_SECRET: c67d158338b7e5df7ff128228c74de33cb7a23f388d1c57c6b0df8fb1c825fad58d33a1eba4ffb6fcfc638a2470abff1583707a6c9ae076575a0f0639eb1b08e
+        APP_SECRET: ${{ secrets.APP_SECRET }}
         JWT_ISSUER: e2e-test
       with:
         config-file: cypress-unit.json
@@ -45,7 +45,7 @@ jobs:
       timeout-minutes: 10
       env:
         CODE_COVERAGE: true
-        APP_SECRET: c67d158338b7e5df7ff128228c74de33cb7a23f388d1c57c6b0df8fb1c825fad58d33a1eba4ffb6fcfc638a2470abff1583707a6c9ae076575a0f0639eb1b08e
+        APP_SECRET: ${{ secrets.APP_SECRET }}
         JWT_ISSUER: e2e-test
         # pass the Dashboard record key as an environment variable
         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}

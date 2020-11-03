@@ -22,6 +22,7 @@ jobs:
       - name: Run Cypress 🌲
         uses: cypress-io/github-action@v2
         env:
+          APP_SECRET: ${{ secrets.APP_SECRET }}
           CYPRESS_BASE_URL: ${{ github.event.deployment_status.target_url }}
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
