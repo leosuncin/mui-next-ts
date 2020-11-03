@@ -1,0 +1,43 @@
+name: Deployment
+
+# https://docs.github.com/en/actions/reference/events-that-trigger-workflows
+on: [deployment_status]
+
+jobs:
+  e2e:
+    # only runs this job on successful deploy
+    if: github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    strategy:
+      # when one test fails, DO NOT cancel the other
+      # containers, because this will kill Cypress processes
+      # leaving the Dashboard hanging ...
+      # https://github.com/cypress-io/github-action/issues/48
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox]
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v2
+      - name: Run Cypress 🌲
+        uses: cypress-io/github-action@v2
+        env:
+          CYPRESS_BASE_URL: ${{ github.event.deployment_status.target_url }}
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          # Recommended: pass the GitHub token lets this action correctly
+          # determine the unique run id necessary to re-run the checks
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          browser: ${{ matrix.browser }}
+          env: coverage=false
+          # Record tests only if add a new feature, fix an issue, refactor or improves existing code
+          record: startsWith(github.event.head_commit.message, 'feat') || startsWith(github.event.head_commit.message, 'fix') || startsWith(github.event.head_commit.message, 'refactor') || startsWith(github.event.head_commit.message, 'perf')
+      - name: Upload screenshots and videos on error 📦
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: Cypress screenshots and videos
+          path: |
+            cypress/screenshots
+            cypress/videos
