@@ -17,6 +17,12 @@ jobs:
       matrix:
         browser: [chrome, firefox]
     steps:
+      - name: Conditionally set Cypress tag 🚦
+        uses: haya14busa/action-cond@v1
+        id: cypress_tag
+        with:
+          cond: startsWith(github.event.head_commit.message, 'feat') || startsWith(github.event.head_commit.message, 'fix') || startsWith(github.event.head_commit.message, 'refactor') || startsWith(github.event.head_commit.message, 'perf')
+          if_true: ${{ matrix.browser }}
       - name: Checkout 🛎
         uses: actions/checkout@v2
       - name: Run Cypress 🌲
@@ -34,6 +40,7 @@ jobs:
           env: coverage=false
           # Record tests only if add a new feature, fix an issue, refactor or improves existing code
           record: startsWith(github.event.head_commit.message, 'feat') || startsWith(github.event.head_commit.message, 'fix') || startsWith(github.event.head_commit.message, 'refactor') || startsWith(github.event.head_commit.message, 'perf')
+          tag: ${{ steps.cypress_tag.outputs.value }}
       - name: Upload screenshots and videos on error 📦
         uses: actions/upload-artifact@v2
         if: failure()
