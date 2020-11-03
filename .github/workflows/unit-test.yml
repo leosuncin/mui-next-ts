@@ -6,10 +6,18 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: hallee/eslint-action@1.0.3
+    - uses: haya14busa/action-cond@v1
+      id: reporter
       with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        cond: ${{ github.event_name == 'pull_request' }}
+        if_true: "github-pr-review"
+        if_false: "github-check"
+    - uses: actions/checkout@v2
+    - uses: reviewdog/action-eslint@v1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        eslint_flags: --ext '.js' --ext '.ts' --ext '.tsx' .
+        reporter: ${{ steps.reporter.outputs.value }}
 
   tsc:
     runs-on: ubuntu-latest
