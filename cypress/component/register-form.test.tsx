@@ -1,6 +1,7 @@
 import RegisterForm from 'components/forms/register';
 import { mount } from 'cypress-react-unit-test';
 import fc from 'fast-check';
+import { RouterContext } from 'next/dist/next-server/lib/router-context';
 import React from 'react';
 import { registerBuild } from 'utils/factories';
 
@@ -10,23 +11,36 @@ describe('RegisterForm component', () => {
   const usernameLabel = /Username/i;
   const passwordLabel = /Password/i;
   const submitButton = /Sign Me Up/i;
+  const Component = ({ onSubmit }) => {
+    const router = {
+      pathname: '/register',
+      route: '/register',
+      query: {},
+      asPath: '/register',
+      components: {},
+      isFallback: false,
+      basePath: '',
+      events: { emit: cy.spy(), off: cy.spy(), on: cy.spy() },
+      push: cy.spy(),
+      replace: cy.spy(),
+      reload: cy.spy(),
+      back: cy.spy(),
+      prefetch: cy.stub().resolves(),
+      beforePopState: cy.spy(),
+    };
 
-  before(() => {
-    Cypress.on('uncaught:exception', (err, runnable) => {
-      // returning false here prevents Cypress from
-      // failing the test
-      //
-      // "Uncaught Error: No router instance found.
-      // You should only use "next/router"
-      return false;
-    });
-  });
+    return (
+      <RouterContext.Provider value={router}>
+        <RegisterForm onSubmit={onSubmit} />
+      </RouterContext.Provider>
+    );
+  };
 
   it('should submit the form', () => {
     const data = registerBuild();
-    const onSubmit = cy.stub().as('handleSubmit');
+    const spySubmit = cy.stub().as('handleSubmit');
 
-    mount(<RegisterForm onSubmit={onSubmit} />);
+    mount(<Component onSubmit={spySubmit} />);
     cy.findByLabelText(firstNameLabel).type(data.firstName);
     cy.findByLabelText(lastNameLabel).type(data.lastName);
     cy.findByLabelText(usernameLabel).type(data.username);
@@ -37,7 +51,7 @@ describe('RegisterForm component', () => {
   });
 
   it('should validate the form', () => {
-    const handleSubmit = cy.stub();
+    const spySubmit = cy.stub();
 
     fc.assert(
       fc
@@ -65,12 +79,12 @@ describe('RegisterForm component', () => {
             cy.findByText(/Username.+(?:empty|too short)/);
             cy.findByText(/Password.+(?:empty|too short)/);
 
-            cy.wrap(handleSubmit).should('not.have.been.called');
+            cy.wrap(spySubmit).should('not.have.been.called');
           },
         )
         .beforeEach(() => {
-          handleSubmit.reset();
-          mount(<RegisterForm onSubmit={handleSubmit} />);
+          spySubmit.reset();
+          mount(<Component onSubmit={spySubmit} />);
         }),
       { numRuns: 10 },
     );

@@ -2,6 +2,7 @@ import LoginForm from 'components/forms/login';
 import { mount } from 'cypress-react-unit-test';
 import faker from 'faker';
 import fc from 'fast-check';
+import { RouterContext } from 'next/dist/next-server/lib/router-context';
 import React from 'react';
 import { loginBuild } from 'utils/factories';
 
@@ -9,23 +10,36 @@ describe('LoginForm component', () => {
   const usernameLabel = /Username/i;
   const passwordLabel = /Password/i;
   const submitButton = /Log me in/i;
+  const Component = ({ onSubmit }) => {
+    const router = {
+      pathname: '/login',
+      route: '/login',
+      query: {},
+      asPath: '/login',
+      components: {},
+      isFallback: false,
+      basePath: '',
+      events: { emit: cy.spy(), off: cy.spy(), on: cy.spy() },
+      push: cy.spy(),
+      replace: cy.spy(),
+      reload: cy.spy(),
+      back: cy.spy(),
+      prefetch: cy.stub().resolves(),
+      beforePopState: cy.spy(),
+    };
 
-  before(() => {
-    Cypress.on('uncaught:exception', (err, runnable) => {
-      // returning false here prevents Cypress from
-      // failing the test
-      //
-      // "Uncaught Error: No router instance found.
-      // You should only use "next/router"
-      return false;
-    });
-  });
+    return (
+      <RouterContext.Provider value={router}>
+        <LoginForm onSubmit={onSubmit} />
+      </RouterContext.Provider>
+    );
+  };
 
   it('should submit the form', () => {
     const data = loginBuild();
-    const onSubmit = cy.stub().as('handleSubmit');
+    const handleSubmit = cy.stub().as('handleSubmit');
 
-    mount(<LoginForm onSubmit={onSubmit} />);
+    mount(<Component onSubmit={handleSubmit} />);
     cy.findByLabelText(usernameLabel).type(data.username);
     cy.findByLabelText(passwordLabel).type(data.password);
     cy.findByRole('button', { name: submitButton }).click();
@@ -56,7 +70,7 @@ describe('LoginForm component', () => {
         )
         .beforeEach(() => {
           handleSubmit.reset();
-          mount(<LoginForm onSubmit={handleSubmit} />);
+          mount(<Component onSubmit={handleSubmit} />);
         }),
       { numRuns: 10 },
     );
@@ -65,7 +79,7 @@ describe('LoginForm component', () => {
   it('should lock the form after three failed attempts', () => {
     const handleSubmit = cy.stub().throws(new Error('Wrong password'));
 
-    mount(<LoginForm onSubmit={handleSubmit} />);
+    mount(<Component onSubmit={handleSubmit} />);
 
     cy.findByLabelText(usernameLabel).type(faker.internet.userName());
     cy.findByLabelText(passwordLabel).type(faker.internet.password());
