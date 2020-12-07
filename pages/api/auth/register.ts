@@ -17,7 +17,8 @@ import { ConflictError, NextHttpHandler, User } from 'types';
  */
 const register: NextHttpHandler = async (req, res) => {
   const [{ total }] = await nSQL('users')
-    .presetQuery('countByUsername', { username: req.body.username })
+    .query('select', ['COUNT(*) AS total'])
+    .where(['username', 'LIKE', req.body.username])
     .exec();
 
   if (total > 0)

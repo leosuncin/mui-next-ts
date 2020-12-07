@@ -5,7 +5,7 @@ import {
   InanoSQLConfig,
   InanoSQLFKActions,
 } from '@nano-sql/core/lib/interfaces';
-import { FuzzySearch, FuzzyUserSanitize } from '@nano-sql/plugin-fuzzy-search';
+import { FuzzySearch } from '@nano-sql/plugin-fuzzy-search';
 
 export const dbConfig: InanoSQLConfig = {
   id: 'mui-next',
@@ -27,26 +27,6 @@ export const dbConfig: InanoSQLConfig = {
       indexes: {
         'username:string': { unique: true, ignore_case: true },
       },
-      queries: [
-        {
-          name: 'countByUsername',
-          args: { 'username:string': { notNull: true } },
-          call: (db, args: { username: string }) =>
-            db
-              .query('select', ['COUNT(*) AS total'])
-              .where(['username', 'LIKE', args.username])
-              .emit(),
-        },
-        {
-          name: 'getByUsername',
-          args: { 'username:string': { notNull: true } },
-          call: (db, args: { username: string }) =>
-            db
-              .query('select')
-              .where(['username', 'LIKE', args.username])
-              .emit(),
-        },
-      ],
     },
     {
       name: 'todos',
@@ -67,37 +47,6 @@ export const dbConfig: InanoSQLConfig = {
           },
         },
       },
-      queries: [
-        {
-          name: 'searchByText',
-          args: {
-            'search:string': {},
-            'limit:number': {},
-            'offset:number': {},
-            'createdBy:uuid': {},
-          },
-          call: (db, args) =>
-            db
-              .query('select')
-              .where(
-                args.search
-                  ? [
-                      [
-                        `SEARCH(text, "${FuzzyUserSanitize(args.search)}")`,
-                        '=',
-                        0,
-                      ],
-                      'AND',
-                      ['createdBy', 'LIKE', args.createdBy],
-                    ]
-                  : ['createdBy', 'LIKE', args.createdBy],
-              )
-              .orderBy(['createdAt DESC'])
-              .limit(args.limit)
-              .offset(args.offset)
-              .emit(),
-        },
-      ],
     },
   ],
   plugins: [FuzzySearch()],

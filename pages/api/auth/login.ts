@@ -16,7 +16,8 @@ import { NextHttpHandler, UnauthorizedError, User } from 'types';
  */
 const login: NextHttpHandler = async (req, res) => {
   const [user] = (await nSQL('users')
-    .presetQuery('getByUsername', { username: req.body.username })
+    .query('select')
+    .where(['username', 'LIKE', req.body.username])
     .exec()) as [User];
 
   if (!user)

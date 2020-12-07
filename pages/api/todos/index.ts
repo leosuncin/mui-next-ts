@@ -1,4 +1,5 @@
 import { nSQL } from '@nano-sql/core';
+import { FuzzyUserSanitize } from '@nano-sql/plugin-fuzzy-search';
 import { StatusCodes } from 'http-status-codes';
 import {
   catchErrors,
@@ -22,14 +23,22 @@ const findNotes: NextHttpHandler = async (req, res) => {
   const limit = Math.abs(parseInt(req.query.limit as string, 10) || 10);
   const page = Math.abs(parseInt(req.query.page as string, 10) || 1);
   const offset = Math.abs(parseInt(req.query.offset as string, 10) || 0);
+  const { search } = req.query as Record<string, string>;
 
   const notes = (await nSQL('todos')
-    .presetQuery('searchByText', {
-      search: req.query.search,
-      offset: offset > 0 ? offset : (page - 1) * limit,
-      limit,
-      createdBy: req.user.id,
-    })
+    .query('select')
+    .where(
+      search
+        ? [
+            [`SEARCH(text, "${FuzzyUserSanitize(search)}")`, '=', 0],
+            'AND',
+            ['createdBy', 'LIKE', req.user.id],
+          ]
+        : ['createdBy', 'LIKE', req.user.id],
+    )
+    .orderBy(['createdAt DESC'])
+    .limit(limit)
+    .offset(offset > 0 ? offset : (page - 1) * limit)
     .exec()) as Array<Todo>;
 
   res.json(notes);
