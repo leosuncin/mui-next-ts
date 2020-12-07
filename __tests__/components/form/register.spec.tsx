@@ -3,6 +3,10 @@ import userEvent from '@testing-library/user-event';
 import RegisterForm, { validations } from 'components/forms/register';
 import React from 'react';
 
+jest.mock('next/link', () => ({ children, href }) =>
+  React.cloneElement(React.Children.only(children), { href }),
+);
+
 describe('<RegisterForm />', () => {
   it('should render', () => {
     expect(render(<RegisterForm onSubmit={jest.fn as any} />)).toBeDefined();

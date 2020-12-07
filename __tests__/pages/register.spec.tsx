@@ -2,33 +2,44 @@ import { render, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AuthProvider } from 'hooks/auth-context';
 import { UserProvider } from 'hooks/user-context';
+import { RouterContext } from 'next/dist/next-server/lib/router-context';
+import type { NextRouter } from 'next/router';
 import RegisterPage from 'pages/register';
 import React from 'react';
 import server from 'utils/test-server';
 
-const spyRouterPush = jest.fn();
-jest.mock('next/router', () => ({
-  useRouter() {
-    return {
-      push: spyRouterPush,
-    };
-  },
-}));
+const routerMocked: jest.Mocked<NextRouter> = {
+  pathname: '/register',
+  route: '/register',
+  query: {},
+  asPath: '/register',
+  isFallback: false,
+  basePath: '',
+  events: { emit: jest.fn(), off: jest.fn(), on: jest.fn() },
+  push: jest.fn(),
+  replace: jest.fn(),
+  reload: jest.fn(),
+  back: jest.fn(),
+  prefetch: jest.fn().mockResolvedValue(undefined),
+  beforePopState: jest.fn(),
+};
 
 describe('<RegisterPage />', () => {
   const tree = (
-    <UserProvider>
-      <AuthProvider>
-        <RegisterPage />
-      </AuthProvider>
-    </UserProvider>
+    <RouterContext.Provider value={routerMocked}>
+      <UserProvider>
+        <AuthProvider>
+          <RegisterPage />
+        </AuthProvider>
+      </UserProvider>
+    </RouterContext.Provider>
   );
 
   beforeAll(() => server.listen());
 
   afterEach(() => {
     server.resetHandlers();
-    spyRouterPush.mockReset();
+    routerMocked.push.mockReset();
   });
 
   afterAll(() => server.close());
@@ -62,6 +73,6 @@ describe('<RegisterPage />', () => {
     userEvent.click(getByText(/Sign Me Up/i));
     await waitForElementToBeRemoved(getByTestId('registering-user'));
 
-    expect(spyRouterPush).toHaveBeenCalledTimes(1);
+    expect(routerMocked.push).toHaveBeenCalledTimes(1);
   });
 });

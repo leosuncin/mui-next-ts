@@ -3,6 +3,10 @@ import userEvent from '@testing-library/user-event';
 import LoginForm, { validations } from 'components/forms/login';
 import React from 'react';
 
+jest.mock('next/link', () => ({ children, href }) =>
+  React.cloneElement(React.Children.only(children), { href }),
+);
+
 describe('<LoginForm />', () => {
   const usernameLabel = /Username/i;
   const passwordLabel = /Password/i;
