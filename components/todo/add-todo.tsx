@@ -1,4 +1,4 @@
-import { yupResolver } from '@hookform/resolvers';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Grid, TextField } from '@material-ui/core';
 import { createTodoSchema } from 'libs/validation';
 import PropTypes from 'prop-types';
