@@ -7,6 +7,5 @@
     "username": "admin",
     "password": "Pa$$w0rd!"
   },
-  "experimentalFetchPolyfill": true,
   "projectId": "kbsfrp"
 }

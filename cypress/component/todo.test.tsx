@@ -17,7 +17,9 @@ describe('Todo component', () => {
   const clearCompletedButton = /Clear completed/i;
 
   beforeEach(() => {
-    cy.server().route('GET', '/api/todos?page=*', todos).as('listTodo');
+    cy.intercept('GET', '/api/todos', req => {
+      req.reply(todos);
+    }).as('listTodo');
   });
 
   it('should list the todos', () => {
@@ -44,7 +46,7 @@ describe('Todo component', () => {
   });
 
   it('should clear the completed ones', () => {
-    cy.route('DELETE', '/api/todos/*', '');
+    cy.intercept('DELETE', '**/api/todos/**', { statusCode: 204, body: null });
     mount(<Todo />);
 
     cy.findByRole('button', { name: clearCompletedButton }).click();
@@ -56,7 +58,9 @@ describe('Todo component', () => {
 
   it('should create a new todo and add to list', () => {
     const todo = todoBuild();
-    cy.route('POST', '/api/todos', todo).as('saveTodo');
+    cy.intercept('POST', '/api/todos', { statusCode: 201, body: todo }).as(
+      'saveTodo',
+    );
     mount(<Todo />);
 
     cy.findByRole('textbox', { name: /Text/ }).type(todo.text);
@@ -64,22 +68,20 @@ describe('Todo component', () => {
 
     cy.wait('@saveTodo');
 
-    cy.findByRole('list').children().first().contains(todo.text);
+    cy.findAllByRole('listitem').first().should('contain.text', todo.text);
   });
 
   it('should edit one todo', () => {
     const todo = faker.random.arrayElement(todos);
     const text = faker.lorem.words();
-    cy.route(
-      'PUT',
-      '/api/todos/*',
-      Object.assign(
-        {},
-        todo,
-        { text },
-        { updatedAt: new Date().toISOString() },
-      ),
-    );
+    cy.intercept('PUT', '**/api/todos/**', {
+      statusCode: 200,
+      body: {
+        ...todo,
+        text,
+        updatedAt: new Date().toISOString(),
+      },
+    });
     mount(<Todo />);
 
     cy.findByRole('listitem', { name: `Double click to edit ${todo.text}` })
@@ -97,16 +99,18 @@ describe('Todo component', () => {
     const todo = faker.random.arrayElement(todos);
     const newActiveCount = activeCount + (todo.done ? 1 : -1);
     const newCompletedCount = completedCount + (todo.done ? -1 : 1);
-    cy.route(
-      'PUT',
-      '/api/todos/*',
-      Object.assign(
-        {},
-        todo,
-        { done: !todo.done },
-        { updatedAt: new Date().toISOString() },
-      ),
-    );
+    cy.intercept('PUT', '**/api/todos/**', req => {
+      const {
+        groups: { id },
+      } = /\/api\/todos\/(?<id>.*)/.exec(req.url);
+      const todo = todos.find(todo => todo.id === id);
+
+      req.reply(200, {
+        ...todo,
+        ...req.body,
+        updatedAt: new Date().toISOString(),
+      });
+    });
     mount(<Todo />);
 
     cy.findByRole('listitem', { name: RegExp(todo.text) })
@@ -124,7 +128,7 @@ describe('Todo component', () => {
 
   it('should remove one todo', () => {
     const todo = faker.random.arrayElement(todos);
-    cy.route('DELETE', '/api/todos/*', '');
+    cy.intercept('DELETE', '**/api/todos/**', { statusCode: 204, body: null });
     mount(<Todo />);
 
     cy.findByRole('listitem', { name: RegExp(todo.text) })
@@ -139,16 +143,20 @@ describe('Todo component', () => {
 
   it('should revert remove on error', () => {
     const todo = faker.random.arrayElement(todos);
-    cy.route({
-      method: 'DELETE',
-      url: '/api/todos/*',
-      status: 503,
-      response: {
-        statusCode: 503,
-        message: 'Database connection error',
+    cy.intercept(
+      {
+        method: 'DELETE',
+        url: '**/api/todos/**',
       },
-      delay: 500,
-    });
+      {
+        statusCode: 503,
+        body: {
+          statusCode: 503,
+          message: 'Database connection error',
+        },
+        delayMs: 2e3,
+      },
+    );
     mount(<Todo />);
 
     cy.findByRole('listitem', { name: RegExp(todo.text) })
@@ -172,16 +180,20 @@ describe('Todo component', () => {
   it('should revert changes when update request fail', () => {
     const todo = faker.random.arrayElement(todos);
     const text = faker.lorem.words();
-    cy.route({
-      method: 'PUT',
-      url: '/api/todos/*',
-      status: 503,
-      response: {
-        statusCode: 503,
-        message: 'Database connection error',
+    cy.intercept(
+      {
+        method: 'PUT',
+        url: '**/api/todos/**',
       },
-      delay: 500,
-    });
+      {
+        statusCode: 503,
+        body: {
+          statusCode: 503,
+          message: 'Database connection error',
+        },
+        delayMs: 2e3,
+      },
+    );
     mount(<Todo />);
 
     cy.findByRole('listitem', { name: `Double click to edit ${todo.text}` })

@@ -6,7 +6,6 @@
   "viewportWidth": 480,
   "viewportHeight": 380,
   "video": false,
-  "experimentalFetchPolyfill": true,
   "experimentalComponentTesting": true,
   "componentFolder": "cypress/component"
 }

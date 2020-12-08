@@ -16,7 +16,7 @@ const usernameErrorText = /Username.+(?:empty|too short)/i;
 const passwordErrorText = /Password.+(?:empty|too short)/i;
 const testMachine = createMachineWithTests({
   pristine(cy: Cypress.cy) {
-    cy.findByRole('img', { name: 'sad face' }).should('not.be.visible');
+    cy.findByRole('img', { name: 'sad face' }).should('not.exist');
   },
   'invalid.firstName'(cy: Cypress.cy) {
     cy.findByText(firstNameErrorText).should('exist');
@@ -37,7 +37,7 @@ const testMachine = createMachineWithTests({
     cy.findByText(passwordErrorText).should('not.exist');
   },
   success(cy: Cypress.cy) {
-    cy.wait('@sendRegister').its('status').should('equal', 200);
+    cy.wait('@sendRegister').its('response.statusCode').should('equal', 200);
     cy.waitUntil(() =>
       cy.location('pathname').then(pathname => pathname !== '/register'),
     )
@@ -45,7 +45,7 @@ const testMachine = createMachineWithTests({
       .should('equal', '/');
   },
   fail(cy: Cypress.cy) {
-    cy.wait('@sendRegister').its('status').should('equal', 409);
+    cy.wait('@sendRegister').its('response.statusCode').should('equal', 409);
     cy.findByRole('img', { name: 'sad face' }).should('be.visible');
     cy.findByText(/Username or Email already registered/i).should('exist');
   },
@@ -122,8 +122,7 @@ describe('Register page', () => {
     describe(plan.description, () => {
       plan.paths.forEach(path => {
         it(path.description, () => {
-          cy.server()
-            .route('POST', '/api/auth/register')
+          cy.intercept('POST', '/api/auth/register')
             .as('sendRegister')
             .visit('/register')
             .then(() => {
@@ -139,8 +138,7 @@ describe('Register page', () => {
   // });
 
   it('should go to login', () => {
-    cy.server()
-      .route('POST', '/api/auth/register')
+    cy.intercept('POST', '/api/auth/register')
       .as('sendRegister')
       .visit('/register');
 

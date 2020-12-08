@@ -1,6 +1,6 @@
 describe('Main page', () => {
   beforeEach(() => {
-    cy.server().route('DELETE', '/api/auth/logout').as('logout').visit('/');
+    cy.intercept('DELETE', '/api/auth/logout').as('logout').visit('/');
   });
 
   it('should redirect to login', () => {

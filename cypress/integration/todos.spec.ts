@@ -3,12 +3,11 @@ import faker from 'faker';
 describe('Todos page', () => {
   beforeEach(() => {
     cy.login(Cypress.env('username'), Cypress.env('password'));
-    cy.server()
-      .route('POST', '/api/todos')
+    cy.intercept('POST', '/api/todos')
       .as('save-todo')
-      .route('PUT', '/api/todos/*')
+      .intercept('PUT', '**/api/todos/**')
       .as('edit-todo')
-      .route('DELETE', '/api/todos/*')
+      .intercept('DELETE', '**/api/todos/**')
       .as('remove-todo')
       .visit('/todos');
   });
@@ -26,7 +25,7 @@ describe('Todos page', () => {
     cy.findByRole('button', { name: /Add/i }).click();
     cy.findByText(text);
 
-    cy.wait('@save-todo').its('status').should('equal', 201);
+    cy.wait('@save-todo').its('response.statusCode').should('equal', 201);
   });
 
   it('should mark one todo as completed', () => {
@@ -35,7 +34,7 @@ describe('Todos page', () => {
       .within(() => {
         cy.findByRole('checkbox', { name: /^Mark as done$/i }).click();
         cy.wait('@edit-todo')
-          .its('responseBody')
+          .its('response.body')
           .should('satisfy', todo => todo.done);
       });
   });
@@ -50,7 +49,7 @@ describe('Todos page', () => {
         cy.findAllByRole('button').first().dblclick();
         cy.findByRole('textbox').clear().type(text).type('{enter}');
         cy.wait('@edit-todo')
-          .its('responseBody')
+          .its('response.body')
           .should('satisfy', todo => todo.text === text);
       });
   });
@@ -60,7 +59,7 @@ describe('Todos page', () => {
       .last()
       .within(() => {
         cy.findByRole('button', { name: /^Delete todo/i }).click();
-        cy.wait('@remove-todo').its('status').should('equal', 204);
+        cy.wait('@remove-todo').its('response.statusCode').should('equal', 204);
       });
   });
 });
