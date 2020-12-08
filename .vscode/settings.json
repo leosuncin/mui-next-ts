@@ -6,6 +6,11 @@
       "url": "https://on.cypress.io/cypress.schema.json"
     }
   ],
+  "yaml.schemas": {
+    "http://json.schemastore.org/github-workflow": [
+      "**/.github/workflows/*.yml"
+    ]
+  },
   "emmet.includeLanguages": {
     "javascript": "javascriptreact",
     "typescript": "typescriptreact"
