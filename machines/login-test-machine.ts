@@ -1,5 +1,6 @@
 import set from 'lodash.set';
 import {
+  EventObject,
   MachineConfig,
   StateMachine,
   StateSchema,
@@ -23,15 +24,13 @@ export interface LoginTestStateSchema extends StateSchema<never> {
     locked: {};
   };
 }
-export type TypeUsernameEvent = {
-  type: string;
+interface TypeUsernameEvent extends EventObject {
   username: string;
-};
-export type TypePasswordEvent = {
-  type: string;
+}
+interface TypePasswordEvent extends EventObject {
   password: string;
-};
-export type FillEvent = TypeUsernameEvent & TypePasswordEvent;
+}
+export interface FillEvent extends TypeUsernameEvent, TypePasswordEvent {}
 
 function isValidUsername(username: string): boolean {
   return typeof username === 'string' && username.trim().length >= 5;

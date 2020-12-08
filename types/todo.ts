@@ -9,15 +9,17 @@ export interface Todo {
   createdBy: uuid;
 }
 
-export type TodoResponse = {
+export interface TodoResponse {
   id: string;
   text: string;
   done: boolean;
   createdAt: string;
   updatedAt: string;
   createdBy: string;
+}
+
+export type CreateTodo = {
+  text: string;
 };
 
-export type CreateTodo = Pick<Todo, 'text'>;
-
-export type UpdateTodo = Partial<Pick<Todo, 'text' | 'done'>>;
+export type UpdateTodo = { text: string } | { done: boolean };

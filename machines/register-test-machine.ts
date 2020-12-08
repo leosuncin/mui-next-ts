@@ -1,6 +1,7 @@
 import { users } from 'libs/db/users';
 import set from 'lodash.set';
 import {
+  EventObject,
   MachineConfig,
   StateMachine,
   StateSchema,
@@ -24,26 +25,23 @@ export interface RegisterTestStateSchema extends StateSchema<never> {
     fail: {};
   };
 }
-export type TypeFirstNameEvent = {
-  type: string;
+interface TypeFirstNameEvent extends EventObject {
   firstName: string;
-};
-export type TypeLastNameEvent = {
-  type: string;
+}
+interface TypeLastNameEvent extends EventObject {
   lastName: string;
-};
-export type TypeUsernameEvent = {
-  type: string;
+}
+interface TypeUsernameEvent extends EventObject {
   username: string;
-};
-export type TypePasswordEvent = {
-  type: string;
+}
+interface TypePasswordEvent extends EventObject {
   password: string;
-};
-export type FillEvent = TypeFirstNameEvent &
-  TypeLastNameEvent &
-  TypeUsernameEvent &
-  TypePasswordEvent;
+}
+export interface FillEvent
+  extends TypeFirstNameEvent,
+    TypeLastNameEvent,
+    TypeUsernameEvent,
+    TypePasswordEvent {}
 
 function isValidFirstName(firstName: string): boolean {
   firstName = firstName.includes('{backspace}') ? '' : firstName;
