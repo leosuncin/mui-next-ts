@@ -77,156 +77,170 @@ const defaultState: TodoState = {
   _filter: 'all',
 };
 
+const todoReducers: Record<
+  TodoEvent['type'],
+  EffectReducer<TodoState, TodoEvent, TodoEffect>
+> = {
+  FETCH_TODOS(state, _, exec) {
+    exec({ type: 'fetchTodos' });
+
+    return {
+      ...state,
+      loading: true,
+    };
+  },
+  TODOS_FETCHED(state, event: TodoFetchSuccessEvent) {
+    return {
+      ...state,
+      loading: false,
+      all: event.payload,
+      completed: completedSelector(event.payload),
+      active: activeSelector(event.payload),
+    };
+  },
+  ADD_TODO(state, { payload }: TodoAddEvent, exec) {
+    exec({ type: 'addTodo', payload });
+
+    return {
+      ...state,
+      loading: true,
+      error: undefined,
+    };
+  },
+  TODO_SAVED(state, { payload }: TodoAddSuccessEvent) {
+    return {
+      ...state,
+      loading: false,
+      all: [payload, ...state.all],
+      active: [payload, ...state.active],
+    };
+  },
+  EDIT_TODO(state, { payload }: TodoUpdateEvent, exec) {
+    exec({ type: 'editTodo', payload });
+
+    const _position = state.all.findIndex(todo => todo.id === payload.id);
+    const all = state.all.map(todo =>
+      todo.id === payload.id
+        ? { ...todo, ...payload.body, updatedAt: new Date().toISOString() }
+        : todo,
+    );
+    const completed = completedSelector(all);
+    const active = activeSelector(all);
+
+    return {
+      ...state,
+      saving: true,
+      error: undefined,
+      all,
+      completed,
+      active,
+      _todo: state.all[_position],
+      _position,
+    };
+  },
+  TODO_CHANGED(state, { payload }: TodoUpdateSuccessEvent) {
+    const all = state.all.map(todo =>
+      todo.id === payload.id ? payload : todo,
+    );
+
+    return {
+      ...state,
+      saving: false,
+      all,
+      completed: payload.done ? completedSelector(all) : state.completed,
+      active: !payload.done ? activeSelector(all) : state.active,
+    };
+  },
+  TODO_REVERT_CHANGE(state, { payload: error }: TodoUpdateFailEvent) {
+    const all = state.all.map(todo =>
+      todo.id === state._todo.id ? state._todo : todo,
+    );
+
+    return {
+      ...state,
+      saving: false,
+      error,
+      all,
+      active: activeSelector(all),
+      completed: completedSelector(all),
+      _todo: undefined,
+      _position: undefined,
+    };
+  },
+  REMOVE_TODO(state, { payload }: TodoRemoveEvent, exec) {
+    exec({ type: 'removeTodo', payload: payload.todo.id });
+
+    const all = state.all.filter(todo => todo.id !== payload.todo.id);
+    const completed = payload.todo.done
+      ? state.completed.filter(todo => todo.id !== payload.todo.id)
+      : state.completed;
+    const active = !payload.todo.done
+      ? state.active.filter(todo => todo.id !== payload.todo.id)
+      : state.active;
+    const _position =
+      payload.position ??
+      state.all.findIndex(todo => todo.id === payload.todo.id);
+
+    return {
+      ...state,
+      error: undefined,
+      all,
+      completed,
+      active,
+      _todo: payload.todo,
+      _position,
+    };
+  },
+  REMOVE_TODO_FAILED(state, { payload: error }: TodoRemoveFailEvent) {
+    const all = [
+      ...state.all.slice(0, state._position),
+      state._todo,
+      ...state.all.slice(state._position),
+    ];
+    const active = !state._todo.done
+      ? [...state.active, state._todo].sort((a, b) =>
+          a.createdAt.localeCompare(b.createdAt),
+        )
+      : state.active;
+    const completed = state._todo.done
+      ? [...state.completed, state._todo].sort((a, b) =>
+          a.createdAt.localeCompare(b.createdAt),
+        )
+      : state.completed;
+
+    return {
+      ...state,
+      error,
+      all,
+      active,
+      completed,
+      _todo: undefined,
+      _position: undefined,
+    };
+  },
+  SWITCH_FILTER(state, { payload: _filter }: TodoChangeFilterEvent) {
+    return {
+      ...state,
+      _filter,
+    };
+  },
+  ERROR(state, { payload: error }: TodoErrorEvent) {
+    return {
+      ...state,
+      loading: false,
+      error,
+    };
+  },
+};
+
 export const todoReducer: EffectReducer<TodoState, TodoEvent, TodoEffect> = (
   state = defaultState,
   event,
   exec,
-) => {
-  switch (event.type) {
-    case 'FETCH_TODOS':
-      exec({ type: 'fetchTodos' });
-      return {
-        ...state,
-        loading: true,
-      };
-
-    case 'TODOS_FETCHED':
-      return {
-        ...state,
-        loading: false,
-        all: event.payload,
-        completed: completedSelector(event.payload),
-        active: activeSelector(event.payload),
-      };
-
-    case 'ADD_TODO':
-      exec({ type: 'addTodo', payload: event.payload });
-      return {
-        ...state,
-        loading: true,
-        error: undefined,
-      };
-
-    case 'TODO_SAVED':
-      return {
-        ...state,
-        loading: false,
-        all: [event.payload, ...state.all],
-        active: [event.payload, ...state.active],
-      };
-
-    case 'EDIT_TODO':
-      exec({ type: 'editTodo', payload: event.payload });
-      const _position = state.all.findIndex(
-        todo => todo.id === event.payload.id,
-      );
-      const all = state.all.map(todo =>
-        todo.id === event.payload.id
-          ? Object.assign({}, todo, event.payload.body, {
-              updatedAt: new Date().toISOString(),
-            })
-          : todo,
-      );
-      const completed = completedSelector(all);
-      const active = activeSelector(all);
-      return {
-        ...state,
-        saving: true,
-        error: undefined,
-        all,
-        completed,
-        active,
-        _todo: state.all[_position],
-        _position,
-      };
-
-    case 'TODO_CHANGED':
-      const _all = state.all.map(todo =>
-        todo.id === event.payload.id ? event.payload : todo,
-      );
-      return {
-        ...state,
-        saving: false,
-        all: _all,
-        completed: event.payload.done
-          ? completedSelector(_all)
-          : state.completed,
-        active: !event.payload.done ? activeSelector(_all) : state.active,
-      };
-
-    case 'TODO_REVERT_CHANGE':
-      const restoredAll = state.all.map(todo =>
-        todo.id === state._todo.id ? state._todo : todo,
-      );
-      return {
-        ...state,
-        saving: false,
-        error: event.payload,
-        all: restoredAll,
-        active: activeSelector(restoredAll),
-        completed: completedSelector(restoredAll),
-        _todo: undefined,
-        _position: undefined,
-      };
-
-    case 'REMOVE_TODO':
-      exec({ type: 'removeTodo', payload: event.payload.todo.id });
-      return {
-        ...state,
-        error: undefined,
-        all: state.all.filter(todo => todo.id !== event.payload.todo.id),
-        completed: event.payload.todo.done
-          ? state.completed.filter(todo => todo.id !== event.payload.todo.id)
-          : state.completed,
-        active: !event.payload.todo.done
-          ? state.active.filter(todo => todo.id !== event.payload.todo.id)
-          : state.active,
-        _todo: event.payload.todo,
-        _position:
-          event.payload.position ??
-          state.all.findIndex(todo => todo.id === event.payload.todo.id),
-      };
-
-    case 'REMOVE_TODO_FAILED':
-      return {
-        ...state,
-        error: event.payload,
-        all: [
-          ...state.all.slice(0, state._position),
-          state._todo,
-          ...state.all.slice(state._position),
-        ],
-        active: !state._todo.done
-          ? [...state.active, state._todo].sort((a, b) =>
-              a.createdAt.localeCompare(b.createdAt),
-            )
-          : state.active,
-        completed: state._todo.done
-          ? [...state.completed, state._todo].sort((a, b) =>
-              a.createdAt.localeCompare(b.createdAt),
-            )
-          : state.completed,
-        _todo: undefined,
-        _position: undefined,
-      };
-
-    case 'SWITCH_FILTER':
-      return {
-        ...state,
-        _filter: event.payload,
-      };
-
-    case 'ERROR':
-      return {
-        ...state,
-        loading: false,
-        error: event.payload,
-      };
-
-    default:
-      return state;
-  }
-};
+) =>
+  event.type in todoReducers
+    ? todoReducers[event.type](state, event, exec)
+    : state;
 const completedSelector = (todos: Todo[]) => todos.filter(todo => todo.done);
 const activeSelector = (todos: Todo[]) => todos.filter(todo => !todo.done);
 

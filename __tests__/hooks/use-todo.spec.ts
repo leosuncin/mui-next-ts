@@ -336,6 +336,10 @@ describe('useTodo Hook', () => {
       expect(nextState.active).toHaveLength(2);
       expect(nextState.completed).toHaveLength(4);
       expect(nextState.all[3]).toHaveProperty('done', true);
+      expect(nextState.all[3]).toHaveProperty(
+        'text',
+        'Do every night: Try to take over the world',
+      );
     });
 
     it('should handle TODO_CHANGED event', () => {
