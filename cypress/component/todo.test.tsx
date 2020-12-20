@@ -68,6 +68,7 @@ describe('Todo component', () => {
 
     cy.wait('@saveTodo');
 
+    cy.findAllByRole('listitem').should('have.lengthOf', todos.length + 1);
     cy.findAllByRole('listitem').first().should('contain.text', todo.text);
   });
 
