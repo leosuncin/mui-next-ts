@@ -2,18 +2,24 @@ name: Unit test
 
 on: [push, pull_request]
 
+env:
+  CYPRESS_INSTALL_BINARY: 0
+
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: haya14busa/action-cond@v1
+    - name: Checkout 🛎
+      uses: actions/checkout@v2
+    - name: Choose reporter for ReviewDog 🚦
+      uses: haya14busa/action-cond@v1
       id: reporter
       with:
         cond: ${{ github.event_name == 'pull_request' }}
         if_true: "github-pr-review"
         if_false: "github-check"
-    - uses: actions/checkout@v2
-    - uses: reviewdog/action-eslint@v1
+    - name: Run ESlint 🧹
+      uses: reviewdog/action-eslint@v1
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         eslint_flags: --ext '.js' --ext '.ts' --ext '.tsx' .
@@ -22,33 +28,31 @@ jobs:
   tsc:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: bahmutov/npm-install@v1
-    - uses: icrawl/action-tsc@v1
+    - name: Checkout 🛎
+      uses: actions/checkout@v2
+    - name: Install NPM dependencies 📦
+      uses: bahmutov/npm-install@v1
+    - name: Check types 🧩
+      uses: icrawl/action-tsc@v1
 
   unit:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
     steps:
-    - uses: actions/checkout@v2
-    - uses: bahmutov/npm-install@v1
-    - uses: actions/cache@v2
-      name: Cache Next.js build
-      with:
-        path: .next/cache
-        key: ${{ runner.os }}-next-build-${{ hashFiles('**/next.config.js') }}
-    - name: Test & publish code coverage
+    - name: Checkout 🛎
+      uses: actions/checkout@v2
+    - name: Install NPM dependencies 📦
+      uses: bahmutov/npm-install@v1
+    - name: Run unit tests 🧪 & publish code coverage 🚀
       uses: paambaati/codeclimate-action@v2.6.0
-      env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_REPO_TOKEN }}
-        APP_SECRET: ${{ secrets.APP_SECRET }}
-        JWT_ISSUER: unit-tests
-        CYPRESS_INSTALL_BINARY: 0
       with:
         coverageCommand: npm test -- --coverage
-        coverageLocations: |
-          ${{ github.workspace }}/coverage/unit/lcov.info:lcov
-    - name: Monitor coverage
+        coverageLocations: ${{ github.workspace }}/coverage/unit/lcov.info:lcov
+      env:
+        APP_SECRET: ${{ secrets.APP_SECRET }}
+        JWT_ISSUER: unit-tests
+        CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_REPO_TOKEN }}
+    - name: Monitor coverage 📫
       if: "github.event_name == 'pull_request'"
       uses: slavcodev/coverage-monitor-action@1.1.0
       with:
@@ -56,7 +60,8 @@ jobs:
         clover_file: coverage/unit/clover.xml
         threshold_alert: 50
         threshold_warning: 80
-    - uses: actions/upload-artifact@v2
+    - name: Upload code coverage ⬆️
+      uses: actions/upload-artifact@v2
       with:
         name: unit-coverage
         path: coverage/unit
