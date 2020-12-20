@@ -1,56 +1,65 @@
+import { nSQL } from '@nano-sql/core';
 import faker from 'faker';
-import HttpStatus from 'http-status-codes';
-import jwt from 'jsonwebtoken';
 import { hashPassword } from 'libs/encrypt';
-import { validateRegister } from 'libs/validate';
-import withDB from 'middlewares/with-db';
-
-faker.seed(6996);
+import { signJWT } from 'libs/jwt';
+import {
+  catchErrors,
+  validateBody,
+  validateMethod,
+  withDB,
+} from 'libs/middleware';
+import { registerSchema } from 'libs/validation';
+import { setCookie } from 'nookies';
+import { ConflictError, NextHttpHandler, User } from 'types';
 
 /**
- * Mock backend endpoint
+ * Register a new a user
  */
-export default withDB((req, res) => {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    res.status(HttpStatus.METHOD_NOT_ALLOWED);
-    return res.send({
-      statusCode: HttpStatus.METHOD_NOT_ALLOWED,
-      error: HttpStatus.getStatusText(HttpStatus.METHOD_NOT_ALLOWED),
-    });
-  }
+const register: NextHttpHandler = async (req, res) => {
+  const [{ total }] = await nSQL('users')
+    .query('select', ['COUNT(*) AS total'])
+    .where(['username', 'LIKE', req.body.username])
+    .exec();
 
-  const message = validateRegister(req.body);
+  if (total > 0)
+    throw new ConflictError('Username or Email already registered');
 
-  if (message.length)
-    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).send({
-      statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-      error: HttpStatus.getStatusText(HttpStatus.UNPROCESSABLE_ENTITY),
-      message,
-    });
+  const [user] = (await nSQL('users')
+    .query('upsert', {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      username: req.body.username,
+      password: hashPassword(req.body.password),
+      picture: faker.image.avatar(),
+      bio: faker.lorem.paragraph(),
+    })
+    .exec()) as [User];
 
-  if (req.db.has(req.body.email)) {
-    return res.status(HttpStatus.CONFLICT).send({
-      statusCode: HttpStatus.CONFLICT,
-      error: HttpStatus.getStatusText(HttpStatus.CONFLICT),
-      message: 'Username or Email already registered',
-    });
-  }
-  req.db.set(req.body.email, hashPassword(req.body.password));
-
-  const token = jwt.sign(
-    { sub: req.body.email },
-    process.env.APP_SECRET ?? '5€cr3t',
-  );
+  const token = signJWT(user);
+  const userWithoutPassword = {
+    id: user.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    username: user.username,
+    picture: user.picture,
+    bio: user.bio,
+  };
 
   res.setHeader('Authorization', `Bearer ${token}`);
-  res.setHeader('Set-Cookie', `token=s%3${token}; Path=/; HttpOnly`);
-
-  res.json({
-    id: faker.random.uuid(),
-    username: req.body.email,
-    name: req.body.firstName + ' ' + req.body.lastName,
-    picture: faker.image.avatar(),
-    bio: faker.lorem.paragraph(),
+  setCookie({ res }, 'token', token, {
+    httpOnly: true,
+    path: '/',
+    sameSite: 'strict',
+    maxAge: 30 * 24 * 3600, // 30 days
   });
-});
+  setCookie({ res }, 'sessionUser', JSON.stringify(userWithoutPassword), {
+    path: '/',
+    sameSite: 'strict',
+  });
+
+  res.json(userWithoutPassword);
+};
+
+export default catchErrors(
+  validateMethod(['POST'])(validateBody(registerSchema)(withDB(register))),
+);

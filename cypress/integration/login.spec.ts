@@ -1,9 +1,6 @@
 import { createModel } from '@xstate/test';
 import faker from 'faker';
-
-import createMachineWithTests, {
-  FillEvent,
-} from '../../machines/login-test-machine';
+import createMachineWithTests, { FillEvent } from 'machines/login-test-machine';
 
 const usernameLabel = /Username/i;
 const passwordLabel = /Password/i;
@@ -65,7 +62,7 @@ const testModel = createModel(testMachine, {
       cy.findByText(submitButton)
         .click()
         .wait('@sendLogin')
-        .its('status')
+        .its('response.statusCode')
         .should('satisfy', status => [200, 401].includes(status));
     },
     RETRY(cy: Cypress.cy) {
@@ -89,8 +86,7 @@ describe('Login page', () => {
       plan.paths.forEach(path => {
         it(path.description, () =>
           cy
-            .server()
-            .route('POST', '/api/auth/login')
+            .intercept('POST', '/api/auth/login')
             .as('sendLogin')
             .visit('/login')
             .then(() => path.test(cy)),
@@ -104,10 +100,7 @@ describe('Login page', () => {
   // });
 
   it('should go to register', () => {
-    cy.server()
-      .route('POST', '/api/auth/login')
-      .as('sendLogin')
-      .visit('/login');
+    cy.intercept('POST', '/api/auth/login').as('sendLogin').visit('/login');
 
     cy.findByText(/Register/i).click();
 

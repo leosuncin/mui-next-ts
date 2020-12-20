@@ -1,10 +1,18 @@
 {
-  "emmet.triggerExpansionOnTab": true,
   "typescript.tsdk": "node_modules/typescript/lib",
   "json.schemas": [
     {
       "fileMatch": ["cypress.json"],
       "url": "https://on.cypress.io/cypress.schema.json"
     }
-  ]
+  ],
+  "yaml.schemas": {
+    "http://json.schemastore.org/github-workflow": [
+      "**/.github/workflows/*.yml"
+    ]
+  },
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact"
+  }
 }

@@ -1,5 +1,7 @@
+import { users } from 'libs/db/users';
 import set from 'lodash.set';
 import {
+  EventObject,
   MachineConfig,
   StateMachine,
   StateSchema,
@@ -13,7 +15,7 @@ export interface RegisterTestStateSchema extends StateSchema<never> {
       states: {
         firstName: {};
         lastName: {};
-        email: {};
+        username: {};
         password: {};
       };
     };
@@ -23,26 +25,23 @@ export interface RegisterTestStateSchema extends StateSchema<never> {
     fail: {};
   };
 }
-export type TypeFirstNameEvent = {
-  type: string;
+interface TypeFirstNameEvent extends EventObject {
   firstName: string;
-};
-export type TypeLastNameEvent = {
-  type: string;
+}
+interface TypeLastNameEvent extends EventObject {
   lastName: string;
-};
-export type TypeEmailEvent = {
-  type: string;
-  email: string;
-};
-export type TypePasswordEvent = {
-  type: string;
+}
+interface TypeUsernameEvent extends EventObject {
+  username: string;
+}
+interface TypePasswordEvent extends EventObject {
   password: string;
-};
-export type FillEvent = TypeFirstNameEvent &
-  TypeLastNameEvent &
-  TypeEmailEvent &
-  TypePasswordEvent;
+}
+export interface FillEvent
+  extends TypeFirstNameEvent,
+    TypeLastNameEvent,
+    TypeUsernameEvent,
+    TypePasswordEvent {}
 
 function isValidFirstName(firstName: string): boolean {
   firstName = firstName.includes('{backspace}') ? '' : firstName;
@@ -52,14 +51,11 @@ function isValidLastName(lastName: string): boolean {
   lastName = lastName.includes('{backspace}') ? '' : lastName;
   return typeof lastName === 'string' && lastName.trim().length > 0;
 }
-function isValidEmail(email: string): boolean {
-  email = email.includes('{backspace}') ? '' : email;
-  return (
-    typeof email === 'string' &&
-    /^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(
-      email,
-    )
-  );
+function isValidUsername(username: string): boolean {
+  username = username.includes('{backspace}')
+    ? ''
+    : username.replace('{enter}', '');
+  return typeof username === 'string' && username.length >= 5;
 }
 function isValidPassword(password: string): boolean {
   password = password.includes('{backspace}')
@@ -90,8 +86,9 @@ const registerTestConfig: MachineConfig<
               !isValidLastName(event.lastName),
           },
           {
-            target: 'invalid.email',
-            cond: (_, event: TypeEmailEvent) => !isValidEmail(event.email),
+            target: 'invalid.username',
+            cond: (_, event: TypeUsernameEvent) =>
+              !isValidUsername(event.username),
           },
           {
             target: 'invalid.password',
@@ -104,14 +101,14 @@ const registerTestConfig: MachineConfig<
               isValidFirstName(event.firstName) &&
               isValidLastName(event.lastName) &&
               isValidPassword(event.password) &&
-              ['admin', 'john_doe', 'jane@doe.me'].includes(event.email),
+              users.some(user => user.username === event.username),
           },
           {
             target: 'valid',
             cond: (_, event) =>
               isValidFirstName(event.firstName) &&
               isValidLastName(event.lastName) &&
-              isValidEmail(event.email) &&
+              isValidUsername(event.username) &&
               isValidPassword(event.password),
           },
         ],
@@ -121,7 +118,7 @@ const registerTestConfig: MachineConfig<
       states: {
         firstName: {},
         lastName: {},
-        email: {},
+        username: {},
         password: {},
       },
     },

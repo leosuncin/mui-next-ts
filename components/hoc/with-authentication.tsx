@@ -1,34 +1,30 @@
-import { NextPageContext, NextPage } from 'next';
+import { NextPage } from 'next';
 import Router from 'next/router';
-import nextCookie from 'next-cookies';
+import { parseCookies } from 'nookies';
 import React, { useEffect } from 'react';
-
-import { User } from 'pages/api/auth/login';
+import { UserWithoutPassword as User } from 'types';
 
 export type AuthenticationProps = {
   user: User;
 };
+function parseUser(sessionUser: string) {
+  if (typeof sessionUser !== 'string') return false;
 
-const authentication = (ctx: NextPageContext): User => {
-  const { sessionUser } = nextCookie(ctx);
-
-  if (!sessionUser) {
-    if (process.browser) Router.push('/login');
-    else {
-      ctx.res.writeHead(302, { Location: '/login' });
-      ctx.res.end();
-    }
-  } else return (sessionUser as unknown) as User;
-};
+  try {
+    return JSON.parse(sessionUser);
+  } catch {
+    return false;
+  }
+}
 const withAuthentication = (WrappedPage: NextPage) => {
-  const Wrapper: NextPage<{ user?: User }> = props => {
-    const syncLogout = event => {
-      if (event.key === 'logoutAt') {
-        Router.push('/login');
-      }
-    };
-
+  const Wrapper: NextPage<AuthenticationProps> = props => {
     useEffect(() => {
+      const syncLogout = event => {
+        if (event.key === 'logoutAt') {
+          Router.push('/login');
+        }
+      };
+
       window.addEventListener('storage', syncLogout);
 
       return () => {
@@ -41,7 +37,17 @@ const withAuthentication = (WrappedPage: NextPage) => {
   };
 
   Wrapper.getInitialProps = async ctx => {
-    const user = authentication(ctx);
+    const { token, sessionUser } = parseCookies(ctx);
+    const user = parseUser(sessionUser);
+
+    if (!token || !user) {
+      if (process.browser) {
+        Router.push('/login');
+      } else {
+        ctx.res.writeHead(302, { Location: '/login' });
+        ctx.res.end();
+      }
+    }
 
     const componentProps =
       WrappedPage.getInitialProps && (await WrappedPage.getInitialProps(ctx));

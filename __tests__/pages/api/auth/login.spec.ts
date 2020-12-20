@@ -1,34 +1,56 @@
-import {
-  METHOD_NOT_ALLOWED,
-  OK,
-  UNAUTHORIZED,
-  UNPROCESSABLE_ENTITY,
-} from 'http-status-codes';
+/**
+ * @jest-environment node
+ */
+import fc from 'fast-check';
+import { StatusCodes } from 'http-status-codes';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
 import loginHandler from 'pages/api/auth/login';
+import { AuthLogin } from 'types';
 
 describe('/api/auth/login', () => {
-  it('should validate the request method', () => {
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>();
-    req._setMethod('PUT');
+  it('should validate the request method', async () => {
+    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+      method: 'PUT',
+    });
 
-    loginHandler(req as any, res);
+    await loginHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(METHOD_NOT_ALLOWED);
+    expect(res._getStatusCode()).toBe(StatusCodes.METHOD_NOT_ALLOWED);
+    expect(res._getHeaders()).toHaveProperty('allow', 'POST');
   });
 
-  it('should validate the body', () => {
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>();
-    req._setMethod('POST');
+  it('should validate the body', () =>
+    fc.assert(
+      fc.asyncProperty<Partial<AuthLogin>>(
+        fc.record(
+          {
+            username: fc.string({ minLength: 0, maxLength: 4 }),
+            password: fc.string({ minLength: 0, maxLength: 7 }),
+          },
+          { withDeletedKeys: true },
+        ),
+        async body => {
+          const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+            method: 'POST',
+            body,
+          });
 
-    loginHandler(req as any, res);
+          await loginHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(UNPROCESSABLE_ENTITY);
-    expect(Array.isArray(res._getData().message)).toBe(true);
-  });
+          expect(res._getStatusCode()).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+          expect(res._getJSONData()).toHaveProperty(
+            'errors',
+            expect.objectContaining({
+              username: expect.stringMatching(/Username.*/),
+              password: expect.stringMatching(/Password.*/),
+            }),
+          );
+        },
+      ),
+    ));
 
-  it('should validate the username', () => {
+  it('should validate the username', async () => {
     const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
       method: 'POST',
       body: {
@@ -37,13 +59,16 @@ describe('/api/auth/login', () => {
       },
     });
 
-    loginHandler(req as any, res);
+    await loginHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(UNAUTHORIZED);
-    expect(res._getData().message).toMatch(/username/);
+    expect(res._getStatusCode()).toBe(StatusCodes.UNAUTHORIZED);
+    expect(res._getJSONData()).toHaveProperty(
+      'message',
+      expect.stringMatching(/Wrong username/),
+    );
   });
 
-  it('should validate the password', () => {
+  it('should validate the password', async () => {
     const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
       method: 'POST',
       body: {
@@ -52,13 +77,16 @@ describe('/api/auth/login', () => {
       },
     });
 
-    loginHandler(req as any, res);
+    await loginHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(UNAUTHORIZED);
-    expect(res._getData().message).toMatch(/Wrong\s+password/);
+    expect(res._getStatusCode()).toBe(StatusCodes.UNAUTHORIZED);
+    expect(res._getJSONData()).toHaveProperty(
+      'message',
+      expect.stringMatching(/Wrong password/),
+    );
   });
 
-  it('should validate the correct credentials', () => {
+  it('should validate the correct credentials', async () => {
     const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
       method: 'POST',
       body: {
@@ -67,17 +95,20 @@ describe('/api/auth/login', () => {
       },
     });
 
-    loginHandler(req as any, res);
+    await loginHandler(req as any, res);
 
-    expect(res._getStatusCode()).toBe(OK);
+    expect(res._getStatusCode()).toBe(StatusCodes.OK);
     expect(res._getHeaders()).toHaveProperty(
       'authorization',
       expect.stringMatching(/Bearer \w+/),
     );
     expect(res._getHeaders()).toHaveProperty(
       'set-cookie',
-      expect.stringMatching(/token=s%3.+; Path=\/; HttpOnly/),
+      expect.arrayContaining([
+        expect.stringMatching(/token=.+; Path=\/; HttpOnly; SameSite=Strict/),
+      ]),
     );
-    expect(res._getData()).toBeDefined();
+    expect(res._getJSONData()).toBeDefined();
+    expect(res._getJSONData()).not.toHaveProperty('password');
   });
 });

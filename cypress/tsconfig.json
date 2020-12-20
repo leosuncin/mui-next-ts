@@ -1,11 +1,13 @@
 {
   "extends": "../tsconfig.json",
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["../node_modules"],
   "compilerOptions": {
     "isolatedModules": false,
     "target": "es6",
     "module": "es6",
+    "jsx": "react",
+    "baseUrl": "..",
     "types": [
       "cypress",
       "@testing-library/cypress",

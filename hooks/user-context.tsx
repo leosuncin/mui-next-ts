@@ -1,6 +1,5 @@
-import React, { createContext, useState, useContext } from 'react';
-
-import { User } from 'pages/api/auth/login';
+import React, { createContext, useContext, useState } from 'react';
+import { UserWithoutPassword as User } from 'types';
 
 const UserStateContext = createContext<User>(null);
 const UserDispatchContext = createContext<React.Dispatch<User>>(null);

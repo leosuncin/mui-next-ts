@@ -1,34 +1,79 @@
-import { ValidationError } from 'libs/validate';
-import { Error as ErrorResponse } from 'pages/api/auth/login';
+import { ErrorResponse, HttpError } from 'types';
 
-const options: RequestInit = { mode: 'cors', credentials: 'include' };
+const defaultOptions: RequestInit = { mode: 'cors', credentials: 'include' };
 
-export async function post<Body, Data>(
+async function fetcher<Data>(
+  input: RequestInfo,
+  options: RequestInit,
+): Promise<Data> {
+  const resp = await fetch(input, options);
+  let result: Data | ErrorResponse;
+
+  if (resp.status === 204) return;
+
+  try {
+    const text = await resp.text();
+    result = JSON.parse(text);
+  } catch {
+    result = {
+      statusCode: resp.status,
+      message: resp.statusText,
+    } as ErrorResponse;
+  }
+
+  if (resp.status < 400) return result as Data;
+
+  throw new HttpError(result as ErrorResponse);
+}
+
+export function post<Body, Data>(
   request: RequestInfo,
   body: Body,
+  signal?: AbortSignal,
 ): Promise<Data> {
-  const resp = await fetch(request, {
-    ...options,
+  return fetcher(request, {
+    ...defaultOptions,
     method: 'POST',
     body: JSON.stringify(body),
     headers: {
       'Content-Type': 'application/json',
+      Accept: 'application/json',
     },
+    signal,
   });
+}
 
-  if (resp.status >= 400) {
-    const error = (await resp.json()) as ErrorResponse;
-    let message = (error.message as string) || resp.statusText;
+export function get<Data>(
+  request: RequestInfo,
+  signal?: AbortSignal,
+): Promise<Data> {
+  return fetcher(request, { ...defaultOptions, signal });
+}
 
-    if (Array.isArray(error.message)) {
-      message = error.message
-        .map((error: ValidationError) => Object.values(error.constraints))
-        .flat()
-        .join('.\n');
-    }
+export function remove(
+  request: RequestInfo,
+  signal?: AbortSignal,
+): Promise<void> {
+  return fetcher(request, {
+    ...defaultOptions,
+    method: 'DELETE',
+    signal,
+  });
+}
 
-    throw new Error(message);
-  }
-
-  return resp.json();
+export function put<Body, Data>(
+  request: RequestInfo,
+  body: Body,
+  signal?: AbortSignal,
+): Promise<Data> {
+  return fetcher(request, {
+    ...defaultOptions,
+    method: 'PUT',
+    body: JSON.stringify(body),
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    signal,
+  });
 }

@@ -1,21 +1,31 @@
-/* global fetchMock */
 import { RenderResult, act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createModel } from '@xstate/test';
 import { AuthProvider } from 'hooks/auth-context';
 import { UserProvider } from 'hooks/user-context';
+import fetchMock from 'jest-fetch-mock';
 import createMachineWithTests, { FillEvent } from 'machines/login-test-machine';
+import { RouterContext } from 'next/dist/next-server/lib/router-context';
+import type { NextRouter } from 'next/router';
 import LoginPage from 'pages/login';
 import React from 'react';
 
-const spyRouterPush = jest.fn();
-jest.mock('next/router', () => ({
-  useRouter() {
-    return {
-      push: spyRouterPush,
-    };
-  },
-}));
+const routerMocked: jest.Mocked<NextRouter> = {
+  pathname: '/login',
+  route: '/login',
+  query: {},
+  asPath: '/login',
+  isFallback: false,
+  basePath: '',
+  events: { emit: jest.fn(), off: jest.fn(), on: jest.fn() },
+  push: jest.fn(),
+  replace: jest.fn(),
+  reload: jest.fn(),
+  back: jest.fn(),
+  prefetch: jest.fn().mockResolvedValue(undefined),
+  beforePopState: jest.fn(),
+};
+fetchMock.enableMocks();
 
 const formTitle = 'login form';
 const usernameLabel = /Username/i;
@@ -36,6 +46,7 @@ const testMachine = createMachineWithTests({
   },
   invalid: async ({ findAllByText }: RenderResult) => {
     const errorMessages = await findAllByText(invalidErrorMessages);
+
     expect(errorMessages.length).toBeGreaterThanOrEqual(1);
     expect(errorMessages.length).toBeLessThan(3);
   },
@@ -56,7 +67,7 @@ const testMachine = createMachineWithTests({
     expect(getByText(credentialsErrorMessage)).toBeInTheDocument();
   },
   success: () => {
-    expect(spyRouterPush).toHaveBeenCalledTimes(1);
+    expect(routerMocked.push).toHaveBeenCalledTimes(1);
   },
   retry: ({ getByText }: RenderResult) => {
     expect(getByText(submitButton).parentElement).toBeEnabled();
@@ -148,7 +159,7 @@ const testPlans = testModel.getSimplePathPlans();
 testPlans.forEach(plan => {
   describe(`Login page ${plan.description}`, () => {
     afterEach(() => {
-      spyRouterPush.mockReset();
+      routerMocked.push.mockReset();
       fetchMock.resetMocks();
     });
 
@@ -157,11 +168,13 @@ testPlans.forEach(plan => {
       it(path.description, () => {
         return path.test(
           render(
-            <UserProvider>
-              <AuthProvider>
-                <LoginPage />
-              </AuthProvider>
-            </UserProvider>,
+            <RouterContext.Provider value={routerMocked}>
+              <UserProvider>
+                <AuthProvider>
+                  <LoginPage />
+                </AuthProvider>
+              </UserProvider>
+            </RouterContext.Provider>,
           ),
         );
       });
@@ -170,6 +183,6 @@ testPlans.forEach(plan => {
 });
 
 // eslint-disable-next-line jest/expect-expect
-it('States coverage', () => {
+it('states coverage', () => {
   testModel.testCoverage();
 });

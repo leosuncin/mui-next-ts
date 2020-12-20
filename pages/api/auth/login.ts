@@ -1,75 +1,58 @@
-import faker from 'faker';
-import HttpStatus from 'http-status-codes';
-import jwt from 'jsonwebtoken';
+import { nSQL } from '@nano-sql/core';
 import { comparePassword } from 'libs/encrypt';
-import { ValidationError, validateLogin } from 'libs/validate';
-import withDB from 'middlewares/with-db';
-
-export type User = {
-  readonly id: string;
-  readonly username: string;
-  readonly name: string;
-  readonly picture: string;
-  readonly bio: string;
-};
-
-export type Error = {
-  readonly statusCode: number;
-  readonly error: string;
-  readonly message?: string | ValidationError[];
-};
-
-faker.seed(6996);
+import { signJWT } from 'libs/jwt';
+import {
+  catchErrors,
+  validateBody,
+  validateMethod,
+  withDB,
+} from 'libs/middleware';
+import { loginSchema } from 'libs/validation';
+import { setCookie } from 'nookies';
+import { NextHttpHandler, UnauthorizedError, User } from 'types';
 
 /**
- * Mock backend endpoint
+ * Login a existing user
  */
-export default withDB((req, res) => {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    res.status(HttpStatus.METHOD_NOT_ALLOWED);
-    return res.send({
-      statusCode: HttpStatus.METHOD_NOT_ALLOWED,
-      error: HttpStatus.getStatusText(HttpStatus.METHOD_NOT_ALLOWED),
-    });
-  }
+const login: NextHttpHandler = async (req, res) => {
+  const [user] = (await nSQL('users')
+    .query('select')
+    .where(['username', 'LIKE', req.body.username])
+    .exec()) as [User];
 
-  const message = validateLogin(req.body);
+  if (!user)
+    throw new UnauthorizedError(`Wrong username: ${req.body.username}`);
 
-  if (message.length)
-    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).send({
-      statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-      error: HttpStatus.getStatusText(HttpStatus.UNPROCESSABLE_ENTITY),
-      message,
-    });
+  if (!comparePassword(user.password, req.body.password))
+    throw new UnauthorizedError(
+      `Wrong password for user: ${req.body.username}`,
+    );
 
-  if (!req.db.has(req.body.username))
-    return res.status(HttpStatus.UNAUTHORIZED).send({
-      statusCode: HttpStatus.UNAUTHORIZED,
-      error: HttpStatus.getStatusText(HttpStatus.UNAUTHORIZED),
-      message: `Wrong username: ${req.body.username}`,
-    });
-
-  if (!comparePassword(req.db.get(req.body.username), req.body.password))
-    return res.status(HttpStatus.UNAUTHORIZED).send({
-      statusCode: HttpStatus.UNAUTHORIZED,
-      error: HttpStatus.getStatusText(HttpStatus.UNAUTHORIZED),
-      message: `Wrong password for user: ${req.body.username}`,
-    });
-
-  const token = jwt.sign(
-    { sub: req.body.username },
-    process.env.APP_SECRET ?? '5€cr3t',
-  );
+  const token = signJWT(user);
+  const userWithoutPassword = {
+    id: user.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    username: user.username,
+    picture: user.picture,
+    bio: user.bio,
+  };
 
   res.setHeader('Authorization', `Bearer ${token}`);
-  res.setHeader('Set-Cookie', `token=s%3${token}; Path=/; HttpOnly`);
-
-  res.json({
-    id: faker.random.uuid(),
-    username: req.body.username,
-    name: faker.name.findName(),
-    picture: faker.image.avatar(),
-    bio: faker.lorem.paragraph(),
+  setCookie({ res }, 'token', token, {
+    httpOnly: true,
+    path: '/',
+    sameSite: 'strict',
+    maxAge: 30 * 24 * 3600, // 30 days
   });
-});
+  setCookie({ res }, 'sessionUser', JSON.stringify(userWithoutPassword), {
+    path: '/',
+    sameSite: 'strict',
+  });
+
+  res.json(userWithoutPassword);
+};
+
+export default catchErrors(
+  validateMethod(['POST'])(validateBody(loginSchema)(withDB(login))),
+);

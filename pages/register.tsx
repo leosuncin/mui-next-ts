@@ -1,15 +1,14 @@
+import { Theme, createStyles, makeStyles } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Fade from '@material-ui/core/Fade';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import { createStyles, makeStyles, Theme } from '@material-ui/core';
-import { useRouter } from 'next/router';
-import React, { useState } from 'react';
-
 import RegisterForm from 'components/forms/register';
 import { useAuth } from 'hooks/auth-context';
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -19,10 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
     image: {
       backgroundImage: 'url(https://source.unsplash.com/random)',
       backgroundRepeat: 'no-repeat',
-      backgroundColor:
-        theme.palette.type === 'dark'
-          ? theme.palette.grey[900]
-          : theme.palette.grey[50],
+      backgroundColor: theme.palette.grey[50],
       backgroundSize: 'cover',
       backgroundPosition: 'center',
     },
@@ -43,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function SignInSide(props) {
+export default function RegisterPage(props) {
   const [error, setError] = useState<string>();
   const { register } = useAuth();
   const router = useRouter();
@@ -74,6 +70,7 @@ export default function SignInSide(props) {
                 setError(null);
                 await register(body);
                 router.push('/');
+                window.location.pathname = '/';
               } catch (error) {
                 setError(error.message);
               }

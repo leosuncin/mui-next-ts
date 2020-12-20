@@ -1,85 +1,78 @@
-import { act, fireEvent, render, waitFor } from '@testing-library/react';
+import { render, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AuthProvider } from 'hooks/auth-context';
 import { UserProvider } from 'hooks/user-context';
+import { RouterContext } from 'next/dist/next-server/lib/router-context';
+import type { NextRouter } from 'next/router';
 import RegisterPage from 'pages/register';
 import React from 'react';
+import server from 'utils/test-server';
 
-const spyRouterPush = jest.fn();
-jest.mock('next/router', () => ({
-  useRouter() {
-    return {
-      push: spyRouterPush,
-    };
-  },
-}));
+const routerMocked: jest.Mocked<NextRouter> = {
+  pathname: '/register',
+  route: '/register',
+  query: {},
+  asPath: '/register',
+  isFallback: false,
+  basePath: '',
+  events: { emit: jest.fn(), off: jest.fn(), on: jest.fn() },
+  push: jest.fn(),
+  replace: jest.fn(),
+  reload: jest.fn(),
+  back: jest.fn(),
+  prefetch: jest.fn().mockResolvedValue(undefined),
+  beforePopState: jest.fn(),
+};
 
 describe('<RegisterPage />', () => {
-  /* global fetchMock */
-  let tree;
-
-  beforeEach(() => {
-    tree = (
+  const tree = (
+    <RouterContext.Provider value={routerMocked}>
       <UserProvider>
         <AuthProvider>
           <RegisterPage />
         </AuthProvider>
       </UserProvider>
-    );
-  });
+    </RouterContext.Provider>
+  );
+
+  beforeAll(() => server.listen());
 
   afterEach(() => {
-    spyRouterPush.mockReset();
+    server.resetHandlers();
+    routerMocked.push.mockReset();
   });
+
+  afterAll(() => server.close());
 
   it('should render', () => {
     expect(render(tree)).toBeDefined();
   });
 
   it('should shown the error for duplicate user', async () => {
-    fetchMock.mockResponse(
-      `{
-      "statusCode": 409,
-      "error": "Conflict",
-      "message": "Username or Email already registered"
-    }`,
-      { status: 409 },
-    );
-    const { getByLabelText, getByTitle, getByText } = render(tree);
+    const { getByLabelText, getByText, findByText, getByTestId } = render(tree);
 
-    userEvent.type(getByLabelText(/First name/i), 'Jane');
-    userEvent.type(getByLabelText(/Last name/i), 'Doe');
-    userEvent.type(getByLabelText(/Email/i), 'jane@doe.me');
-    userEvent.type(getByLabelText(/Password/i), '!drowssap');
-
-    await act(async () => {
-      fireEvent.submit(getByTitle('register form'));
-    });
+    await userEvent.type(getByLabelText(/First name/i), 'Jane');
+    await userEvent.type(getByLabelText(/Last name/i), 'Doe');
+    await userEvent.type(getByLabelText(/Username/i), 'jane_doe');
+    await userEvent.type(getByLabelText(/Password/i), '!drowssap');
+    userEvent.click(getByText(/Sign Me Up/i));
+    await waitForElementToBeRemoved(getByTestId('registering-user'));
 
     await expect(
-      waitFor(() => getByText('Username or Email already registered')),
+      findByText('Username or Email already registered'),
     ).resolves.toBeInTheDocument();
   });
 
   it('should register a new user', async () => {
-    fetchMock.mockResponse(`{
-      "id": "760add88-0a2b-4358-bc3f-7d82245c5dea",
-      "username": "kristen.williams@example.com",
-      "name": "Kristen Williams",
-      "picture": "https://i.pravatar.cc/200",
-      "bio": "Lorem ipsum dolorem"
-    }`);
-    const { getByLabelText, getByTitle } = render(tree);
+    const { getByLabelText, getByText, getByTestId } = render(tree);
 
-    userEvent.type(getByLabelText(/First name/i), 'Kristen');
-    userEvent.type(getByLabelText(/Last name/i), 'Williams');
-    userEvent.type(getByLabelText(/Email/i), 'kristen.williams@example.com');
-    userEvent.type(getByLabelText(/Password/i), 'Pa$$w0rd!');
+    await userEvent.type(getByLabelText(/First name/i), 'Kristen');
+    await userEvent.type(getByLabelText(/Last name/i), 'Williams');
+    await userEvent.type(getByLabelText(/Username/i), 'kristen.williams');
+    await userEvent.type(getByLabelText(/Password/i), 'Pa$$w0rd!');
+    userEvent.click(getByText(/Sign Me Up/i));
+    await waitForElementToBeRemoved(getByTestId('registering-user'));
 
-    await act(async () => {
-      fireEvent.submit(getByTitle('register form'));
-    });
-
-    expect(spyRouterPush).toHaveBeenCalledTimes(1);
+    expect(routerMocked.push).toHaveBeenCalledTimes(1);
   });
 });

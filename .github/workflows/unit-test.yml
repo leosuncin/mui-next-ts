@@ -6,10 +6,18 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: hallee/eslint-action@1.0.3
+    - uses: haya14busa/action-cond@v1
+      id: reporter
       with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        cond: ${{ github.event_name == 'pull_request' }}
+        if_true: "github-pr-review"
+        if_false: "github-check"
+    - uses: actions/checkout@v2
+    - uses: reviewdog/action-eslint@v1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        eslint_flags: --ext '.js' --ext '.ts' --ext '.tsx' .
+        reporter: ${{ steps.reporter.outputs.value }}
 
   tsc:
     runs-on: ubuntu-latest
@@ -33,7 +41,9 @@ jobs:
       uses: paambaati/codeclimate-action@v2.6.0
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_REPO_TOKEN }}
-        APP_SECRET: c67d158338b7e5df7ff128228c74de33cb7a23f388d1c57c6b0df8fb1c825fad58d33a1eba4ffb6fcfc638a2470abff1583707a6c9ae076575a0f0639eb1b08e
+        APP_SECRET: ${{ secrets.APP_SECRET }}
+        JWT_ISSUER: unit-tests
+        CYPRESS_INSTALL_BINARY: 0
       with:
         coverageCommand: npm test -- --coverage
         coverageLocations: |

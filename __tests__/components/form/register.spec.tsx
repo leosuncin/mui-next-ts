@@ -1,7 +1,11 @@
-import React from 'react';
-import { render, fireEvent, act } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import RegisterForm, { validations } from 'components/forms/register';
+import React from 'react';
+
+jest.mock('next/link', () => ({ children, href }) =>
+  React.cloneElement(React.Children.only(children), { href }),
+);
 
 describe('<RegisterForm />', () => {
   it('should render', () => {
@@ -19,7 +23,7 @@ describe('<RegisterForm />', () => {
 
     expect(getByText(validations.firstName.required)).toBeInTheDocument();
     expect(getByText(validations.lastName.required)).toBeInTheDocument();
-    expect(getByText(validations.email.required)).toBeInTheDocument();
+    expect(getByText(validations.username.required)).toBeInTheDocument();
     expect(getByText(validations.password.required)).toBeInTheDocument();
   });
 
@@ -31,7 +35,7 @@ describe('<RegisterForm />', () => {
 
     userEvent.type(getByLabelText(/First name/i), 'Joe');
     userEvent.type(getByLabelText(/Last name/i), 'Doe');
-    userEvent.type(getByLabelText(/Email/i), 'joe@doe.me');
+    userEvent.type(getByLabelText(/Username/i), 'joe_doe');
     userEvent.type(getByLabelText(/Password/i), 'Pa$$w0rd!');
     await act(async () => {
       fireEvent.submit(getByTitle('register form'));
@@ -41,7 +45,7 @@ describe('<RegisterForm />', () => {
       {
         firstName: 'Joe',
         lastName: 'Doe',
-        email: 'joe@doe.me',
+        username: 'joe_doe',
         password: 'Pa$$w0rd!',
       },
       expect.anything(),

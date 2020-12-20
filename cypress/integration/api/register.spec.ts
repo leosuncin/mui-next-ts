@@ -1,38 +1,28 @@
 import faker from 'faker';
-import {
-  CONFLICT,
-  METHOD_NOT_ALLOWED,
-  OK,
-  UNPROCESSABLE_ENTITY,
-} from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 
 describe('Register API', () => {
   it('should validate the request method', () => {
     cy.api({
       url: '/api/auth/register',
       failOnStatusCode: false,
-    })
-      .its('status')
-      .should('equal', METHOD_NOT_ALLOWED);
+    }).validateResponse(StatusCodes.METHOD_NOT_ALLOWED, 'ApiError');
   });
 
   it('should validate the body', () => {
     cy.api({
       url: '/api/auth/register',
       method: 'POST',
+      body: {},
       failOnStatusCode: false,
-    }).then(({ status, body }) => {
-      expect(status).to.equal(UNPROCESSABLE_ENTITY);
-      expect(body).to.haveOwnProperty('message');
-      expect(Array.isArray(body.message)).to.be.equal(true);
-    });
+    }).validateResponse(StatusCodes.UNPROCESSABLE_ENTITY, 'ApiError');
   });
 
   it('should reject duplicate user', () => {
     const body = {
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
-      email: 'jane@doe.me',
+      username: 'jane_doe',
       password: 'ji32k7au4a83',
     };
 
@@ -41,18 +31,14 @@ describe('Register API', () => {
       method: 'POST',
       body,
       failOnStatusCode: false,
-    }).then(response => {
-      expect(response.status).to.equal(CONFLICT);
-      expect(response.body).to.haveOwnProperty('message');
-      expect(response.body.message).to.match(/already registered/);
-    });
+    }).validateResponse(StatusCodes.CONFLICT, 'ApiError');
   });
 
   it('should register a new user', () => {
     const body = {
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
-      email: faker.internet.email().toLowerCase(),
+      username: faker.internet.userName().toLowerCase(),
       password: faker.internet.password(),
     };
 
@@ -60,14 +46,20 @@ describe('Register API', () => {
       url: '/api/auth/register',
       method: 'POST',
       body,
-    }).then(response => {
-      expect(response.status).to.equal(OK);
-      expect(response.body).to.haveOwnProperty('username', body.email);
-      expect(response.body).to.haveOwnProperty(
-        'name',
-        `${body.firstName} ${body.lastName}`,
-      );
-      expect(response.body).not.to.haveOwnProperty('password');
-    });
+    })
+      .validateResponse(StatusCodes.OK, 'User')
+      .then(response => {
+        expect(response.headers).to.haveOwnProperty('authorization');
+        expect(response.headers.authorization).to.match(/Bearer \w+/);
+        expect(response.headers).to.haveOwnProperty('set-cookie');
+        expect(response.headers['set-cookie']).to.satisfy((cookies: string[]) =>
+          cookies.some(cookie =>
+            /token=.*; Max-Age=\d+; Path=\/; HttpOnly; SameSite=Strict/.test(
+              cookie,
+            ),
+          ),
+        );
+        expect(response.body).to.haveOwnProperty('username', body.username);
+      });
   });
 });
