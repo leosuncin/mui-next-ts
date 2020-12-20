@@ -1,0 +1,25 @@
+name: Report code coverage 📈
+
+# https://docs.github.com/en/actions/reference/events-that-trigger-workflows
+on:
+  workflow_run:
+    workflows: ["Unit test", "E2E test"]
+    types:
+      - completed
+
+jobs:
+  report_coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v2
+      - name: Download unit test coverage ⬇️
+        uses: actions/download-artifact@v2
+        with:
+            name: unit-coverage
+      - name: Download e2e test coverage ⬇️
+        uses: actions/download-artifact@v2
+        with:
+            name: e2e-coverage
+      - name: Merge coverages 🏗️
+        run: ls -R coverage
