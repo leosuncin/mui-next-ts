@@ -50,7 +50,7 @@
     "swr": "^0.3.10",
     "use-effect-reducer": "^0.7.0",
     "xstate": "^4.15.0",
-    "yup": "^0.29.1"
+    "yup": "^0.32.8"
   },
   "devDependencies": {
     "@bahmutov/cy-api": "^1.4.2",
