@@ -37,11 +37,17 @@ jobs:
       with:
         path: .next/cache
         key: ${{ runner.os }}-next-build-${{ hashFiles('**/next.config.js') }}
-    - name: Run tests 🧪
-      run: npm test -- --coverage
+    - name: Test & publish code coverage
+      uses: paambaati/codeclimate-action@v2.6.0
       env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_REPO_TOKEN }}
         APP_SECRET: ${{ secrets.APP_SECRET }}
         JWT_ISSUER: unit-tests
+        CYPRESS_INSTALL_BINARY: 0
+      with:
+        coverageCommand: npm test -- --coverage
+        coverageLocations: |
+          ${{ github.workspace }}/coverage/unit/lcov.info:lcov
     - name: Monitor coverage
       if: "github.event_name == 'pull_request'"
       uses: slavcodev/coverage-monitor-action@1.1.0
