@@ -1,4 +1,4 @@
-name: Report code coverage 📈
+name: Code coverage
 
 # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
 on:
