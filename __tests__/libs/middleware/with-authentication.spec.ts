@@ -11,8 +11,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
 import { UnauthorizedError } from 'types';
 
-const toBase64 = (str: unknown) => Buffer.from(str).toString('base64');
-const toBase64UrlSafe = (str: unknown) =>
+const toBase64 = (str: String) => Buffer.from(str).toString('base64');
+const toBase64UrlSafe = (str: String) =>
   Buffer.from(str).toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
 
 describe('withAuthentication middleware', () => {
