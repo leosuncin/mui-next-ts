@@ -1,0 +1,44 @@
+name: Code coverage
+
+# https://docs.github.com/en/actions/reference/events-that-trigger-workflows
+on:
+  workflow_run:
+    workflows: ["Unit test", "E2E test"]
+    types:
+      - completed
+
+jobs:
+  report_coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v2
+      - name: Download unit test coverage ⬇️
+        uses: actions/download-artifact@v2
+        with:
+            name: unit-coverage
+      - name: Download e2e test coverage ⬇️
+        uses: actions/download-artifact@v2
+        with:
+            name: e2e-coverage
+      - name: Merge coverages 🏗️
+        run: |
+          mkdir -p reports .nyc_output
+          cp coverage/e2e/coverage-final.json reports/coverage-e2e.json
+          cp coverage/unit/coverage-final.json reports/coverage-unit.json
+          npx nyc merge reports
+          mv coverage.json .nyc_output/out.json
+          npx nyc report --reporter json --report-dir coverage
+          npx nyc report --skip-empty --reporter text-summary
+      - name: Publish code coverage 🚀
+        uses: paambaati/codeclimate-action@v2.6.0
+        with:
+          coverageLocations: |
+            ${{ github.workspace }}/coverage/unit/lcov.info:lcov
+            ${{ github.workspace }}/coverage/e2e/lcov.info:lcov
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_REPO_TOKEN }}
+      - name: Set code coverage commit status 📫
+        run: npx set-gh-status
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
