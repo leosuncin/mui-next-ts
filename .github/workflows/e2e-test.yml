@@ -17,7 +17,7 @@ jobs:
       uses: cypress-io/github-action@v2
       timeout-minutes: 10
       env:
-        CODE_COVERAGE: 'true'
+        CODE_COVERAGE: true
         APP_SECRET: ${{ secrets.APP_SECRET }}
         JWT_ISSUER: e2e-test
       with:
@@ -25,7 +25,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
-        name: Cypress screenshots
+        name: Component screenshots
         path: cypress/screenshots
 
   e2e:
@@ -33,8 +33,6 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
     steps:
     - uses: actions/checkout@v2
-    # just so we learn about available environment variables Zeit Now provides
-    - uses: hmarr/debug-action@master
     - name: Cache Next.js build
       uses: actions/cache@v2
       with:
@@ -47,11 +45,6 @@ jobs:
         CODE_COVERAGE: true
         APP_SECRET: ${{ secrets.APP_SECRET }}
         JWT_ISSUER: e2e-test
-        # pass the Dashboard record key as an environment variable
-        CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-        # Recommended: pass the GitHub token lets this action correctly
-        # determine the unique run id necessary to re-run the checks
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         build: npm run build
         start: npm start
