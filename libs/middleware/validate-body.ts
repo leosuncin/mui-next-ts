@@ -1,7 +1,7 @@
 import { NextHttpHandler, UnprocessableEntityError } from 'types';
-import { ObjectSchema } from 'yup';
+import type { AnyObjectSchema } from 'yup';
 
-export function validateBody(schema: ObjectSchema) {
+export function validateBody(schema: AnyObjectSchema) {
   return (handler: NextHttpHandler): NextHttpHandler => async (req, res) => {
     try {
       req.body = await schema.validate(req.body, {
