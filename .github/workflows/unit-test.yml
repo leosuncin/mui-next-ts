@@ -43,14 +43,17 @@ jobs:
       uses: actions/checkout@v2
     - name: Install NPM dependencies 📦
       uses: bahmutov/npm-install@v1
-    - name: Run unit tests 🧪 & publish code coverage 🚀
-      uses: paambaati/codeclimate-action@v2.6.0
-      with:
-        coverageCommand: npm test -- --coverage
-        coverageLocations: ${{ github.workspace }}/coverage/unit/lcov.info:lcov
+    - name: Run unit tests 🧪
+      run: npm t -- --coverage
       env:
         APP_SECRET: ${{ secrets.APP_SECRET }}
         JWT_ISSUER: unit-tests
+    - name: Publish code coverage 🚀
+      uses: paambaati/codeclimate-action@v2.6.0
+      with:
+        coverageCommand: echo true
+        coverageLocations: ${{ github.workspace }}/coverage/unit/lcov.info:lcov
+      env:
         CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_REPO_TOKEN }}
     - name: Monitor coverage 📫
       if: "github.event_name == 'pull_request'"

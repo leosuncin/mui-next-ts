@@ -4,8 +4,13 @@ on:
   push:
     branches:
     - master
-    - "wip/*"
-    - "feat/*"
+    - wip/*
+    - feat/*
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 env:
   CODE_COVERAGE: true
