@@ -97,3 +97,11 @@ npx nyc report
 ## Show your support
 
 Give a ⭐️ if this project helped you!
+
+### :star2: Stargazers
+
+[![Stargazers repo roster for @leosuncin/mui-next-ts](https://reporoster.com/stars/leosuncin/mui-next-ts)](https://github.com/leosuncin/mui-next-ts/stargazers)
+
+### :fork_and_knife: Forkers
+
+[![Forkers repo roster for @leosuncin/mui-next-ts](https://reporoster.com/forks/leosuncin/mui-next-ts)](https://github.com/leosuncin/mui-next-ts/network/members)
