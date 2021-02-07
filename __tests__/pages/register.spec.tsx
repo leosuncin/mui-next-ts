@@ -22,6 +22,7 @@ const routerMocked: jest.Mocked<NextRouter> = {
   back: jest.fn(),
   prefetch: jest.fn().mockResolvedValue(undefined),
   beforePopState: jest.fn(),
+  isReady: true,
 };
 
 describe('<RegisterPage />', () => {
