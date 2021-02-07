@@ -3,6 +3,7 @@ import { mount } from 'cypress-react-unit-test';
 import faker from 'faker';
 import fc from 'fast-check';
 import { RouterContext } from 'next/dist/next-server/lib/router-context';
+import type { NextRouter } from 'next/router';
 import React from 'react';
 import { loginBuild } from 'utils/factories';
 
@@ -11,12 +12,11 @@ describe('LoginForm component', () => {
   const passwordLabel = /Password/i;
   const submitButton = /Log me in/i;
   const Component = ({ onSubmit }) => {
-    const router = {
+    const router: NextRouter = {
       pathname: '/login',
       route: '/login',
       query: {},
       asPath: '/login',
-      components: {},
       isFallback: false,
       basePath: '',
       events: { emit: cy.spy(), off: cy.spy(), on: cy.spy() },
@@ -26,6 +26,7 @@ describe('LoginForm component', () => {
       back: cy.spy(),
       prefetch: cy.stub().resolves(),
       beforePopState: cy.spy(),
+      isReady: true,
     };
 
     return (

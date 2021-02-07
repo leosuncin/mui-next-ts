@@ -2,6 +2,7 @@ import RegisterForm from 'components/forms/register';
 import { mount } from 'cypress-react-unit-test';
 import fc from 'fast-check';
 import { RouterContext } from 'next/dist/next-server/lib/router-context';
+import type { NextRouter } from 'next/router';
 import React from 'react';
 import { registerBuild } from 'utils/factories';
 
@@ -12,12 +13,11 @@ describe('RegisterForm component', () => {
   const passwordLabel = /Password/i;
   const submitButton = /Sign Me Up/i;
   const Component = ({ onSubmit }) => {
-    const router = {
+    const router: NextRouter = {
       pathname: '/register',
       route: '/register',
       query: {},
       asPath: '/register',
-      components: {},
       isFallback: false,
       basePath: '',
       events: { emit: cy.spy(), off: cy.spy(), on: cy.spy() },
@@ -27,6 +27,7 @@ describe('RegisterForm component', () => {
       back: cy.spy(),
       prefetch: cy.stub().resolves(),
       beforePopState: cy.spy(),
+      isReady: true,
     };
 
     return (
