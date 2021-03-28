@@ -27,6 +27,8 @@ describe('LoginForm component', () => {
       prefetch: cy.stub().resolves(),
       beforePopState: cy.spy(),
       isReady: true,
+      isPreview: false,
+      isLocaleDomain: true,
     };
 
     return (

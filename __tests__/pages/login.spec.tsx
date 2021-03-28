@@ -25,6 +25,8 @@ const routerMocked: jest.Mocked<NextRouter> = {
   prefetch: jest.fn().mockResolvedValue(undefined),
   beforePopState: jest.fn(),
   isReady: true,
+  isPreview: false,
+  isLocaleDomain: true,
 };
 fetchMock.enableMocks();
 
