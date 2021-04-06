@@ -93,10 +93,10 @@ const testModel = createModel(testMachine, {
         passwordInput.value = '';
 
         await act(async () => {
-          await userEvent.type(usernameInput, event.username);
+          userEvent.type(usernameInput, event.username);
           fireEvent.blur(usernameInput);
 
-          await userEvent.type(passwordInput, event.password);
+          userEvent.type(passwordInput, event.password);
           fireEvent.blur(passwordInput);
         });
 
@@ -115,9 +115,9 @@ const testModel = createModel(testMachine, {
               statusCode: 401,
               error: 'Unauthorized',
               message:
-                event.username !== 'admin'
-                  ? `Wrong username: ${event.username}`
-                  : `"Wrong password for user: ${event.username}`,
+                event.username === 'admin'
+                  ? `"Wrong password for user: ${event.username}`
+                  : `Wrong username: ${event.username}`,
             }),
             {
               status: 401,

@@ -59,7 +59,7 @@ const IndexPage: NextPage<AuthenticationProps> = () => {
     responsive: 'standard',
     expandableRows: true,
     expandableRowsOnClick: true,
-    renderExpandableRow(rowData, rowMeta) {
+    renderExpandableRow(rowData: Array<User[keyof User]>) {
       const colSpan = rowData.length + 1;
 
       return (
@@ -91,14 +91,14 @@ const IndexPage: NextPage<AuthenticationProps> = () => {
           signal: abortController.signal,
         });
         if (!isCanceled) setUsers(data);
-      } catch (error) {
-        if (!isCanceled) setError(error.message);
+      } catch (error: unknown) {
+        if (!isCanceled && error instanceof Error) setError(error.message);
       } finally {
         if (!isCanceled) setIsLoading(false);
       }
     }
 
-    fetchUser();
+    void fetchUser();
 
     return () => {
       isCanceled = true;

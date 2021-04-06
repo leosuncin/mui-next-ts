@@ -144,13 +144,13 @@ const registerTestConfig: MachineConfig<
   },
 };
 
-export default (
+export default function buildRegisterTestMachine(
   testSuite: Record<string, Function>,
-): StateMachine<never, RegisterTestStateSchema, FillEvent> => {
-  Object.entries(testSuite).forEach(([state, test]) => {
+): StateMachine<never, RegisterTestStateSchema, FillEvent> {
+  for (const [state, test] of Object.entries(testSuite)) {
     const path = `states.${state.replace(/\./g, '.states.')}.meta.test`;
     set(registerTestConfig, path, test);
-  });
+  }
 
   return createMachine(registerTestConfig);
-};
+}

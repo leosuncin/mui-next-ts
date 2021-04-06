@@ -4,5 +4,5 @@ import { User } from './user';
 
 export type NextHttpHandler<T = unknown> = (
   request: NextApiRequest & { user: User },
-  res: NextApiResponse<T | Error>,
+  response: NextApiResponse<T | Error>,
 ) => Promise<void> | void;

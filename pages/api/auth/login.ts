@@ -14,18 +14,20 @@ import { NextHttpHandler, UnauthorizedError, User } from 'types';
 /**
  * Login a existing user
  */
-const login: NextHttpHandler = async (request, res) => {
+const login: NextHttpHandler = async (request, response) => {
   const [user] = (await nSQL('users')
     .query('select')
     .where(['username', 'LIKE', request.body.username])
     .exec()) as [User];
 
   if (!user)
-    throw new UnauthorizedError(`Wrong username: ${request.body.username}`);
+    throw new UnauthorizedError(
+      `Wrong username: ${request.body.username as string}`,
+    );
 
   if (!comparePassword(user.password, request.body.password))
     throw new UnauthorizedError(
-      `Wrong password for user: ${request.body.username}`,
+      `Wrong password for user: ${request.body.username as string}`,
     );
 
   const token = signJWT(user);
@@ -38,19 +40,24 @@ const login: NextHttpHandler = async (request, res) => {
     bio: user.bio,
   };
 
-  res.setHeader('Authorization', `Bearer ${token}`);
-  setCookie({ res }, 'token', token, {
+  response.setHeader('Authorization', `Bearer ${token}`);
+  setCookie({ res: response }, 'token', token, {
     httpOnly: true,
     path: '/',
     sameSite: 'strict',
     maxAge: 30 * 24 * 3600, // 30 days
   });
-  setCookie({ res }, 'sessionUser', JSON.stringify(userWithoutPassword), {
-    path: '/',
-    sameSite: 'strict',
-  });
+  setCookie(
+    { res: response },
+    'sessionUser',
+    JSON.stringify(userWithoutPassword),
+    {
+      path: '/',
+      sameSite: 'strict',
+    },
+  );
 
-  res.json(userWithoutPassword);
+  response.json(userWithoutPassword);
 };
 
 export default catchErrors(

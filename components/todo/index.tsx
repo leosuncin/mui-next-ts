@@ -48,11 +48,11 @@ function Todo({ className }: TodoProps) {
         onChangeFilter={filter => {
           actions.changeFilter(filter);
         }}
-        onClearCompleted={() =>
-          state.completed.map(todo => {
+        onClearCompleted={() => {
+          for (const todo of state.completed) {
             actions.removeTodo(todo);
-          })
-        }
+          }
+        }}
       />
       <ListTodo
         todos={state[state._filter]}

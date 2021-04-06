@@ -1,14 +1,14 @@
 import { get } from 'libs/request';
 import { UserWithoutPassword as User } from 'types';
 
-import { PaginationParams } from '.';
+import { PaginationParameters } from '.';
 
 export default async function listUser({
   page = 1,
   offset = 0,
   limit = 10,
   signal,
-}: Partial<PaginationParams> = {}): Promise<User[]> {
+}: Partial<PaginationParameters> = {}): Promise<User[]> {
   const searchParameters = new URLSearchParams();
 
   if (offset > 0) searchParameters.set('offset', offset as any);

@@ -3,10 +3,11 @@ import { signJWT } from 'libs/jwt';
 import { loginSchema as validationSchema } from 'libs/validation';
 import { RequestHandler, rest } from 'msw';
 import { AuthLogin } from 'types';
+import type { ValidationError } from 'yup';
 
 const loginHandler: RequestHandler = rest.post(
   '/api/auth/login',
-  (request, res, ctx) => {
+  (request, response, context) => {
     const user = {
       id: '760add88-0a2b-4358-bc3f-7d82245c5dea',
       username: 'admin',
@@ -22,13 +23,13 @@ const loginHandler: RequestHandler = rest.post(
         abortEarly: false,
         stripUnknown: true,
       });
-    } catch (error) {
-      return res(
-        ctx.status(StatusCodes.UNPROCESSABLE_ENTITY),
-        ctx.json({
+    } catch (error: unknown) {
+      return response(
+        context.status(StatusCodes.UNPROCESSABLE_ENTITY),
+        context.json({
           statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
           message: 'Validation errors',
-          errors: error.inner.reduce(
+          errors: (error as ValidationError).inner.reduce(
             (previous, error) => ({
               ...previous,
               [error.path]: error.errors[0],
@@ -41,35 +42,35 @@ const loginHandler: RequestHandler = rest.post(
 
     if (username === user.username && password === 'Pa$$w0rd!') {
       const token = signJWT(user as any);
-      return res(
-        ctx.status(StatusCodes.OK),
-        ctx.set('Authorization', `Bearer ${token}`),
-        ctx.cookie('token', token, {
+      return response(
+        context.status(StatusCodes.OK),
+        context.set('Authorization', `Bearer ${token}`),
+        context.cookie('token', token, {
           httpOnly: true,
           path: '/',
           sameSite: 'strict',
           maxAge: 30 * 24 * 3600, // 30 days
         }),
-        ctx.cookie('sessionUser', JSON.stringify(user), {
+        context.cookie('sessionUser', JSON.stringify(user), {
           path: '/',
           sameSite: 'strict',
         }),
-        ctx.json(user),
+        context.json(user),
       );
     }
 
     if (username === user.username)
-      return res(
-        ctx.status(StatusCodes.UNAUTHORIZED),
-        ctx.json({
+      return response(
+        context.status(StatusCodes.UNAUTHORIZED),
+        context.json({
           statusCode: StatusCodes.UNAUTHORIZED,
           message: `Wrong password for user: ${username}`,
         }),
       );
 
-    return res(
-      ctx.status(StatusCodes.UNAUTHORIZED),
-      ctx.json({
+    return response(
+      context.status(StatusCodes.UNAUTHORIZED),
+      context.json({
         statusCode: StatusCodes.UNAUTHORIZED,
         message: `Wrong username: ${username}`,
       }),

@@ -4,10 +4,11 @@ import { signJWT } from 'libs/jwt';
 import { registerSchema as validationSchema } from 'libs/validation';
 import { RequestHandler, rest } from 'msw';
 import { AuthRegister } from 'types';
+import type { ValidationError } from 'yup';
 
 const registerHandler: RequestHandler = rest.post(
   '/api/auth/register',
-  (request, res, ctx) => {
+  (request, response, context) => {
     const user = {
       id: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
       firstName: 'Jane',
@@ -24,13 +25,13 @@ const registerHandler: RequestHandler = rest.post(
         abortEarly: false,
         stripUnknown: true,
       });
-    } catch (error) {
-      return res(
-        ctx.status(StatusCodes.UNPROCESSABLE_ENTITY),
-        ctx.json({
+    } catch (error: unknown) {
+      return response(
+        context.status(StatusCodes.UNPROCESSABLE_ENTITY),
+        context.json({
           statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
           message: 'Validation errors',
-          errors: error.inner.reduce(
+          errors: (error as ValidationError).inner.reduce(
             (previous, error) => ({
               ...previous,
               [error.path]: error.errors[0],
@@ -42,9 +43,9 @@ const registerHandler: RequestHandler = rest.post(
     }
 
     if (username === user.username) {
-      return res(
-        ctx.status(StatusCodes.CONFLICT),
-        ctx.json({
+      return response(
+        context.status(StatusCodes.CONFLICT),
+        context.json({
           statusCode: StatusCodes.CONFLICT,
           message: 'Username or Email already registered',
         }),
@@ -61,20 +62,20 @@ const registerHandler: RequestHandler = rest.post(
     };
     const token = signJWT(newUser as any);
 
-    return res(
-      ctx.status(StatusCodes.OK),
-      ctx.set('Authorization', `Bearer ${token}`),
-      ctx.cookie('token', token, {
+    return response(
+      context.status(StatusCodes.OK),
+      context.set('Authorization', `Bearer ${token}`),
+      context.cookie('token', token, {
         httpOnly: true,
         path: '/',
         sameSite: 'strict',
         maxAge: 30 * 24 * 3600, // 30 days
       }),
-      ctx.cookie('sessionUser', JSON.stringify(newUser), {
+      context.cookie('sessionUser', JSON.stringify(newUser), {
         path: '/',
         sameSite: 'strict',
       }),
-      ctx.json(newUser),
+      context.json(newUser),
     );
   },
 );

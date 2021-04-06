@@ -116,7 +116,7 @@ describe('<TodoItem />', () => {
     expect(spyChange).not.toHaveBeenCalled();
 
     userEvent.clear(screen.getByRole('textbox'));
-    await userEvent.type(
+    userEvent.type(
       screen.getByRole('textbox'),
       'Cursus chuña dignissim cachimbo pedo ut egestas. In bajar cherche placerat gravida zumba. Gravida chucheria webiar vergon enim tetelque chocoya.',
     );

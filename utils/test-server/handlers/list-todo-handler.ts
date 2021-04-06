@@ -4,10 +4,10 @@ import { RequestHandler, rest } from 'msw';
 
 const listTodoHandler: RequestHandler = rest.get(
   '/api/todos',
-  (request, res, ctx) => {
-    return res(
-      ctx.delay(60),
-      ctx.json(
+  (request, response, context) => {
+    return response(
+      context.delay(60),
+      context.json(
         todos
           .filter(t => t.createdBy === users[1].id)
           .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()),

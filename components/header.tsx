@@ -41,8 +41,8 @@ const Header: React.FC<{ title?: string }> = props => {
               aria-haspopup="true"
               aria-controls="profile-menu"
               data-testid="profile-menu"
-              onClick={e => {
-                setAnchorElement(e.currentTarget);
+              onClick={event => {
+                setAnchorElement(event.currentTarget);
               }}
             >
               <AccountIcon />
@@ -74,7 +74,7 @@ const Header: React.FC<{ title?: string }> = props => {
               <MenuItem
                 onClick={() => {
                   logout();
-                  router.push('/login');
+                  void router.push('/login');
                 }}
               >
                 <ExitToAppIcon />

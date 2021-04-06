@@ -8,8 +8,8 @@ import {
 export default catchErrors(
   validateMethod(['GET'])(
     withDB(
-      withAuthentication((request, res) => {
-        res.json(request.user);
+      withAuthentication((request, response) => {
+        response.json(request.user);
       }),
     ),
   ),

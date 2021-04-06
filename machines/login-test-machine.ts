@@ -106,13 +106,13 @@ const loginTestConfig: MachineConfig<never, LoginTestStateSchema, FillEvent> = {
   },
 };
 
-export default (
+export default function buildLoginTestMachine(
   testSuite: Record<string, Function>,
-): StateMachine<never, LoginTestStateSchema, FillEvent> => {
-  Object.entries(testSuite).forEach(([state, test]) => {
+): StateMachine<never, LoginTestStateSchema, FillEvent> {
+  for (const [state, test] of Object.entries(testSuite)) {
     const path = `states.${state.replace(/\./g, '.states.')}.meta.test`;
     set(loginTestConfig, path, test);
-  });
+  }
 
   return createMachine(loginTestConfig);
-};
+}

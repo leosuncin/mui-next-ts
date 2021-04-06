@@ -125,9 +125,7 @@ describe('Register page', () => {
           cy.intercept('POST', '/api/auth/register')
             .as('sendRegister')
             .visit('/register')
-            .then(() => {
-              path.test(cy);
-            });
+            .then(async () => path.test(cy));
         });
       }
     });

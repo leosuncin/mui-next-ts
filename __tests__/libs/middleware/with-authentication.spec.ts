@@ -23,8 +23,16 @@ describe('withAuthentication middleware', () => {
     null,
     undefined,
     faker.lorem.slug(),
-    faker.lorem.paragraphs(3).split('\n \r').map(toBase64).join('.'),
-    faker.lorem.sentences(3).split('. ').map(toBase64UrlSafe).join('.'),
+    faker.lorem
+      .paragraphs(3)
+      .split('\n \r')
+      .map(paragraph => toBase64(paragraph))
+      .join('.'),
+    faker.lorem
+      .sentences(3)
+      .split('. ')
+      .map(sentence => toBase64UrlSafe(sentence))
+      .join('.'),
     sign({ sub: faker.random.uuid() }, process.env.APP_SECRET || '5€cr3t'),
     `${toBase64UrlSafe(
       users[0].id,

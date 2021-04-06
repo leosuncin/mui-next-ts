@@ -15,7 +15,7 @@ import { ConflictError, NextHttpHandler, User } from 'types';
 /**
  * Register a new a user
  */
-const register: NextHttpHandler = async (request, res) => {
+const register: NextHttpHandler = async (request, response) => {
   const [{ total }] = await nSQL('users')
     .query('select', ['COUNT(*) AS total'])
     .where(['username', 'LIKE', request.body.username])
@@ -45,19 +45,24 @@ const register: NextHttpHandler = async (request, res) => {
     bio: user.bio,
   };
 
-  res.setHeader('Authorization', `Bearer ${token}`);
-  setCookie({ res }, 'token', token, {
+  response.setHeader('Authorization', `Bearer ${token}`);
+  setCookie({ res: response }, 'token', token, {
     httpOnly: true,
     path: '/',
     sameSite: 'strict',
     maxAge: 30 * 24 * 3600, // 30 days
   });
-  setCookie({ res }, 'sessionUser', JSON.stringify(userWithoutPassword), {
-    path: '/',
-    sameSite: 'strict',
-  });
+  setCookie(
+    { res: response },
+    'sessionUser',
+    JSON.stringify(userWithoutPassword),
+    {
+      path: '/',
+      sameSite: 'strict',
+    },
+  );
 
-  res.json(userWithoutPassword);
+  response.json(userWithoutPassword);
 };
 
 export default catchErrors(

@@ -7,7 +7,7 @@ import {
 } from 'libs/middleware';
 import { NextHttpHandler, UserWithoutPassword as User } from 'types';
 
-const findUsers: NextHttpHandler = async (request, res) => {
+const findUsers: NextHttpHandler = async (request, response) => {
   const limit = Math.abs(
     Number.parseInt(request.query.limit as string, 10) || 10,
   );
@@ -30,7 +30,7 @@ const findUsers: NextHttpHandler = async (request, res) => {
     .offset(offset > 0 ? offset : (page - 1) * limit)
     .exec()) as User[];
 
-  res.json(users);
+  response.json(users);
 };
 
 export default catchErrors(

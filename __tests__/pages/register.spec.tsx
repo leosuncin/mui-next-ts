@@ -58,10 +58,10 @@ describe('<RegisterPage />', () => {
   it('should shown the error for duplicate user', async () => {
     const { getByLabelText, getByText, findByText, getByTestId } = render(tree);
 
-    await userEvent.type(getByLabelText(/first name/i), 'Jane');
-    await userEvent.type(getByLabelText(/last name/i), 'Doe');
-    await userEvent.type(getByLabelText(/username/i), 'jane_doe');
-    await userEvent.type(getByLabelText(/password/i), '!drowssap');
+    userEvent.type(getByLabelText(/first name/i), 'Jane');
+    userEvent.type(getByLabelText(/last name/i), 'Doe');
+    userEvent.type(getByLabelText(/username/i), 'jane_doe');
+    userEvent.type(getByLabelText(/password/i), '!drowssap');
     userEvent.click(getByText(/sign me up/i));
     await waitForElementToBeRemoved(getByTestId('registering-user'));
 
@@ -73,10 +73,10 @@ describe('<RegisterPage />', () => {
   it('should register a new user', async () => {
     const { getByLabelText, getByText, getByTestId } = render(tree);
 
-    await userEvent.type(getByLabelText(/first name/i), 'Kristen');
-    await userEvent.type(getByLabelText(/last name/i), 'Williams');
-    await userEvent.type(getByLabelText(/username/i), 'kristen.williams');
-    await userEvent.type(getByLabelText(/password/i), 'Pa$$w0rd!');
+    userEvent.type(getByLabelText(/first name/i), 'Kristen');
+    userEvent.type(getByLabelText(/last name/i), 'Williams');
+    userEvent.type(getByLabelText(/username/i), 'kristen.williams');
+    userEvent.type(getByLabelText(/password/i), 'Pa$$w0rd!');
     userEvent.click(getByText(/sign me up/i));
     await waitForElementToBeRemoved(getByTestId('registering-user'));
 

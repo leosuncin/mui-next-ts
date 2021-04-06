@@ -148,7 +148,7 @@ const todoReducers: Record<
       saving: false,
       all,
       completed: payload.done ? completedSelector(all) : state.completed,
-      active: !payload.done ? activeSelector(all) : state.active,
+      active: payload.done ? state.active : activeSelector(all),
     };
   },
   TODO_REVERT_CHANGE(state, { payload: error }: TodoUpdateFailEvent) {
@@ -174,9 +174,9 @@ const todoReducers: Record<
     const completed = payload.todo.done
       ? state.completed.filter(todo => todo.id !== payload.todo.id)
       : state.completed;
-    const active = !payload.todo.done
-      ? state.active.filter(todo => todo.id !== payload.todo.id)
-      : state.active;
+    const active = payload.todo.done
+      ? state.active
+      : state.active.filter(todo => todo.id !== payload.todo.id);
     const _position =
       payload.position ??
       state.all.findIndex(todo => todo.id === payload.todo.id);
@@ -197,11 +197,11 @@ const todoReducers: Record<
       state._todo,
       ...state.all.slice(state._position),
     ];
-    const active = !state._todo.done
-      ? [...state.active, state._todo].sort((a, b) =>
+    const active = state._todo.done
+      ? state.active
+      : [...state.active, state._todo].sort((a, b) =>
           a.createdAt.localeCompare(b.createdAt),
-        )
-      : state.active;
+        );
     const completed = state._todo.done
       ? [...state.completed, state._todo].sort((a, b) =>
           a.createdAt.localeCompare(b.createdAt),

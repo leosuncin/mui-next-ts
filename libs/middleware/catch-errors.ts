@@ -15,11 +15,11 @@ function isValidationObjectErrors(
 export function catchErrors(
   handler: NextHttpHandler,
 ): NextHttpHandler<ErrorResponse> {
-  return async (request, res) => {
+  return async (request, response) => {
     try {
-      await handler(request, res);
+      await handler(request, response);
       return;
-    } catch (error) {
+    } catch (error: unknown) {
       /* istanbul ignore if */
       if (process.env.NODE_ENV !== 'test') {
         // Silent log on test environment
@@ -30,7 +30,7 @@ export function catchErrors(
       if (HttpApiError.isHttpApiError(error)) {
         const { message, statusCode, context } = error;
 
-        res.status(statusCode).json({
+        response.status(statusCode).json({
           message,
           statusCode,
           errors: isValidationObjectErrors(context) ? context : undefined,
@@ -38,8 +38,8 @@ export function catchErrors(
         return;
       }
 
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        message: error.message,
+      response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: error instanceof Error ? error.message : String(error),
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       });
     }

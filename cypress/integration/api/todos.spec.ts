@@ -86,14 +86,14 @@ describe('Todo API', () => {
 
   it('should get one todo', () => {
     cy.api({
-      url: url + '/' + todo.id,
+      url: `${url}/${todo.id}`,
       headers: { authorization },
     }).validateResponse(StatusCodes.OK, 'Todo');
   });
 
   it('should update one todo', () => {
     cy.api({
-      url: url + '/' + todo.id,
+      url: `${url}/${todo.id}`,
       method: 'PUT',
       body: {
         text: faker.fake('Buy {{commerce.product}}'),
@@ -115,7 +115,7 @@ describe('Todo API', () => {
       .its('body')
       .then(body => {
         cy.api({
-          url: url + '/' + body.id,
+          url: `${url}/${body.id as string}`,
           method: 'DELETE',
           headers: { authorization },
         })
@@ -175,14 +175,14 @@ describe('Todo API', () => {
 
     it('should fail to get one todo', () => {
       cy.api({
-        url: url + '/' + todo.id,
+        url: `${url}/${todo.id}`,
         failOnStatusCode: false,
       }).validateResponse(StatusCodes.UNAUTHORIZED, 'ApiError');
     });
 
     it('should fail to update one todo', () => {
       cy.api({
-        url: url + '/' + todo.id,
+        url: `${url}/${todo.id}`,
         method: 'PUT',
         body: {
           text: faker.fake(`Buy {{commerce.product}}`),
@@ -194,7 +194,7 @@ describe('Todo API', () => {
 
     it('should fail to remove one todo', () => {
       cy.api({
-        url: url + '/' + todo.id,
+        url: `${url}/${todo.id}`,
         method: 'DELETE',
         failOnStatusCode: false,
       }).validateResponse(StatusCodes.UNAUTHORIZED, 'ApiError');
@@ -212,7 +212,7 @@ describe('Todo API', () => {
 
     it('should forbid the access one todo that belongs to another', () => {
       cy.api({
-        url: url + '/' + todo.id,
+        url: `${url}/${todo.id}`,
         headers: { authorization },
         failOnStatusCode: false,
       }).validateResponse(StatusCodes.FORBIDDEN, 'ApiError');
@@ -220,7 +220,7 @@ describe('Todo API', () => {
 
     it('should forbid the update of one that belongs to another', () => {
       cy.api({
-        url: url + '/' + todo.id,
+        url: `${url}/${todo.id}`,
         method: 'PUT',
         body: {
           text: faker.fake('Buy {{finance.amount}} x {{commerce.product}}'),
@@ -233,7 +233,7 @@ describe('Todo API', () => {
 
     it('should forbid the remove of one todo that belongs to another', () => {
       cy.api({
-        url: url + '/' + todo.id,
+        url: `${url}/${todo.id}`,
         method: 'DELETE',
         headers: { authorization },
         failOnStatusCode: false,

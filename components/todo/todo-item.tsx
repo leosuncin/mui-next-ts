@@ -37,8 +37,8 @@ const TodoItem: React.FC<PropTypes.InferProps<typeof propTypes>> = ({
     try {
       setValidationError(null);
       validationSchema.validateSync({ text });
-    } catch (error) {
-      setValidationError(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) setValidationError(error.message);
     }
   }, [text]);
 
@@ -87,15 +87,8 @@ const TodoItem: React.FC<PropTypes.InferProps<typeof propTypes>> = ({
               }}
               onBlur={saveTodo}
               onKeyUp={event => {
-                switch (event.key) {
-                  case 'Escape':
-                    abortEdit();
-                    break;
-
-                  case 'Enter':
-                    saveTodo();
-                    break;
-                }
+                if (event.key === 'Escape') abortEdit();
+                if (event.key === 'Enter') saveTodo();
               }}
             />
           ) : todo.done ? (

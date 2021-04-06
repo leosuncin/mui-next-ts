@@ -8,7 +8,7 @@ export { default as logout } from './logout';
 export { default as register } from './register';
 export { default as deleteTodo } from './delete-todo';
 
-export type PaginationParams = {
+export type PaginationParameters = {
   page: number;
   offset: number;
   limit: number;

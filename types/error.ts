@@ -23,7 +23,7 @@ export class HttpApiError extends Error {
     if (Error.captureStackTrace) Error.captureStackTrace(this);
   }
 
-  static isHttpApiError(error: Error): error is HttpApiError {
+  static isHttpApiError(error: any): error is HttpApiError {
     return (
       error.name === this.name &&
       Object.prototype.hasOwnProperty.call(error, 'statusCode')

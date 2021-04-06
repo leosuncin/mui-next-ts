@@ -69,10 +69,10 @@ export default function RegisterPage(props) {
               try {
                 setError(null);
                 await register(body);
-                router.push('/');
+                void router.push('/');
                 window.location.pathname = '/';
-              } catch (error) {
-                setError(error.message);
+              } catch (error: unknown) {
+                setError(error instanceof Error && error.message);
               }
             }}
           />

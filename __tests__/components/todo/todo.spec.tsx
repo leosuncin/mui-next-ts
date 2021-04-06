@@ -58,7 +58,7 @@ describe('<Todo />', () => {
 
     await waitForElementToBeRemoved(screen.getByTestId('loading-todos')); // Wait until loader to disappear
 
-    await userEvent.type(screen.getByRole('textbox', { name: /Text/ }), text); // Typing the new todo
+    userEvent.type(screen.getByRole('textbox', { name: /Text/ }), text); // Typing the new todo
     userEvent.click(screen.getByRole('button', { name: /^add$/i })); // Submit the form
 
     await screen.findByTestId('loading-todos'); // Wait until loader appear
@@ -77,7 +77,7 @@ describe('<Todo />', () => {
       screen.getAllByRole('listitem')[0].querySelector('span + time'),
     ); // Activate the edit state
     userEvent.clear(screen.getByRole('textbox', { name: /edit text/i })); // Clear the input
-    await userEvent.type(
+    userEvent.type(
       screen.getByRole('textbox', { name: /edit text/i }),
       text + '{enter}',
     ); // Type changes and save with Enter

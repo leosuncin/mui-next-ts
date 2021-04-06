@@ -1,10 +1,10 @@
 import { NextHttpHandler, UnprocessableEntityError } from 'types';
-import type { AnyObjectSchema } from 'yup';
+import type { AnyObjectSchema, ValidationError } from 'yup';
 
 export function validateBody(schema: AnyObjectSchema) {
   return (handler: NextHttpHandler): NextHttpHandler => async (
     request,
-    res,
+    response,
   ) => {
     try {
       request.body = await schema.validate(request.body, {
@@ -12,12 +12,14 @@ export function validateBody(schema: AnyObjectSchema) {
         stripUnknown: true,
       });
 
-      await handler(request, res);
+      await handler(request, response);
       return;
-    } catch (error) {
+    } catch (error: unknown) {
       throw new UnprocessableEntityError(
         'Validation errors',
-        UnprocessableEntityError.transformValidationError(error),
+        UnprocessableEntityError.transformValidationError(
+          error as ValidationError,
+        ),
       );
     }
   };

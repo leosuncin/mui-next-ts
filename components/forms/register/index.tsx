@@ -66,7 +66,7 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
             autoFocus
             inputRef={register(validations.firstName)}
             error={Boolean(errors.firstName)}
-            helperText={errors.firstName && errors.firstName.message}
+            helperText={errors.firstName?.message}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -80,7 +80,7 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
             autoComplete="lname"
             inputRef={register(validations.lastName)}
             error={Boolean(errors.lastName)}
-            helperText={errors.lastName && errors.lastName.message}
+            helperText={errors.lastName?.message}
           />
         </Grid>
         <Grid item xs={12}>
@@ -95,7 +95,7 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
             autoComplete="username"
             inputRef={register(validations.username)}
             error={Boolean(errors.username)}
-            helperText={errors.username && errors.username.message}
+            helperText={errors.username?.message}
           />
         </Grid>
         <Grid item xs={12}>
@@ -110,7 +110,7 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
             autoComplete="current-password"
             inputRef={register(validations.password)}
             error={Boolean(errors.password)}
-            helperText={errors.password && errors.password.message}
+            helperText={errors.password?.message}
           />
         </Grid>
       </Grid>

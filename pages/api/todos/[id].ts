@@ -10,7 +10,7 @@ import {
 import { editTodoSchema } from 'libs/validation';
 import { ForbiddenError, NextHttpHandler, NotFoundError, Todo } from 'types';
 
-const putHandler: NextHttpHandler = async (request, res) => {
+const putHandler: NextHttpHandler = async (request, response) => {
   const [updates] = await nSQL('todos')
     /*
      * Solves issue with @nano-sql/plugin-fuzzy-search,
@@ -24,7 +24,7 @@ const putHandler: NextHttpHandler = async (request, res) => {
     .where(['id', '=', request.query.id])
     .exec();
 
-  res.json({
+  response.json({
     ...updates,
     /* `updates.updatedAt` is returned as string,
      * but to return a ISO 8601 first cast to date
@@ -33,37 +33,39 @@ const putHandler: NextHttpHandler = async (request, res) => {
   });
 };
 
-const deleteHandler: NextHttpHandler = async (request, res) => {
+const deleteHandler: NextHttpHandler = async (request, response) => {
   await nSQL('todos')
     .query('delete')
     .where(['id', '=', request.query.id])
     .exec();
-  res.status(StatusCodes.NO_CONTENT).send(Buffer.alloc(0));
+  response.status(StatusCodes.NO_CONTENT).send(Buffer.alloc(0));
 };
 
-const endpointHandler: NextHttpHandler = async (request, res) => {
+const endpointHandler: NextHttpHandler = async (request, response) => {
   const [todo] = (await nSQL('todos')
     .query('select')
     .where(['id', '=', request.query.id])
     .exec()) as [Todo];
 
   if (!todo)
-    throw new NotFoundError(`Not found any ToDo with id: ${request.query.id}`);
+    throw new NotFoundError(
+      `Not found any ToDo with id: ${request.query.id as string}`,
+    );
 
   if (todo.createdBy !== request.user.id)
     throw new ForbiddenError("ToDo doesn't belong to you");
 
   switch (request.method) {
     case 'GET': {
-      res.json(todo);
+      response.json(todo);
       return;
     }
 
     case 'PUT':
-      return validateBody(editTodoSchema)(putHandler)(request, res);
+      return validateBody(editTodoSchema)(putHandler)(request, response);
 
     case 'DELETE':
-      return deleteHandler(request, res);
+      return deleteHandler(request, response);
   }
 };
 

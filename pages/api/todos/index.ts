@@ -11,15 +11,15 @@ import {
 import { createTodoSchema } from 'libs/validation';
 import { NextHttpHandler, Todo } from 'types';
 
-const saveNote: NextHttpHandler = async (request, res) => {
+const saveNote: NextHttpHandler = async (request, response) => {
   const [note] = (await nSQL('todos')
     .query('upsert', { ...request.body, createdBy: request.user.id })
     .exec()) as [Todo];
 
-  res.status(StatusCodes.CREATED).json(note);
+  response.status(StatusCodes.CREATED).json(note);
 };
 
-const findNotes: NextHttpHandler = async (request, res) => {
+const findNotes: NextHttpHandler = async (request, response) => {
   const limit = Math.abs(
     Number.parseInt(request.query.limit as string, 10) || 10,
   );
@@ -45,19 +45,19 @@ const findNotes: NextHttpHandler = async (request, res) => {
     .offset(offset > 0 ? offset : (page - 1) * limit)
     .exec()) as Todo[];
 
-  res.json(notes);
+  response.json(notes);
 };
 
 export default catchErrors(
   validateMethod(['GET', 'POST'])(
     withDB(
-      withAuthentication((request, res) => {
+      withAuthentication((request, response) => {
         switch (request.method) {
           case 'GET':
-            return findNotes(request, res);
+            return findNotes(request, response);
 
           case 'POST':
-            return validateBody(createTodoSchema)(saveNote)(request, res);
+            return validateBody(createTodoSchema)(saveNote)(request, response);
         }
       }),
     ),

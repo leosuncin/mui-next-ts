@@ -1,14 +1,14 @@
 import { get } from 'libs/request';
 import { TodoResponse as Todo } from 'types';
 
-import { PaginationParams } from '.';
+import { PaginationParameters } from '.';
 
 export default async function listTodo({
   page = 1,
   offset = 0,
   limit = 10,
   signal,
-}: Partial<PaginationParams> = {}): Promise<Todo[]> {
+}: Partial<PaginationParameters> = {}): Promise<Todo[]> {
   const searchParameters = new URLSearchParams();
 
   if (offset > 0) searchParameters.set('offset', offset as any);

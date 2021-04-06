@@ -7,23 +7,24 @@ async function fetcher<Data>(
   options: RequestInit,
 ): Promise<Data> {
   const resp = await fetch(input, options);
-  let result: Data | ErrorResponse;
+  let data: Data;
+  let error: ErrorResponse;
 
   if (resp.status === 204) return;
 
   try {
     const text = await resp.text();
-    result = JSON.parse(text);
+    data = JSON.parse(text);
   } catch {
-    result = {
+    error = {
       statusCode: resp.status,
       message: resp.statusText,
-    } as ErrorResponse;
+    };
   }
 
-  if (resp.status < 400) return result as Data;
+  if (resp.status < 400) return data;
 
-  throw new HttpError(result as ErrorResponse);
+  throw new HttpError(error);
 }
 
 export async function post<Body, Data>(

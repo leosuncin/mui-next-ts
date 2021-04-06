@@ -55,7 +55,7 @@ function isJWT(token: string): boolean {
 }
 
 export function withAuthentication(handler: NextHttpHandler): NextHttpHandler {
-  return async (request, res) => {
+  return async (request, response) => {
     const token =
       extractTokenFromCookies(request) ?? extractTokenFromHeaders(request);
 
@@ -80,10 +80,13 @@ export function withAuthentication(handler: NextHttpHandler): NextHttpHandler {
 
       request.user = user;
 
-      await handler(request, res);
+      await handler(request, response);
       return;
-    } catch (error) {
-      throw new UnauthorizedError('Invalid authorization token', error);
+    } catch (error: unknown) {
+      throw new UnauthorizedError(
+        'Invalid authorization token',
+        error as Error,
+      );
     }
   };
 }

@@ -22,7 +22,7 @@ const withAuthentication = (WrappedPage: NextPage) => {
     useEffect(() => {
       const syncLogout = event => {
         if (event.key === 'logoutAt') {
-          Router.push('/login');
+          void Router.push('/login');
         }
       };
 
@@ -43,7 +43,7 @@ const withAuthentication = (WrappedPage: NextPage) => {
 
     if (!token || !user) {
       if (process.browser) {
-        Router.push('/login');
+        void Router.push('/login');
       } else {
         ctx.res.writeHead(302, { Location: '/login' });
         ctx.res.end();

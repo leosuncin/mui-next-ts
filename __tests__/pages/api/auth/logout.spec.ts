@@ -25,7 +25,7 @@ describe('[DELETE] /api/auth/logout', () => {
       url: '/api/auth/logout',
     });
 
-    logoutHandler(req, res);
+    void logoutHandler(req, res);
 
     expect(res._getStatusCode()).toBe(StatusCodes.NO_CONTENT);
     expect(res._getHeaders()).toMatchInlineSnapshot(`

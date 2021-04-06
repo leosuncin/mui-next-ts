@@ -62,10 +62,10 @@ const LoginForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
           try {
             setErrorMessage(null);
             await props.onSubmit(body);
-          } catch (error) {
+          } catch (error: unknown) {
             setAttempt(attempt => attempt + 1);
             if (attempt >= 3) setErrorMessage('Too many failed attempts');
-            else setErrorMessage(error.message);
+            else setErrorMessage(error instanceof Error && error.message);
           }
         })}
       >
@@ -82,7 +82,7 @@ const LoginForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
           inputRef={register(validations.username)}
           error={Boolean(errors.username)}
           disabled={attempt > 3}
-          helperText={errors.username && errors.username.message}
+          helperText={errors.username?.message}
         />
         <TextField
           variant="outlined"
@@ -97,7 +97,7 @@ const LoginForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
           inputRef={register(validations.password)}
           error={Boolean(errors.password)}
           disabled={attempt > 3}
-          helperText={errors.password && errors.password.message}
+          helperText={errors.password?.message}
         />
         {formState.isSubmitting ? (
           <div className={classes.loaderContainer}>

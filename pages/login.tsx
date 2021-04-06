@@ -53,7 +53,7 @@ export default function LoginPage(props) {
           <LoginForm
             onSubmit={async body => {
               await login(body);
-              router.push('/');
+              await router.push('/');
               window.location.pathname = '/';
             }}
           />
