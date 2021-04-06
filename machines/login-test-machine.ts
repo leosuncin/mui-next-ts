@@ -9,19 +9,19 @@ import {
 
 export interface LoginTestStateSchema extends StateSchema<never> {
   states: {
-    pristine: {};
+    pristine: Record<string, unknown>;
     invalid: {
       states: {
-        username: {};
-        password: {};
+        username: Record<string, unknown>;
+        password: Record<string, unknown>;
       };
     };
-    valid: {};
-    correctCredentials: {};
-    incorrectCredentials: {};
-    success: {};
-    retry: {};
-    locked: {};
+    valid: Record<string, unknown>;
+    correctCredentials: Record<string, unknown>;
+    incorrectCredentials: Record<string, unknown>;
+    success: Record<string, unknown>;
+    retry: Record<string, unknown>;
+    locked: Record<string, unknown>;
   };
 }
 interface TypeUsernameEvent extends EventObject {
@@ -35,6 +35,7 @@ export interface FillEvent extends TypeUsernameEvent, TypePasswordEvent {}
 function isValidUsername(username: string): boolean {
   return typeof username === 'string' && username.trim().length >= 5;
 }
+
 function isValidPassword(password: string): boolean {
   return typeof password === 'string' && password.trim().length >= 8;
 }

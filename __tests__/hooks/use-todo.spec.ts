@@ -15,7 +15,7 @@ describe('useTodo Hook', () => {
     });
 
     it('should handle FETCH_TODOS event', () => {
-      const prevState: TodoState = {
+      const previousState: TodoState = {
         all: [],
         completed: [],
         active: [],
@@ -24,8 +24,9 @@ describe('useTodo Hook', () => {
       };
       const mockExec = jest.fn();
 
-      expect(todoReducer(prevState, { type: 'FETCH_TODOS' }, mockExec as any))
-        .toMatchInlineSnapshot(`
+      expect(
+        todoReducer(previousState, { type: 'FETCH_TODOS' }, mockExec as any),
+      ).toMatchInlineSnapshot(`
         Object {
           "_filter": "all",
           "active": Array [],
@@ -38,7 +39,7 @@ describe('useTodo Hook', () => {
     });
 
     it('should handle TODOS_FETCHED event', () => {
-      const prevState: TodoState = {
+      const previousState: TodoState = {
         _filter: 'all',
         active: [],
         all: [],
@@ -136,7 +137,7 @@ describe('useTodo Hook', () => {
         ],
       };
 
-      const nextState = todoReducer(prevState, event, jest.fn() as any);
+      const nextState = todoReducer(previousState, event, jest.fn() as any);
 
       expect(nextState.all).toHaveLength(10);
       expect(nextState.active).toHaveLength(5);
@@ -145,7 +146,7 @@ describe('useTodo Hook', () => {
     });
 
     it('should handle ADD_TODO event', () => {
-      const prevState: TodoState = {
+      const previousState: TodoState = {
         _filter: 'all',
         active: [],
         all: [],
@@ -158,7 +159,7 @@ describe('useTodo Hook', () => {
       };
       const mockExec = jest.fn();
 
-      const nextState = todoReducer(prevState, event, mockExec as any);
+      const nextState = todoReducer(previousState, event, mockExec as any);
 
       expect(nextState).toHaveProperty('loading', true);
       expect(nextState.error).toBeUndefined();
@@ -169,7 +170,7 @@ describe('useTodo Hook', () => {
     });
 
     it('should handle TODO_SAVED event', () => {
-      const prevState: TodoState = {
+      const previousState: TodoState = {
         _filter: 'all',
         active: [],
         all: [],
@@ -188,7 +189,7 @@ describe('useTodo Hook', () => {
         },
       };
 
-      const nextState = todoReducer(prevState, event, jest.fn() as any);
+      const nextState = todoReducer(previousState, event, jest.fn() as any);
 
       expect(nextState).toHaveProperty('loading', false);
       expect(nextState.all).toStrictEqual([event.payload]);
@@ -196,7 +197,7 @@ describe('useTodo Hook', () => {
     });
 
     it('should handle EDIT_TODO event', () => {
-      const prevState: TodoState = {
+      const previousState: TodoState = {
         _filter: 'all',
         all: [
           {
@@ -320,7 +321,7 @@ describe('useTodo Hook', () => {
       };
       const mockExec = jest.fn();
 
-      const nextState = todoReducer(prevState, event, mockExec as any);
+      const nextState = todoReducer(previousState, event, mockExec as any);
 
       expect(mockExec).toHaveBeenCalledWith({
         type: 'editTodo',
@@ -343,7 +344,7 @@ describe('useTodo Hook', () => {
     });
 
     it('should handle TODO_CHANGED event', () => {
-      const prevState: TodoState = {
+      const previousState: TodoState = {
         _filter: 'all',
         all: [
           {
@@ -467,7 +468,7 @@ describe('useTodo Hook', () => {
         },
       };
 
-      const nextState = todoReducer(prevState, event, jest.fn() as any);
+      const nextState = todoReducer(previousState, event, jest.fn() as any);
 
       expect(nextState.all).toHaveLength(6);
       expect(nextState.active).toHaveLength(2);
@@ -475,7 +476,7 @@ describe('useTodo Hook', () => {
     });
 
     it('should handle TODO_REVERT_CHANGE event', () => {
-      const prevState: TodoState = {
+      const previousState: TodoState = {
         _filter: 'all',
         all: [
           {
@@ -601,7 +602,7 @@ describe('useTodo Hook', () => {
         payload: 'Database connection error',
       };
 
-      const nextState = todoReducer(prevState, event, jest.fn() as any);
+      const nextState = todoReducer(previousState, event, jest.fn() as any);
 
       expect(nextState).toHaveProperty('error', 'Database connection error');
       expect(nextState._position).toBeUndefined();
@@ -628,7 +629,7 @@ describe('useTodo Hook', () => {
     });
 
     it('should handle REMOVE_TODO event', () => {
-      const prevState: TodoState = {
+      const previousState: TodoState = {
         _filter: 'all',
         loading: false,
         all: [
@@ -756,7 +757,7 @@ describe('useTodo Hook', () => {
       };
       const mockExec = jest.fn();
 
-      const nextState = todoReducer(prevState, event, mockExec as any);
+      const nextState = todoReducer(previousState, event, mockExec as any);
 
       expect(mockExec).toHaveBeenCalledWith({
         type: 'removeTodo',
@@ -778,7 +779,7 @@ describe('useTodo Hook', () => {
     });
 
     it('should handle REMOVE_TODO_FAILED event', () => {
-      const prevState: TodoState = {
+      const previousState: TodoState = {
         _filter: 'all',
         _position: 3,
         _todo: {
@@ -888,7 +889,7 @@ describe('useTodo Hook', () => {
         payload: 'Database connection error',
       };
 
-      const nextState = todoReducer(prevState, event, jest.fn() as any);
+      const nextState = todoReducer(previousState, event, jest.fn() as any);
 
       expect(nextState).toHaveProperty('error', 'Database connection error');
       expect(nextState._position).toBeUndefined();
@@ -1007,7 +1008,7 @@ describe('useTodo Hook', () => {
     });
 
     it('should handle SWITCH_FILTER event', () => {
-      const prevState: TodoState = {
+      const previousState: TodoState = {
         _filter: 'all',
         active: [],
         all: [],
@@ -1017,14 +1018,14 @@ describe('useTodo Hook', () => {
 
       expect(
         todoReducer(
-          prevState,
+          previousState,
           { type: 'SWITCH_FILTER', payload: 'active' },
           jest.fn() as any,
         ),
       ).toHaveProperty('_filter', 'active');
       expect(
         todoReducer(
-          prevState,
+          previousState,
           { type: 'SWITCH_FILTER', payload: 'completed' },
           jest.fn() as any,
         ),
@@ -1032,7 +1033,7 @@ describe('useTodo Hook', () => {
     });
 
     it('should handle ERROR event', () => {
-      const prevState: TodoState = {
+      const previousState: TodoState = {
         _filter: 'all',
         active: [],
         all: [],
@@ -1041,7 +1042,7 @@ describe('useTodo Hook', () => {
       };
       const event: TodoEvent = { type: 'ERROR', payload: 'Network Error' };
 
-      const nextState = todoReducer(prevState, event, jest.fn() as any);
+      const nextState = todoReducer(previousState, event, jest.fn() as any);
 
       expect(nextState).toHaveProperty('loading', false);
       expect(nextState).toHaveProperty('error', 'Network Error');

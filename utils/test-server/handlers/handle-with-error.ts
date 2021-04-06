@@ -5,7 +5,7 @@ export const respondWithServiceUnavailable = (
   endpoint: string,
   method: keyof typeof rest,
 ): RequestHandler =>
-  rest[method](endpoint, (req, res, ctx) => {
+  rest[method](endpoint, (request, res, ctx) => {
     return res(
       ctx.status(StatusCodes.SERVICE_UNAVAILABLE),
       ctx.json({
@@ -19,6 +19,6 @@ export const respondWithInternalServerError = (
   endpoint: string,
   method: keyof typeof rest,
 ): RequestHandler =>
-  rest[method](endpoint, (req, res, ctx) => {
+  rest[method](endpoint, (request, res, ctx) => {
     return res(ctx.status(StatusCodes.INTERNAL_SERVER_ERROR));
   });

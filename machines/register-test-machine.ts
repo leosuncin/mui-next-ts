@@ -10,19 +10,19 @@ import {
 
 export interface RegisterTestStateSchema extends StateSchema<never> {
   states: {
-    pristine: {};
+    pristine: Record<string, unknown>;
     invalid: {
       states: {
-        firstName: {};
-        lastName: {};
-        username: {};
-        password: {};
+        firstName: Record<string, unknown>;
+        lastName: Record<string, unknown>;
+        username: Record<string, unknown>;
+        password: Record<string, unknown>;
       };
     };
-    valid: {};
-    duplicateCredentials: {};
-    success: {};
-    fail: {};
+    valid: Record<string, unknown>;
+    duplicateCredentials: Record<string, unknown>;
+    success: Record<string, unknown>;
+    fail: Record<string, unknown>;
   };
 }
 interface TypeFirstNameEvent extends EventObject {
@@ -47,16 +47,19 @@ function isValidFirstName(firstName: string): boolean {
   firstName = firstName.includes('{backspace}') ? '' : firstName;
   return typeof firstName === 'string' && firstName.trim().length > 0;
 }
+
 function isValidLastName(lastName: string): boolean {
   lastName = lastName.includes('{backspace}') ? '' : lastName;
   return typeof lastName === 'string' && lastName.trim().length > 0;
 }
+
 function isValidUsername(username: string): boolean {
   username = username.includes('{backspace}')
     ? ''
     : username.replace('{enter}', '');
   return typeof username === 'string' && username.length >= 5;
 }
+
 function isValidPassword(password: string): boolean {
   password = password.includes('{backspace}')
     ? ''

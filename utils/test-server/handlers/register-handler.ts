@@ -7,7 +7,7 @@ import { AuthRegister } from 'types';
 
 const registerHandler: RequestHandler = rest.post(
   '/api/auth/register',
-  (req, res, ctx) => {
+  (request, res, ctx) => {
     const user = {
       id: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
       firstName: 'Jane',
@@ -17,10 +17,10 @@ const registerHandler: RequestHandler = rest.post(
       bio:
         'She had this enormous capacity for wonder, and lived by the Golden Rule.',
     };
-    const { firstName, lastName, username } = req.body as AuthRegister;
+    const { firstName, lastName, username } = request.body as AuthRegister;
 
     try {
-      validationSchema.validateSync(req.body, {
+      validationSchema.validateSync(request.body, {
         abortEarly: false,
         stripUnknown: true,
       });
@@ -31,7 +31,10 @@ const registerHandler: RequestHandler = rest.post(
           statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
           message: 'Validation errors',
           errors: error.inner.reduce(
-            (prev, error) => ({ ...prev, [error.path]: error.errors[0] }),
+            (previous, error) => ({
+              ...previous,
+              [error.path]: error.errors[0],
+            }),
             {},
           ),
         }),

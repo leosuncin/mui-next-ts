@@ -56,7 +56,7 @@ export default function RegisterPage(props) {
           <Typography component="h1" variant="h5">
             Welcome aboard
           </Typography>
-          <Fade in={!!error} aria-expanded={!!error}>
+          <Fade in={Boolean(error)} aria-expanded={Boolean(error)}>
             <Typography color="secondary" className={classes.errorMessage}>
               <span role="img" aria-label="sad face">
                 😥

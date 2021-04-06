@@ -110,7 +110,7 @@ describe('<TodoItem />', () => {
     );
 
     await expect(
-      screen.findByText(/Text is a required field/i),
+      screen.findByText(/text is a required field/i),
     ).resolves.toBeInTheDocument();
 
     expect(spyChange).not.toHaveBeenCalled();
@@ -123,7 +123,7 @@ describe('<TodoItem />', () => {
     fireEvent.blur(screen.getByRole('textbox'));
 
     await expect(
-      screen.findByText(/Text must be at most 140 characters/i),
+      screen.findByText(/text must be at most 140 characters/i),
     ).resolves.toBeInTheDocument();
 
     expect(spyChange).not.toHaveBeenCalled();
@@ -166,7 +166,7 @@ describe('<TodoItem />', () => {
       />,
     );
 
-    userEvent.click(screen.getByRole('button', { name: /Delete todo/i }));
+    userEvent.click(screen.getByRole('button', { name: /delete todo/i }));
 
     expect(spyRemove).toHaveBeenCalled();
   });

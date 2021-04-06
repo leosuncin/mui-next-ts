@@ -8,9 +8,9 @@ import React from 'react';
 import { loginBuild } from 'utils/factories';
 
 describe('LoginForm component', () => {
-  const usernameLabel = /Username/i;
-  const passwordLabel = /Password/i;
-  const submitButton = /Log me in/i;
+  const usernameLabel = /username/i;
+  const passwordLabel = /password/i;
+  const submitButton = /log me in/i;
   const Component = ({ onSubmit }) => {
     const router: NextRouter = {
       pathname: '/login',

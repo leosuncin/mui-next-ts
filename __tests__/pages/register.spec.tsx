@@ -38,14 +38,18 @@ describe('<RegisterPage />', () => {
     </RouterContext.Provider>
   );
 
-  beforeAll(() => server.listen());
+  beforeAll(() => {
+    server.listen();
+  });
 
   afterEach(() => {
     server.resetHandlers();
     routerMocked.push.mockReset();
   });
 
-  afterAll(() => server.close());
+  afterAll(() => {
+    server.close();
+  });
 
   it('should render', () => {
     expect(render(tree)).toBeDefined();
@@ -54,11 +58,11 @@ describe('<RegisterPage />', () => {
   it('should shown the error for duplicate user', async () => {
     const { getByLabelText, getByText, findByText, getByTestId } = render(tree);
 
-    await userEvent.type(getByLabelText(/First name/i), 'Jane');
-    await userEvent.type(getByLabelText(/Last name/i), 'Doe');
-    await userEvent.type(getByLabelText(/Username/i), 'jane_doe');
-    await userEvent.type(getByLabelText(/Password/i), '!drowssap');
-    userEvent.click(getByText(/Sign Me Up/i));
+    await userEvent.type(getByLabelText(/first name/i), 'Jane');
+    await userEvent.type(getByLabelText(/last name/i), 'Doe');
+    await userEvent.type(getByLabelText(/username/i), 'jane_doe');
+    await userEvent.type(getByLabelText(/password/i), '!drowssap');
+    userEvent.click(getByText(/sign me up/i));
     await waitForElementToBeRemoved(getByTestId('registering-user'));
 
     await expect(
@@ -69,11 +73,11 @@ describe('<RegisterPage />', () => {
   it('should register a new user', async () => {
     const { getByLabelText, getByText, getByTestId } = render(tree);
 
-    await userEvent.type(getByLabelText(/First name/i), 'Kristen');
-    await userEvent.type(getByLabelText(/Last name/i), 'Williams');
-    await userEvent.type(getByLabelText(/Username/i), 'kristen.williams');
-    await userEvent.type(getByLabelText(/Password/i), 'Pa$$w0rd!');
-    userEvent.click(getByText(/Sign Me Up/i));
+    await userEvent.type(getByLabelText(/first name/i), 'Kristen');
+    await userEvent.type(getByLabelText(/last name/i), 'Williams');
+    await userEvent.type(getByLabelText(/username/i), 'kristen.williams');
+    await userEvent.type(getByLabelText(/password/i), 'Pa$$w0rd!');
+    userEvent.click(getByText(/sign me up/i));
     await waitForElementToBeRemoved(getByTestId('registering-user'));
 
     expect(routerMocked.push).toHaveBeenCalledTimes(1);

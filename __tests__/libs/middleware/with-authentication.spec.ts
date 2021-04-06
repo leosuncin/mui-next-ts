@@ -11,9 +11,12 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
 import { UnauthorizedError } from 'types';
 
-const toBase64 = (str: String) => Buffer.from(str).toString('base64');
-const toBase64UrlSafe = (str: String) =>
-  Buffer.from(str).toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
+const toBase64 = (string: string) => Buffer.from(string).toString('base64');
+const toBase64UrlSafe = (string: string) =>
+  Buffer.from(string)
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_');
 
 describe('withAuthentication middleware', () => {
   const testCases = [

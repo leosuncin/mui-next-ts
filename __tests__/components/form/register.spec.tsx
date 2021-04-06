@@ -33,10 +33,10 @@ describe('<RegisterForm />', () => {
       <RegisterForm onSubmit={handleSubmit} />,
     );
 
-    userEvent.type(getByLabelText(/First name/i), 'Joe');
-    userEvent.type(getByLabelText(/Last name/i), 'Doe');
-    userEvent.type(getByLabelText(/Username/i), 'joe_doe');
-    userEvent.type(getByLabelText(/Password/i), 'Pa$$w0rd!');
+    userEvent.type(getByLabelText(/first name/i), 'Joe');
+    userEvent.type(getByLabelText(/last name/i), 'Doe');
+    userEvent.type(getByLabelText(/username/i), 'joe_doe');
+    userEvent.type(getByLabelText(/password/i), 'Pa$$w0rd!');
     await act(async () => {
       fireEvent.submit(getByTitle('register form'));
     });

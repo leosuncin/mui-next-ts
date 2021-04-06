@@ -26,7 +26,7 @@ async function fetcher<Data>(
   throw new HttpError(result as ErrorResponse);
 }
 
-export function post<Body, Data>(
+export async function post<Body, Data>(
   request: RequestInfo,
   body: Body,
   signal?: AbortSignal,
@@ -43,14 +43,14 @@ export function post<Body, Data>(
   });
 }
 
-export function get<Data>(
+export async function get<Data>(
   request: RequestInfo,
   signal?: AbortSignal,
 ): Promise<Data> {
   return fetcher(request, { ...defaultOptions, signal });
 }
 
-export function remove(
+export async function remove(
   request: RequestInfo,
   signal?: AbortSignal,
 ): Promise<void> {
@@ -61,7 +61,7 @@ export function remove(
   });
 }
 
-export function put<Body, Data>(
+export async function put<Body, Data>(
   request: RequestInfo,
   body: Body,
   signal?: AbortSignal,

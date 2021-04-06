@@ -7,11 +7,11 @@ import React from 'react';
 import { registerBuild } from 'utils/factories';
 
 describe('RegisterForm component', () => {
-  const firstNameLabel = /First name/i;
-  const lastNameLabel = /Last name/i;
-  const usernameLabel = /Username/i;
-  const passwordLabel = /Password/i;
-  const submitButton = /Sign Me Up/i;
+  const firstNameLabel = /first name/i;
+  const lastNameLabel = /last name/i;
+  const usernameLabel = /username/i;
+  const passwordLabel = /password/i;
+  const submitButton = /sign me up/i;
   const Component = ({ onSubmit }) => {
     const router: NextRouter = {
       pathname: '/register',
@@ -77,8 +77,8 @@ describe('RegisterForm component', () => {
 
             cy.findByRole('button', { name: submitButton }).click();
 
-            cy.findByText(/First name should not be empty/i);
-            cy.findByText(/Last name should not be empty/i);
+            cy.findByText(/first name should not be empty/i);
+            cy.findByText(/last name should not be empty/i);
             cy.findByText(/Username.+(?:empty|too short)/);
             cy.findByText(/Password.+(?:empty|too short)/);
 

@@ -8,18 +8,17 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import FaceIcon from '@material-ui/icons/Face';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountIcon from '@material-ui/icons/Person';
-import PropTypes from 'prop-types';
-import React, { useState } from 'react';
-
 import { useAuth } from 'hooks/auth-context';
 import { useUserState } from 'hooks/user-context';
 import { useRouter } from 'next/router';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 
 const Header: React.FC<{ title?: string }> = props => {
   const user = useUserState();
   const { logout } = useAuth();
   const router = useRouter();
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorElement, setAnchorElement] = useState(null);
 
   return (
     <AppBar position="static">
@@ -42,7 +41,9 @@ const Header: React.FC<{ title?: string }> = props => {
               aria-haspopup="true"
               aria-controls="profile-menu"
               data-testid="profile-menu"
-              onClick={e => setAnchorEl(e.currentTarget)}
+              onClick={e => {
+                setAnchorElement(e.currentTarget);
+              }}
             >
               <AccountIcon />
             </IconButton>
@@ -52,8 +53,8 @@ const Header: React.FC<{ title?: string }> = props => {
               aria-haspopup="true"
               disableAutoFocusItem
               keepMounted
-              open={Boolean(anchorEl)}
-              anchorEl={anchorEl}
+              open={Boolean(anchorElement)}
+              anchorEl={anchorElement}
               anchorOrigin={{
                 vertical: 'top',
                 horizontal: 'right',
@@ -62,7 +63,9 @@ const Header: React.FC<{ title?: string }> = props => {
                 vertical: 'top',
                 horizontal: 'right',
               }}
-              onClose={() => setAnchorEl(null)}
+              onClose={() => {
+                setAnchorElement(null);
+              }}
             >
               <MenuItem>
                 <FaceIcon />
@@ -84,6 +87,7 @@ const Header: React.FC<{ title?: string }> = props => {
     </AppBar>
   );
 };
+
 Header.propTypes = {
   title: PropTypes.string,
 };

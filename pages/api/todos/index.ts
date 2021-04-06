@@ -11,19 +11,23 @@ import {
 import { createTodoSchema } from 'libs/validation';
 import { NextHttpHandler, Todo } from 'types';
 
-const saveNote: NextHttpHandler = async (req, res) => {
+const saveNote: NextHttpHandler = async (request, res) => {
   const [note] = (await nSQL('todos')
-    .query('upsert', { ...req.body, createdBy: req.user.id })
+    .query('upsert', { ...request.body, createdBy: request.user.id })
     .exec()) as [Todo];
 
   res.status(StatusCodes.CREATED).json(note);
 };
 
-const findNotes: NextHttpHandler = async (req, res) => {
-  const limit = Math.abs(parseInt(req.query.limit as string, 10) || 10);
-  const page = Math.abs(parseInt(req.query.page as string, 10) || 1);
-  const offset = Math.abs(parseInt(req.query.offset as string, 10) || 0);
-  const { search } = req.query as Record<string, string>;
+const findNotes: NextHttpHandler = async (request, res) => {
+  const limit = Math.abs(
+    Number.parseInt(request.query.limit as string, 10) || 10,
+  );
+  const page = Math.abs(Number.parseInt(request.query.page as string, 10) || 1);
+  const offset = Math.abs(
+    Number.parseInt(request.query.offset as string, 10) || 0,
+  );
+  const { search } = request.query as Record<string, string>;
 
   const notes = (await nSQL('todos')
     .query('select')
@@ -32,14 +36,14 @@ const findNotes: NextHttpHandler = async (req, res) => {
         ? [
             [`SEARCH(text, "${FuzzyUserSanitize(search)}")`, '=', 0],
             'AND',
-            ['createdBy', 'LIKE', req.user.id],
+            ['createdBy', 'LIKE', request.user.id],
           ]
-        : ['createdBy', 'LIKE', req.user.id],
+        : ['createdBy', 'LIKE', request.user.id],
     )
     .orderBy(['createdAt DESC'])
     .limit(limit)
     .offset(offset > 0 ? offset : (page - 1) * limit)
-    .exec()) as Array<Todo>;
+    .exec()) as Todo[];
 
   res.json(notes);
 };
@@ -47,13 +51,13 @@ const findNotes: NextHttpHandler = async (req, res) => {
 export default catchErrors(
   validateMethod(['GET', 'POST'])(
     withDB(
-      withAuthentication((req, res) => {
-        switch (req.method) {
+      withAuthentication((request, res) => {
+        switch (request.method) {
           case 'GET':
-            return findNotes(req, res);
+            return findNotes(request, res);
 
           case 'POST':
-            return validateBody(createTodoSchema)(saveNote)(req, res);
+            return validateBody(createTodoSchema)(saveNote)(request, res);
         }
       }),
     ),

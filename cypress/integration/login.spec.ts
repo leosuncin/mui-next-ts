@@ -2,9 +2,9 @@ import { createModel } from '@xstate/test';
 import faker from 'faker';
 import createMachineWithTests, { FillEvent } from 'machines/login-test-machine';
 
-const usernameLabel = /Username/i;
-const passwordLabel = /Password/i;
-const submitButton = /Log me in/i;
+const usernameLabel = /username/i;
+const passwordLabel = /password/i;
+const submitButton = /log me in/i;
 const testMachine = createMachineWithTests({
   pristine: (cy: Cypress.cy) => {
     cy.findByLabelText('sad face').should('not.be.visible');
@@ -20,7 +20,7 @@ const testMachine = createMachineWithTests({
     cy.findByText(/Password.+(?:empty|too short)/).should('not.exist');
   },
   incorrectCredentials: (cy: Cypress.cy) => {
-    cy.findByText(/Wrong (?:username|password)/i).should('exist');
+    cy.findByText(/wrong (?:username|password)/i).should('exist');
   },
   success: (cy: Cypress.cy) => {
     cy.waitUntil(() =>
@@ -30,7 +30,7 @@ const testMachine = createMachineWithTests({
       .should('equal', '/');
   },
   locked: (cy: Cypress.cy) => {
-    cy.findByText(/Too many failed attempts/i).should('exist');
+    cy.findByText(/too many failed attempts/i).should('exist');
     cy.findByLabelText(usernameLabel).should('be.disabled');
     cy.findByLabelText(passwordLabel).should('be.disabled');
     cy.findByText(submitButton).parent().should('be.disabled');
@@ -81,28 +81,28 @@ const testModel = createModel(testMachine, {
 describe('Login page', () => {
   const testPlans = testModel.getSimplePathPlans();
 
-  testPlans.forEach(plan => {
+  for (const plan of testPlans) {
     describe(plan.description, () => {
-      plan.paths.forEach(path => {
+      for (const path of plan.paths) {
         it(path.description, () =>
           cy
             .intercept('POST', '/api/auth/login')
             .as('sendLogin')
             .visit('/login')
-            .then(() => path.test(cy)),
+            .then(async () => path.test(cy)),
         );
-      });
+      }
     });
-  });
+  }
 
-  // it('coverage', () => {
+  // It('coverage', () => {
   //   testModel.testCoverage();
   // });
 
   it('should go to register', () => {
     cy.intercept('POST', '/api/auth/login').as('sendLogin').visit('/login');
 
-    cy.findByText(/Register/i).click();
+    cy.findByText(/register/i).click();
 
     cy.waitUntil(() =>
       cy.location('pathname').then(pathname => pathname !== '/login'),

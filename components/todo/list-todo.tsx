@@ -19,7 +19,9 @@ const ListTodo: React.FC<{
         <TodoItem
           key={todo.id}
           todo={todo}
-          onChangeTodo={body => props.onChangeTodo(todo.id, body)}
+          onChangeTodo={body => {
+            props.onChangeTodo(todo.id, body);
+          }}
           onRemoveTodo={props.onRemoveTodo.bind(null, todo, idx)}
         />
       ))}

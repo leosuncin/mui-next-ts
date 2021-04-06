@@ -16,6 +16,7 @@ function parseUser(sessionUser: string) {
     return false;
   }
 }
+
 const withAuthentication = (WrappedPage: NextPage) => {
   const Wrapper: NextPage<AuthenticationProps> = props => {
     useEffect(() => {

@@ -6,9 +6,9 @@ import { todoBuild } from 'utils/factories';
 
 const createTodoHandler: RequestHandler = rest.post(
   '/api/todos',
-  (req, res, ctx) => {
+  (request, res, ctx) => {
     try {
-      const newTodo = validationSchema.validateSync(req.body, {
+      const newTodo = validationSchema.validateSync(request.body, {
         abortEarly: false,
         stripUnknown: true,
       });
@@ -34,7 +34,10 @@ const createTodoHandler: RequestHandler = rest.post(
           statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
           message: 'Validation errors',
           errors: error.inner.reduce(
-            (prev, error) => ({ ...prev, [error.path]: error.errors[0] }),
+            (previous, error) => ({
+              ...previous,
+              [error.path]: error.errors[0],
+            }),
             {},
           ),
         }),

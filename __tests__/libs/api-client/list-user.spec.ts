@@ -2,11 +2,17 @@ import listUser from 'libs/api-client/list-user';
 import server from 'utils/test-server';
 
 describe('fetch users', () => {
-  beforeAll(() => server.listen());
+  beforeAll(() => {
+    server.listen();
+  });
 
-  afterEach(() => server.resetHandlers());
+  afterEach(() => {
+    server.resetHandlers();
+  });
 
-  afterAll(() => server.close());
+  afterAll(() => {
+    server.close();
+  });
 
   it.each([
     [1, 0, 10],
@@ -20,7 +26,9 @@ describe('fetch users', () => {
 
   it('should abort the request before finished', async () => {
     const ctrl = new AbortController();
-    setTimeout(() => ctrl.abort(), 50);
+    setTimeout(() => {
+      ctrl.abort();
+    }, 50);
 
     await expect(listUser({ signal: ctrl.signal })).rejects.toThrow('Aborted');
   });

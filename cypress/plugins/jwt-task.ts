@@ -1,6 +1,7 @@
 import { Secret, SignOptions, sign } from 'jsonwebtoken';
 
 import { signJWT } from '../../libs/jwt';
+
 export type SignParams = {
   payload: string | Record<string, any>;
   secret?: string;
@@ -14,7 +15,7 @@ interface JwtTask {
    * @param {SignParams} params
    * @returns {string} JSON Web Token
    */
-  signToken(params: SignParams): string;
+  signToken(parameters: SignParams): string;
   /**
    * Create a JWT from user
    *

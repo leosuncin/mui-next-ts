@@ -4,8 +4,8 @@ import AddTodo from 'components/todo/add-todo';
 import React from 'react';
 
 describe('<AddTodo />', () => {
-  const textLabel = /Text/i;
-  const submitButton = /Add/i;
+  const textLabel = /text/i;
+  const submitButton = /add/i;
 
   it('should render', () => {
     expect(render(<AddTodo onSubmit={jest.fn()} />)).toBeDefined();
@@ -29,7 +29,7 @@ describe('<AddTodo />', () => {
     render(<AddTodo onSubmit={spySubmit} />);
 
     userEvent.click(screen.getByRole('button', { name: submitButton }));
-    await screen.findByText(/Text is a required field/i);
+    await screen.findByText(/text is a required field/i);
 
     userEvent.type(
       screen.getByLabelText(textLabel),
@@ -37,7 +37,7 @@ describe('<AddTodo />', () => {
 Nobis asperiores quisquam quos assumenda esse voluptatum laborum accusantium,
 eveniet voluptate ex laudantium quas deleniti et aspernatur animi fuga pariatur facere corporis!`,
     );
-    await screen.findByText(/Text must be at most 140 characters/i);
+    await screen.findByText(/text must be at most 140 characters/i);
 
     expect(spySubmit).not.toHaveBeenCalled();
   });

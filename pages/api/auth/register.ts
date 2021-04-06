@@ -15,10 +15,10 @@ import { ConflictError, NextHttpHandler, User } from 'types';
 /**
  * Register a new a user
  */
-const register: NextHttpHandler = async (req, res) => {
+const register: NextHttpHandler = async (request, res) => {
   const [{ total }] = await nSQL('users')
     .query('select', ['COUNT(*) AS total'])
-    .where(['username', 'LIKE', req.body.username])
+    .where(['username', 'LIKE', request.body.username])
     .exec();
 
   if (total > 0)
@@ -26,10 +26,10 @@ const register: NextHttpHandler = async (req, res) => {
 
   const [user] = (await nSQL('users')
     .query('upsert', {
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      username: req.body.username,
-      password: hashPassword(req.body.password),
+      firstName: request.body.firstName,
+      lastName: request.body.lastName,
+      username: request.body.username,
+      password: hashPassword(request.body.password),
       picture: faker.image.avatar(),
       bio: faker.lorem.paragraph(),
     })

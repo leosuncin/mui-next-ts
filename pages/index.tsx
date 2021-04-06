@@ -97,6 +97,7 @@ const IndexPage: NextPage<AuthenticationProps> = () => {
         if (!isCanceled) setIsLoading(false);
       }
     }
+
     fetchUser();
 
     return () => {
@@ -113,7 +114,7 @@ const IndexPage: NextPage<AuthenticationProps> = () => {
         direction="column"
         style={{ paddingTop: '2em' }}
       >
-        <Grid item lg style={{ display: Boolean(error) ? 'block' : 'none' }}>
+        <Grid item lg style={{ display: error ? 'block' : 'none' }}>
           <Collapse in={Boolean(error)}>
             <Alert severity="error">{error}</Alert>
           </Collapse>

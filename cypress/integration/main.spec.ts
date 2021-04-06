@@ -13,14 +13,14 @@ describe('Main page', () => {
     });
 
     it('should show main page', () => {
-      cy.findByText(/Main page/i, { selector: ':not(title)' });
+      cy.findByText(/main page/i, { selector: ':not(title)' });
       cy.findByTestId('profile-menu').click({ force: true });
       cy.findByTestId('app-menu').click({ force: true });
     });
 
     it('should allow to logout', () => {
       cy.findByTestId('profile-menu').click();
-      cy.findByText(/Logout/i)
+      cy.findByText(/logout/i)
         .click()
         .wait('@logout');
       cy.location('pathname').should('equal', '/login');

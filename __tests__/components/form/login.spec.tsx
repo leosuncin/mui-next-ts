@@ -8,8 +8,8 @@ jest.mock('next/link', () => ({ children, href }) =>
 );
 
 describe('<LoginForm />', () => {
-  const usernameLabel = /Username/i;
-  const passwordLabel = /Password/i;
+  const usernameLabel = /username/i;
+  const passwordLabel = /password/i;
   const formTitle = 'login form';
 
   it('should render', () => {

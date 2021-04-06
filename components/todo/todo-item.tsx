@@ -43,7 +43,7 @@ const TodoItem: React.FC<PropTypes.InferProps<typeof propTypes>> = ({
   }, [text]);
 
   const saveTodo = () => {
-    const hasError = !!validationError;
+    const hasError = Boolean(validationError);
 
     if (todo.text !== text && !hasError) onChangeTodo({ text });
 
@@ -80,9 +80,11 @@ const TodoItem: React.FC<PropTypes.InferProps<typeof propTypes>> = ({
               id="text-edit"
               fullWidth
               value={text}
-              error={!!validationError}
+              error={Boolean(validationError)}
               helperText={validationError}
-              onChange={event => setText(event.target.value)}
+              onChange={event => {
+                setText(event.target.value);
+              }}
               onBlur={saveTodo}
               onKeyUp={event => {
                 switch (event.key) {
@@ -107,10 +109,11 @@ const TodoItem: React.FC<PropTypes.InferProps<typeof propTypes>> = ({
         ).toRelative()}
         secondaryTypographyProps={{
           component: 'time',
-          // @ts-ignore
           dateTime: todo.done ? todo.updatedAt : todo.createdAt,
         }}
-        onDoubleClick={() => setIsEditing(prevIsEditing => !prevIsEditing)}
+        onDoubleClick={() => {
+          setIsEditing(previousIsEditing => !previousIsEditing);
+        }}
       />
       <ListItemSecondaryAction>
         <IconButton
@@ -124,6 +127,7 @@ const TodoItem: React.FC<PropTypes.InferProps<typeof propTypes>> = ({
     </ListItem>
   );
 };
+
 TodoItem.propTypes = propTypes;
 
 export default TodoItem;

@@ -42,6 +42,7 @@ module.exports = (on, config) => {
   if (!config.experimentalComponentTesting) {
     require('cypress-terminal-report/src/installLogsPrinter')(on);
   }
+
   on(
     'task',
     jwtTask(process.env.APP_SECRET, { expiresIn: '1 min', algorithm: 'HS384' }),

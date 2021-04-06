@@ -17,12 +17,12 @@ declare global {
   namespace Cypress {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface Chainable {
-      login(username: string, password: string): Chainable<Cypress.Response>;
+      login(username: string, password: string): Chainable<Response>;
       validateResponse(
         statusCode: number,
         schema: string,
         version?: string,
-      ): Chainable<Cypress.Response>;
+      ): Chainable<Response>;
     }
   }
 }
@@ -47,9 +47,8 @@ Cypress.Commands.add(
     version = '1.0.0',
   ) => {
     if (Array.isArray(subject.body))
-      subject.body.forEach(item =>
-        assertSchema(schemas, formats)(schema, version)(item),
-      );
+      for (const item of subject.body)
+        assertSchema(schemas, formats)(schema, version)(item);
     else assertSchema(schemas, formats)(schema, version)(subject.body);
     expect(subject.status).to.be.equal(statusCode);
 

@@ -3,7 +3,7 @@ import { RequestHandler, rest } from 'msw';
 
 const logoutHandler: RequestHandler = rest.delete(
   '/api/auth/logout',
-  (req, res, ctx) =>
+  (request, res, ctx) =>
     res(
       ctx.status(StatusCodes.NO_CONTENT),
       ctx.set('Set-Cookie', 'token=; Max-Age=-1; Path=/; HttpOnly'),

@@ -3,11 +3,17 @@ import { HttpError, UserWithoutPassword } from 'types';
 import server, { respondWithServiceUnavailable } from 'utils/test-server';
 
 describe('login', () => {
-  beforeAll(() => server.listen());
+  beforeAll(() => {
+    server.listen();
+  });
 
-  afterEach(() => server.resetHandlers());
+  afterEach(() => {
+    server.resetHandlers();
+  });
 
-  afterAll(() => server.close());
+  afterAll(() => {
+    server.close();
+  });
 
   it('should allow to send credentials', async () => {
     const body = { username: 'admin', password: 'Pa$$w0rd!' };

@@ -5,15 +5,15 @@ import createMachineWithTests, {
   FillEvent,
 } from 'machines/register-test-machine';
 
-const firstNameLabel = /First name/i;
-const lastNameLabel = /Last name/i;
-const usernameLabel = /Username/i;
-const passwordLabel = /Password/i;
-const submitButton = /Sign Me Up/i;
-const firstNameErrorText = /First name should not be empty/i;
-const lastNameErrorText = /Last name should not be empty/i;
-const usernameErrorText = /Username.+(?:empty|too short)/i;
-const passwordErrorText = /Password.+(?:empty|too short)/i;
+const firstNameLabel = /first name/i;
+const lastNameLabel = /last name/i;
+const usernameLabel = /username/i;
+const passwordLabel = /password/i;
+const submitButton = /sign me up/i;
+const firstNameErrorText = /first name should not be empty/i;
+const lastNameErrorText = /last name should not be empty/i;
+const usernameErrorText = /username.+(?:empty|too short)/i;
+const passwordErrorText = /password.+(?:empty|too short)/i;
 const testMachine = createMachineWithTests({
   pristine(cy: Cypress.cy) {
     cy.findByRole('img', { name: 'sad face' }).should('not.exist');
@@ -47,7 +47,7 @@ const testMachine = createMachineWithTests({
   fail(cy: Cypress.cy) {
     cy.wait('@sendRegister').its('response.statusCode').should('equal', 409);
     cy.findByRole('img', { name: 'sad face' }).should('be.visible');
-    cy.findByText(/Username or Email already registered/i).should('exist');
+    cy.findByText(/username or email already registered/i).should('exist');
   },
 });
 const testModel = createModel(testMachine, {
@@ -87,7 +87,7 @@ const testModel = createModel(testMachine, {
         {
           firstName: faker.name.firstName(),
           lastName: faker.name.lastName(),
-          username: faker.lorem.word().substr(0, 4) + '{enter}',
+          username: faker.lorem.word().slice(0, 4) + '{enter}',
           password: faker.internet.password(),
         },
         {
@@ -118,9 +118,9 @@ const testModel = createModel(testMachine, {
 describe('Register page', () => {
   const testPlans = testModel.getSimplePathPlans();
 
-  testPlans.forEach(plan => {
+  for (const plan of testPlans) {
     describe(plan.description, () => {
-      plan.paths.forEach(path => {
+      for (const path of plan.paths) {
         it(path.description, () => {
           cy.intercept('POST', '/api/auth/register')
             .as('sendRegister')
@@ -129,11 +129,11 @@ describe('Register page', () => {
               path.test(cy);
             });
         });
-      });
+      }
     });
-  });
+  }
 
-  // it('coverage', () => {
+  // It('coverage', () => {
   //   testModel.testCoverage();
   // });
 
@@ -142,7 +142,7 @@ describe('Register page', () => {
       .as('sendRegister')
       .visit('/register');
 
-    cy.findByText(/Log in/i).click();
+    cy.findByText(/log in/i).click();
 
     cy.waitUntil(() =>
       cy.location('pathname').then(pathname => pathname !== '/register'),

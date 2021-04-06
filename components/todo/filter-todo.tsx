@@ -93,6 +93,7 @@ const FilterTodo: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
     </Paper>
   );
 };
+
 FilterTodo.propTypes = propTypes;
 FilterTodo.defaultProps = {
   filter: 'all',

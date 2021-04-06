@@ -20,7 +20,7 @@ describe('/api/auth/login', () => {
     expect(res._getHeaders()).toHaveProperty('allow', 'POST');
   });
 
-  it('should validate the body', () =>
+  it('should validate the body', async () =>
     fc.assert(
       fc.asyncProperty<Partial<AuthLogin>>(
         fc.record(

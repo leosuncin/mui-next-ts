@@ -6,7 +6,7 @@ import { AuthLogin } from 'types';
 
 const loginHandler: RequestHandler = rest.post(
   '/api/auth/login',
-  (req, res, ctx) => {
+  (request, res, ctx) => {
     const user = {
       id: '760add88-0a2b-4358-bc3f-7d82245c5dea',
       username: 'admin',
@@ -15,10 +15,10 @@ const loginHandler: RequestHandler = rest.post(
       picture: 'https://i.pravatar.cc/200',
       bio: 'Lorem ipsum dolorem',
     };
-    const { username, password } = req.body as AuthLogin;
+    const { username, password } = request.body as AuthLogin;
 
     try {
-      validationSchema.validateSync(req.body, {
+      validationSchema.validateSync(request.body, {
         abortEarly: false,
         stripUnknown: true,
       });
@@ -29,7 +29,10 @@ const loginHandler: RequestHandler = rest.post(
           statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
           message: 'Validation errors',
           errors: error.inner.reduce(
-            (prev, error) => ({ ...prev, [error.path]: error.errors[0] }),
+            (previous, error) => ({
+              ...previous,
+              [error.path]: error.errors[0],
+            }),
             {},
           ),
         }),

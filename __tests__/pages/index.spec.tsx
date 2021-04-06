@@ -28,14 +28,18 @@ describe('<IndexPage />', () => {
     </UserProvider>
   );
 
-  beforeAll(() => server.listen());
+  beforeAll(() => {
+    server.listen();
+  });
 
   afterEach(() => {
     server.resetHandlers();
     spyRouterPush.mockReset();
   });
 
-  afterAll(() => server.close());
+  afterAll(() => {
+    server.close();
+  });
 
   it('should render', () => {
     expect(render(tree)).toBeDefined();

@@ -16,7 +16,7 @@ describe('[GET] /api/users', () => {
   it.each([
     [null, null, null],
     [undefined, undefined, undefined],
-    [NaN, NaN, NaN],
+    [Number.NaN, Number.NaN, Number.NaN],
     [0, 0, 0],
     ['', 'a', 'b'],
     ['10', '1', '0'],

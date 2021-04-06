@@ -14,18 +14,18 @@ import { NextHttpHandler, UnauthorizedError, User } from 'types';
 /**
  * Login a existing user
  */
-const login: NextHttpHandler = async (req, res) => {
+const login: NextHttpHandler = async (request, res) => {
   const [user] = (await nSQL('users')
     .query('select')
-    .where(['username', 'LIKE', req.body.username])
+    .where(['username', 'LIKE', request.body.username])
     .exec()) as [User];
 
   if (!user)
-    throw new UnauthorizedError(`Wrong username: ${req.body.username}`);
+    throw new UnauthorizedError(`Wrong username: ${request.body.username}`);
 
-  if (!comparePassword(user.password, req.body.password))
+  if (!comparePassword(user.password, request.body.password))
     throw new UnauthorizedError(
-      `Wrong password for user: ${req.body.username}`,
+      `Wrong password for user: ${request.body.username}`,
     );
 
   const token = signJWT(user);

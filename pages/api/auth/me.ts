@@ -7,6 +7,10 @@ import {
 
 export default catchErrors(
   validateMethod(['GET'])(
-    withDB(withAuthentication((req, res) => res.json(req.user))),
+    withDB(
+      withAuthentication((request, res) => {
+        res.json(request.user);
+      }),
+    ),
   ),
 );

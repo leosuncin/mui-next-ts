@@ -45,7 +45,7 @@ const LoginForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
 
   return (
     <>
-      <Fade in={!!errorMessage} aria-expanded={!!errorMessage}>
+      <Fade in={Boolean(errorMessage)} aria-expanded={Boolean(errorMessage)}>
         <Typography color="secondary" className={classes.errorMessage}>
           <span role="img" aria-label="sad face">
             😥
@@ -80,7 +80,7 @@ const LoginForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
           autoComplete="username"
           autoFocus
           inputRef={register(validations.username)}
-          error={!!errors.username}
+          error={Boolean(errors.username)}
           disabled={attempt > 3}
           helperText={errors.username && errors.username.message}
         />
@@ -95,7 +95,7 @@ const LoginForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
           id="password"
           autoComplete="current-password"
           inputRef={register(validations.password)}
-          error={!!errors.password}
+          error={Boolean(errors.password)}
           disabled={attempt > 3}
           helperText={errors.password && errors.password.message}
         />
@@ -136,6 +136,7 @@ const LoginForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
     </>
   );
 };
+
 LoginForm.propTypes = propTypes;
 
 export default LoginForm;

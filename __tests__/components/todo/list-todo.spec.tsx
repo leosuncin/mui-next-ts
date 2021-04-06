@@ -31,7 +31,7 @@ describe('<ListTodo />', () => {
     );
     userEvent.click(
       screen
-        .getByRole('listitem', { name: RegExp(todo.text) })
+        .getByRole('listitem', { name: new RegExp(todo.text) })
         .querySelector('input[type=checkbox]'),
     );
 

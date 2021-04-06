@@ -10,18 +10,18 @@ import {
 import { editTodoSchema } from 'libs/validation';
 import { ForbiddenError, NextHttpHandler, NotFoundError, Todo } from 'types';
 
-const putHandler: NextHttpHandler = async (req, res) => {
+const putHandler: NextHttpHandler = async (request, res) => {
   const [updates] = await nSQL('todos')
     /*
      * Solves issue with @nano-sql/plugin-fuzzy-search,
      * due it needs the id to rebuild the search index
      */
     .query('upsert', {
-      ...req.body,
+      ...request.body,
       updatedAt: new Date(),
-      id: req.query.id,
+      id: request.query.id,
     })
-    .where(['id', '=', req.query.id])
+    .where(['id', '=', request.query.id])
     .exec();
 
   res.json({
@@ -33,32 +33,37 @@ const putHandler: NextHttpHandler = async (req, res) => {
   });
 };
 
-const deleteHandler: NextHttpHandler = async (req, res) => {
-  await nSQL('todos').query('delete').where(['id', '=', req.query.id]).exec();
+const deleteHandler: NextHttpHandler = async (request, res) => {
+  await nSQL('todos')
+    .query('delete')
+    .where(['id', '=', request.query.id])
+    .exec();
   res.status(StatusCodes.NO_CONTENT).send(Buffer.alloc(0));
 };
 
-const endpointHandler: NextHttpHandler = async (req, res) => {
+const endpointHandler: NextHttpHandler = async (request, res) => {
   const [todo] = (await nSQL('todos')
     .query('select')
-    .where(['id', '=', req.query.id])
+    .where(['id', '=', request.query.id])
     .exec()) as [Todo];
 
   if (!todo)
-    throw new NotFoundError(`Not found any ToDo with id: ${req.query.id}`);
+    throw new NotFoundError(`Not found any ToDo with id: ${request.query.id}`);
 
-  if (todo.createdBy !== req.user.id)
+  if (todo.createdBy !== request.user.id)
     throw new ForbiddenError("ToDo doesn't belong to you");
 
-  switch (req.method) {
-    case 'GET':
-      return res.json(todo);
+  switch (request.method) {
+    case 'GET': {
+      res.json(todo);
+      return;
+    }
 
     case 'PUT':
-      return validateBody(editTodoSchema)(putHandler)(req, res);
+      return validateBody(editTodoSchema)(putHandler)(request, res);
 
     case 'DELETE':
-      return deleteHandler(req, res);
+      return deleteHandler(request, res);
   }
 };
 

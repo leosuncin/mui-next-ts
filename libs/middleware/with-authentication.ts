@@ -4,15 +4,15 @@ import { NextApiRequest } from 'next';
 import { parseCookies } from 'nookies';
 import { NextHttpHandler, UnauthorizedError, User } from 'types';
 
-function extractTokenFromCookies(req: NextApiRequest) {
-  const cookies = parseCookies({ req });
+function extractTokenFromCookies(request: NextApiRequest) {
+  const cookies = parseCookies({ req: request });
 
   return cookies.token;
 }
 
-function extractTokenFromHeaders(req: NextApiRequest) {
+function extractTokenFromHeaders(request: NextApiRequest) {
   const bearerRegex = /Bearer (.*)/;
-  const { authorization } = req.headers;
+  const { authorization } = request.headers;
 
   if (!authorization || !bearerRegex.test(authorization)) return;
 
@@ -36,7 +36,7 @@ function isJSON(json: string, encoding: BufferEncoding = 'binary'): boolean {
 }
 
 function isJWT(token: string): boolean {
-  const urlSafeBase64 = /^[A-Z0-9_-]+$/i;
+  const urlSafeBase64 = /^[\w-]+$/i;
 
   if (typeof token !== 'string') return;
 
@@ -55,8 +55,9 @@ function isJWT(token: string): boolean {
 }
 
 export function withAuthentication(handler: NextHttpHandler): NextHttpHandler {
-  return async (req, res) => {
-    const token = extractTokenFromCookies(req) ?? extractTokenFromHeaders(req);
+  return async (request, res) => {
+    const token =
+      extractTokenFromCookies(request) ?? extractTokenFromHeaders(request);
 
     if (!isJWT(token))
       throw new UnauthorizedError('Missing or invalid authorization token');
@@ -77,9 +78,10 @@ export function withAuthentication(handler: NextHttpHandler): NextHttpHandler {
 
       if (!user) throw new UnauthorizedError('Invalid user from token');
 
-      req.user = user;
+      request.user = user;
 
-      return handler(req, res);
+      await handler(request, res);
+      return;
     } catch (error) {
       throw new UnauthorizedError('Invalid authorization token', error);
     }

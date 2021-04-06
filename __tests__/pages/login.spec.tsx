@@ -31,14 +31,14 @@ const routerMocked: jest.Mocked<NextRouter> = {
 fetchMock.enableMocks();
 
 const formTitle = 'login form';
-const usernameLabel = /Username/i;
-const passwordLabel = /Password/i;
-const submitButton = /Log me in/i;
-const usernameErrorMessage = /Username.+(?:empty|too short)/i;
-const passwordErrorMessage = /Password.+(?:empty|too short)/i;
-const credentialsErrorMessage = /Wrong (?:username|password)/i;
-const invalidErrorMessages = /(?:Username|Password).+(?:empty|too short)/i;
-const lockedErrorMessage = /Too many failed attempts/i;
+const usernameLabel = /username/i;
+const passwordLabel = /password/i;
+const submitButton = /log me in/i;
+const usernameErrorMessage = /username.+(?:empty|too short)/i;
+const passwordErrorMessage = /password.+(?:empty|too short)/i;
+const credentialsErrorMessage = /wrong (?:username|password)/i;
+const invalidErrorMessages = /(?:username|password).+(?:empty|too short)/i;
+const lockedErrorMessage = /too many failed attempts/i;
 
 const testMachine = createMachineWithTests({
   pristine: ({ getByLabelText }: RenderResult) => {
@@ -138,12 +138,12 @@ const testModel = createModel(testMachine, {
         { username: 'admin', password: 'Pa$$w0rd!' },
       ],
     },
-    SUBMIT({ getByTitle }: RenderResult) {
+    async SUBMIT({ getByTitle }: RenderResult) {
       return act(async () => {
         fireEvent.submit(getByTitle(formTitle));
       });
     },
-    RETRY(cy: RenderResult) {
+    async RETRY(cy: RenderResult) {
       return act(async () => {
         const passwordInput = cy.getByLabelText(
           passwordLabel,
@@ -159,16 +159,16 @@ const testModel = createModel(testMachine, {
 });
 const testPlans = testModel.getSimplePathPlans();
 
-testPlans.forEach(plan => {
+for (const plan of testPlans) {
   describe(`Login page ${plan.description}`, () => {
     afterEach(() => {
       routerMocked.push.mockReset();
       fetchMock.resetMocks();
     });
 
-    plan.paths.forEach(path => {
+    for (const path of plan.paths) {
       // eslint-disable-next-line jest/expect-expect, jest/valid-title
-      it(path.description, () => {
+      it(path.description, async () => {
         return path.test(
           render(
             <RouterContext.Provider value={routerMocked}>
@@ -181,9 +181,9 @@ testPlans.forEach(plan => {
           ),
         );
       });
-    });
+    }
   });
-});
+}
 
 // eslint-disable-next-line jest/expect-expect
 it('states coverage', () => {

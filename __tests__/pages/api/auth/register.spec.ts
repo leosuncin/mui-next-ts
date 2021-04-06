@@ -21,7 +21,7 @@ describe('/api/auth/register', () => {
     expect(res._getHeaders()).toHaveProperty('allow', 'POST');
   });
 
-  it('should validate the body', () =>
+  it('should validate the body', async () =>
     fc.assert(
       fc.asyncProperty<Partial<AuthRegister>>(
         fc.record(

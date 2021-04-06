@@ -34,9 +34,9 @@ describe('<FilterTodo />', () => {
       />,
     );
 
-    helpers.shuffle(['all', 'completed', 'active']).forEach(filter => {
+    for (const filter of helpers.shuffle(['all', 'completed', 'active'])) {
       userEvent.click(
-        screen.getByRole('button', { name: RegExp(filter, 'i') }),
+        screen.getByRole('button', { name: new RegExp(filter, 'i') }),
       );
 
       expect(spyChangeFilter).toHaveBeenCalledWith(filter);
@@ -51,7 +51,7 @@ describe('<FilterTodo />', () => {
           onClearCompleted={jest.fn()}
         />,
       );
-    });
+    }
   });
 
   it('should click «Clear completed»', () => {

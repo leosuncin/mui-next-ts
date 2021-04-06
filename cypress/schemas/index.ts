@@ -14,7 +14,7 @@ const datetime: CustomFormat = {
 const uuid: CustomFormat = {
   name: 'uuid',
   description: 'uuid v4',
-  detect: /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/,
+  detect: /^[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12}$/,
   example: '760add88-0a2b-4358-bc3f-7d82245c5dea',
 };
 

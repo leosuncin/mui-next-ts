@@ -4,7 +4,7 @@ import { RequestHandler, rest } from 'msw';
 
 const listTodoHandler: RequestHandler = rest.get(
   '/api/todos',
-  (req, res, ctx) => {
+  (request, res, ctx) => {
     return res(
       ctx.delay(60),
       ctx.json(

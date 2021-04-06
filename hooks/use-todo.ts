@@ -247,39 +247,49 @@ const activeSelector = (todos: Todo[]) => todos.filter(todo => !todo.done);
 function errorAction(error: Error): TodoErrorEvent {
   return { type: 'ERROR', payload: error.message };
 }
+
 function fetchTodosAction(): FetchTodosEffect {
   return { type: 'fetchTodos' };
 }
+
 function fecthTodosSuccessAction(todos: Todo[]): TodoFetchSuccessEvent {
   return { type: 'TODOS_FETCHED', payload: todos };
 }
+
 function addTodoAction(newTodo: CreateTodo): TodoAddEvent {
   return { type: 'ADD_TODO', payload: newTodo };
 }
+
 function addTodoSuccessAction(todo: Todo): TodoAddSuccessEvent {
   return { type: 'TODO_SAVED', payload: todo };
 }
+
 function updateTodoAction(id: Todo['id'], body: UpdateTodo): TodoUpdateEvent {
   return {
     type: 'EDIT_TODO',
     payload: { id, body },
   };
 }
+
 function updateTodoSuccessAction(todo: Todo): TodoUpdateSuccessEvent {
   return { type: 'TODO_CHANGED', payload: todo };
 }
+
 function updateTodoFailAction(error: Error): TodoUpdateFailEvent {
   return { type: 'TODO_REVERT_CHANGE', payload: error.message };
 }
+
 function removeTodoAction(todo: Todo, position?: number): TodoRemoveEvent {
   return {
     type: 'REMOVE_TODO',
     payload: { todo, position },
   };
 }
+
 function removeTodoFailAction(error: Error): TodoRemoveFailEvent {
   return { type: 'REMOVE_TODO_FAILED', payload: error.message };
 }
+
 function changeFilterAction(
   filter: keyof typeof filterTodoBy,
 ): TodoChangeFilterEvent {
@@ -296,13 +306,18 @@ function fetchTodosEffect(
 ) {
   const ctrl = new AbortController();
   listTodo({ signal: ctrl.signal })
-    .then(todos => dispatch(fecthTodosSuccessAction(todos)))
+    .then(todos => {
+      dispatch(fecthTodosSuccessAction(todos));
+    })
     .catch(error => {
       if (!ctrl.signal.aborted) dispatch(errorAction(error));
     });
 
-  return () => ctrl.abort();
+  return () => {
+    ctrl.abort();
+  };
 }
+
 function addTodoEffect(
   state: TodoState,
   effect: AddTodoEffect,
@@ -310,13 +325,18 @@ function addTodoEffect(
 ) {
   const ctrl = new AbortController();
   createTodo(effect.payload, ctrl.signal)
-    .then(todo => dispatch(addTodoSuccessAction(todo)))
+    .then(todo => {
+      dispatch(addTodoSuccessAction(todo));
+    })
     .catch(error => {
       if (!ctrl.signal.aborted) dispatch(errorAction(error));
     });
 
-  return () => ctrl.abort();
+  return () => {
+    ctrl.abort();
+  };
 }
+
 function editTodoEffect(
   state: TodoState,
   effect: EditTodoEffect,
@@ -324,13 +344,18 @@ function editTodoEffect(
 ) {
   const ctrl = new AbortController();
   updateTodo(effect.payload.id, effect.payload.body, ctrl.signal)
-    .then(todo => dispatch(updateTodoSuccessAction(todo)))
+    .then(todo => {
+      dispatch(updateTodoSuccessAction(todo));
+    })
     .catch(error => {
       if (!ctrl.signal.aborted) dispatch(updateTodoFailAction(error));
     });
 
-  return () => ctrl.abort();
+  return () => {
+    ctrl.abort();
+  };
 }
+
 function removeTodoEffect(
   state: TodoState,
   effect: RemoveTodoEffect,
@@ -341,7 +366,9 @@ function removeTodoEffect(
     if (!ctrl.signal.aborted) dispatch(removeTodoFailAction(error));
   });
 
-  return () => ctrl.abort();
+  return () => {
+    ctrl.abort();
+  };
 }
 
 type TodoAction = {

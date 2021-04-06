@@ -35,22 +35,34 @@ function Todo({ className }: TodoProps) {
           </Collapse>
         </Grid>
       )}
-      <AddTodoForm onSubmit={todo => actions.addTodo(todo)} />
+      <AddTodoForm
+        onSubmit={todo => {
+          actions.addTodo(todo);
+        }}
+      />
       <FilterTodo
         all={state.all.length}
         completed={state.completed.length}
         active={state.active.length}
         filter={state._filter}
-        onChangeFilter={filter => actions.changeFilter(filter)}
+        onChangeFilter={filter => {
+          actions.changeFilter(filter);
+        }}
         onClearCompleted={() =>
-          state.completed.map(todo => actions.removeTodo(todo))
+          state.completed.map(todo => {
+            actions.removeTodo(todo);
+          })
         }
       />
       <ListTodo
         todos={state[state._filter]}
         saving={state.saving}
-        onChangeTodo={(id, body) => actions.updateTodo(id, body)}
-        onRemoveTodo={(todo, position) => actions.removeTodo(todo, position)}
+        onChangeTodo={(id, body) => {
+          actions.updateTodo(id, body);
+        }}
+        onRemoveTodo={(todo, position) => {
+          actions.removeTodo(todo, position);
+        }}
       />
       {state.loading && (
         <Backdrop open={state.loading} className={classes.backdrop}>
@@ -60,6 +72,7 @@ function Todo({ className }: TodoProps) {
     </Grid>
   );
 }
+
 Todo.propTypes = {};
 
 export default Todo;

@@ -8,7 +8,9 @@ export interface ErrorResponse {
 }
 
 export class HttpApiError extends Error {
-  readonly name = 'HttpApiError';
+  get name() {
+    return 'HttpApiError';
+  }
 
   constructor(
     public readonly message: string,
@@ -53,7 +55,7 @@ export class UnprocessableEntityError extends HttpApiError {
     error: ValidationError,
   ): Record<string, string> {
     return error.inner.reduce(
-      (prev, error) => ({ ...prev, [error.path]: error.errors[0] }),
+      (previous, error) => ({ ...previous, [error.path]: error.errors[0] }),
       {},
     );
   }
@@ -84,7 +86,10 @@ export class NotFoundError extends HttpApiError {
 }
 
 export class HttpError extends Error implements ErrorResponse {
-  readonly name = 'HttpError';
+  get name() {
+    return 'HttpError';
+  }
+
   readonly statusCode: number;
   readonly errors?: Record<string, string>;
 

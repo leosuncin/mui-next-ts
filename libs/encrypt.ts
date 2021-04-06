@@ -10,9 +10,9 @@ export function hashPassword(password: string, length = 16): string {
   const salt = genSalt(length);
 
   const hash = pbkdf2Sync(password, salt, iterations, length, digest);
-  const tmpBuffer = Buffer.from(hash.toString('hex') + ':' + salt);
+  const temporaryBuffer = Buffer.from(hash.toString('hex') + ':' + salt);
 
-  return tmpBuffer.toString('base64');
+  return temporaryBuffer.toString('base64');
 }
 
 export function comparePassword(hash: string, password: string): boolean {
@@ -20,7 +20,13 @@ export function comparePassword(hash: string, password: string): boolean {
   const digest = 'sha512';
   const auxBuffer = Buffer.from(hash, 'base64');
   const [key, salt] = auxBuffer.toString('utf-8').split(':');
-  const tmpHash = pbkdf2Sync(password, salt, iterations, salt.length, digest);
+  const temporaryHash = pbkdf2Sync(
+    password,
+    salt,
+    iterations,
+    salt.length,
+    digest,
+  );
 
-  return key === tmpHash.toString('hex');
+  return key === temporaryHash.toString('hex');
 }

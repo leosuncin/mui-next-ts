@@ -9,12 +9,12 @@ export default async function listTodo({
   limit = 10,
   signal,
 }: Partial<PaginationParams> = {}): Promise<Todo[]> {
-  const searchParams = new URLSearchParams();
+  const searchParameters = new URLSearchParams();
 
-  if (offset > 0) searchParams.set('offset', offset as any);
-  else searchParams.set('page', page as any);
+  if (offset > 0) searchParameters.set('offset', offset as any);
+  else searchParameters.set('page', page as any);
 
-  if (limit !== 10) searchParams.set('limit', limit as any);
+  if (limit !== 10) searchParameters.set('limit', limit as any);
 
-  return get<Todo[]>(`/api/todos?${searchParams.toString()}`, signal);
+  return get<Todo[]>(`/api/todos?${searchParameters.toString()}`, signal);
 }

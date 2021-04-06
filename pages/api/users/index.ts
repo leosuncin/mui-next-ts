@@ -7,10 +7,14 @@ import {
 } from 'libs/middleware';
 import { NextHttpHandler, UserWithoutPassword as User } from 'types';
 
-const findUsers: NextHttpHandler = async (req, res) => {
-  const limit = Math.abs(parseInt(req.query.limit as string, 10) || 10);
-  const page = Math.abs(parseInt(req.query.page as string, 10) || 1);
-  const offset = Math.abs(parseInt(req.query.offset as string, 10) || 0);
+const findUsers: NextHttpHandler = async (request, res) => {
+  const limit = Math.abs(
+    Number.parseInt(request.query.limit as string, 10) || 10,
+  );
+  const page = Math.abs(Number.parseInt(request.query.page as string, 10) || 1);
+  const offset = Math.abs(
+    Number.parseInt(request.query.offset as string, 10) || 0,
+  );
 
   const users = (await nSQL('users')
     .query('select', [

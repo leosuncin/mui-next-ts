@@ -1,13 +1,8 @@
 module.exports = {
   randomBytes(size) {
-    return Buffer.from(Array(size).fill(0));
+    return Buffer.from(new Array(size).fill(0));
   },
   pbkdf2Sync(password) {
-    return Buffer.from(
-      password
-        .split('')
-        .reverse()
-        .join(''),
-    );
+    return Buffer.from(password.split('').reverse().join(''));
   },
 };

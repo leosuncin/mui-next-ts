@@ -12,9 +12,9 @@
 // You can read more here:
 // https://on.cypress.io/configuration
 // ***********************************************************
-import '@bahmutov/cy-api/support';
-import '@cypress/code-coverage/support';
-import '@testing-library/cypress/add-commands';
+import '@bahmutov/cy-api/support.js';
+import '@cypress/code-coverage/support.js';
+import '@testing-library/cypress/add-commands.js';
 import 'cypress-wait-until';
 import './commands';
 

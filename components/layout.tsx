@@ -1,9 +1,8 @@
 import Container from '@material-ui/core/Container';
+import Header from 'components/header';
 import Head from 'next/head';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-import Header from 'components/header';
 
 const Layout: React.FC<{ title?: string }> = props => {
   return (
@@ -16,6 +15,7 @@ const Layout: React.FC<{ title?: string }> = props => {
     </>
   );
 };
+
 Layout.propTypes = {
   title: PropTypes.string,
 };

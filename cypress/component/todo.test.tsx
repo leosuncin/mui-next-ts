@@ -11,14 +11,14 @@ describe('Todo component', () => {
     0,
   );
   const completedCount = todos.length - activeCount;
-  const allButton = RegExp(`All \\(${todos.length}\\)`, 'i');
-  const activeButton = RegExp(`Active \\(${activeCount}\\)`, 'i');
-  const completedButton = RegExp(`Completed \\(${completedCount}\\)`, 'i');
-  const clearCompletedButton = /Clear completed/i;
+  const allButton = new RegExp(`All \\(${todos.length}\\)`, 'i');
+  const activeButton = new RegExp(`Active \\(${activeCount}\\)`, 'i');
+  const completedButton = new RegExp(`Completed \\(${completedCount}\\)`, 'i');
+  const clearCompletedButton = /clear completed/i;
 
   beforeEach(() => {
-    cy.intercept('GET', '/api/todos', req => {
-      req.reply(todos);
+    cy.intercept('GET', '/api/todos', request => {
+      request.reply(todos);
     }).as('listTodo');
   });
 
@@ -26,7 +26,7 @@ describe('Todo component', () => {
     mount(<Todo />);
 
     cy.findAllByRole('listitem').its('length').should('equal', todos.length);
-    cy.findByText(RegExp(`${activeCount} items left`, 'i')).should('exist');
+    cy.findByText(new RegExp(`${activeCount} items left`, 'i')).should('exist');
     cy.findByText(allButton).should('exist');
     cy.findByText(activeButton).should('exist');
     cy.findByText(completedButton).should('exist');
@@ -53,7 +53,7 @@ describe('Todo component', () => {
 
     cy.findAllByRole('listitem').should('have.lengthOf', activeCount);
     cy.findByRole('button', { name: clearCompletedButton }).should('not.exist');
-    cy.findByRole('button', { name: /Completed \(0\)/i }).should('exist');
+    cy.findByRole('button', { name: /completed \(0\)/i }).should('exist');
   });
 
   it('should create a new todo and add to list', () => {
@@ -64,7 +64,7 @@ describe('Todo component', () => {
     mount(<Todo />);
 
     cy.findByRole('textbox', { name: /Text/ }).type(todo.text);
-    cy.findByRole('button', { name: /^Add$/i }).click();
+    cy.findByRole('button', { name: /^add$/i }).click();
 
     cy.wait('@saveTodo');
 
@@ -88,7 +88,7 @@ describe('Todo component', () => {
     cy.findByRole('listitem', { name: `Double click to edit ${todo.text}` })
       .scrollIntoView()
       .dblclick();
-    cy.findByRole('textbox', { name: /Edit text/i })
+    cy.findByRole('textbox', { name: /edit text/i })
       .clear()
       .type(text)
       .type('{enter}');
@@ -100,30 +100,32 @@ describe('Todo component', () => {
     const todo = faker.random.arrayElement(todos);
     const newActiveCount = activeCount + (todo.done ? 1 : -1);
     const newCompletedCount = completedCount + (todo.done ? -1 : 1);
-    cy.intercept('PUT', '**/api/todos/**', req => {
+    cy.intercept('PUT', '**/api/todos/**', request => {
       const {
         groups: { id },
-      } = /\/api\/todos\/(?<id>.*)/.exec(req.url);
+      } = /\/api\/todos\/(?<id>.*)/.exec(request.url);
       const todo = todos.find(todo => todo.id === id);
 
-      req.reply(200, {
+      request.reply(200, {
         ...todo,
-        ...req.body,
+        ...request.body,
         updatedAt: new Date().toISOString(),
       });
     });
     mount(<Todo />);
 
-    cy.findByRole('listitem', { name: RegExp(todo.text) })
+    cy.findByRole('listitem', { name: new RegExp(todo.text) })
       .findByRole('checkbox')
       .click();
 
-    cy.findByText(RegExp(`${newActiveCount} items left`, 'i')).should('exist');
+    cy.findByText(new RegExp(`${newActiveCount} items left`, 'i')).should(
+      'exist',
+    );
     cy.findByRole('button', {
-      name: RegExp(`Active \\(${newActiveCount}\\)`, 'i'),
+      name: new RegExp(`Active \\(${newActiveCount}\\)`, 'i'),
     }).should('exist');
     cy.findByRole('button', {
-      name: RegExp(`Completed \\(${newCompletedCount}\\)`, 'i'),
+      name: new RegExp(`Completed \\(${newCompletedCount}\\)`, 'i'),
     }).should('exist');
   });
 
@@ -132,7 +134,7 @@ describe('Todo component', () => {
     cy.intercept('DELETE', '**/api/todos/**', { statusCode: 204, body: null });
     mount(<Todo />);
 
-    cy.findByRole('listitem', { name: RegExp(todo.text) })
+    cy.findByRole('listitem', { name: new RegExp(todo.text) })
       .findByRole('button', { name: /Delete todo/ })
       .click();
 
@@ -160,7 +162,7 @@ describe('Todo component', () => {
     );
     mount(<Todo />);
 
-    cy.findByRole('listitem', { name: RegExp(todo.text) })
+    cy.findByRole('listitem', { name: new RegExp(todo.text) })
       .findByRole('button', { name: /Delete todo/ })
       .click();
 
@@ -172,7 +174,7 @@ describe('Todo component', () => {
     cy.findByRole('alert').should('contain.text', 'Database connection error');
     cy.findByText(todo.text).should('exist');
     cy.findAllByRole('listitem').should('have.length', todos.length);
-    cy.findByText(RegExp(`${activeCount} items left`, 'i')).should('exist');
+    cy.findByText(new RegExp(`${activeCount} items left`, 'i')).should('exist');
     cy.findByText(allButton).should('exist');
     cy.findByText(activeButton).should('exist');
     cy.findByText(completedButton).should('exist');
@@ -200,7 +202,7 @@ describe('Todo component', () => {
     cy.findByRole('listitem', { name: `Double click to edit ${todo.text}` })
       .scrollIntoView()
       .dblclick();
-    cy.findByRole('textbox', { name: /Edit text/i })
+    cy.findByRole('textbox', { name: /edit text/i })
       .clear()
       .type(text)
       .type('{enter}');
@@ -208,6 +210,6 @@ describe('Todo component', () => {
 
     cy.findByRole('alert').should('contain.text', 'Database connection error');
     cy.findByText(todo.text).should('exist');
-    cy.findByText(RegExp(`${activeCount} items left`, 'i')).should('exist');
+    cy.findByText(new RegExp(`${activeCount} items left`, 'i')).should('exist');
   });
 });

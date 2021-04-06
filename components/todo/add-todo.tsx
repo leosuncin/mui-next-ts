@@ -29,7 +29,7 @@ const TodoForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
         id="text-input"
         variant="outlined"
         fullWidth
-        error={!!errors.text}
+        error={Boolean(errors.text)}
         helperText={errors.text?.message}
         inputRef={register}
       />
@@ -46,6 +46,7 @@ const TodoForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
     </Grid>
   );
 };
+
 TodoForm.propTypes = propTypes;
 
 export default TodoForm;

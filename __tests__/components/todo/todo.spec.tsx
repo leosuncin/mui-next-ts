@@ -12,11 +12,17 @@ import server from 'utils/test-server';
 import { respondWithServiceUnavailable } from 'utils/test-server/handlers/handle-with-error';
 
 describe('<Todo />', () => {
-  beforeAll(() => server.listen());
+  beforeAll(() => {
+    server.listen();
+  });
 
-  afterEach(() => server.resetHandlers());
+  afterEach(() => {
+    server.resetHandlers();
+  });
 
-  afterAll(() => server.close());
+  afterAll(() => {
+    server.close();
+  });
 
   it('should render', () => {
     expect(render(<Todo />)).toBeDefined();
@@ -37,9 +43,9 @@ describe('<Todo />', () => {
     await waitForElementToBeRemoved(screen.getByTestId('loading-todos')); // Wait until loader to disappear
 
     screen.getByText(/5 items left/i);
-    screen.getByRole('button', { name: /All \(10\)/i });
-    screen.getByRole('button', { name: /Active \(5\)/i });
-    screen.getByRole('button', { name: /Completed \(5\)/i });
+    screen.getByRole('button', { name: /all \(10\)/i });
+    screen.getByRole('button', { name: /active \(5\)/i });
+    screen.getByRole('button', { name: /completed \(5\)/i });
 
     expect(
       screen.getByRole('list', { name: 'List of todo' }).children,
@@ -53,7 +59,7 @@ describe('<Todo />', () => {
     await waitForElementToBeRemoved(screen.getByTestId('loading-todos')); // Wait until loader to disappear
 
     await userEvent.type(screen.getByRole('textbox', { name: /Text/ }), text); // Typing the new todo
-    userEvent.click(screen.getByRole('button', { name: /^Add$/i })); // Submit the form
+    userEvent.click(screen.getByRole('button', { name: /^add$/i })); // Submit the form
 
     await screen.findByTestId('loading-todos'); // Wait until loader appear
     await waitForElementToBeRemoved(screen.queryByTestId('loading-todos')); // Then, wait until loader to disappear
@@ -70,9 +76,9 @@ describe('<Todo />', () => {
     userEvent.dblClick(
       screen.getAllByRole('listitem')[0].querySelector('span + time'),
     ); // Activate the edit state
-    userEvent.clear(screen.getByRole('textbox', { name: /Edit text/i })); // Clear the input
+    userEvent.clear(screen.getByRole('textbox', { name: /edit text/i })); // Clear the input
     await userEvent.type(
-      screen.getByRole('textbox', { name: /Edit text/i }),
+      screen.getByRole('textbox', { name: /edit text/i }),
       text + '{enter}',
     ); // Type changes and save with Enter
 
@@ -98,15 +104,15 @@ describe('<Todo />', () => {
 
     await waitForElementToBeRemoved(screen.getByTestId('loading-todos')); // Wait until loader to disappear
 
-    userEvent.click(screen.getByRole('button', { name: /Active \(\d+\)/i })); // Display only active
+    userEvent.click(screen.getByRole('button', { name: /active \(\d+\)/i })); // Display only active
 
     expect(screen.getAllByRole('listitem')).toHaveLength(5);
 
-    userEvent.click(screen.getByRole('button', { name: /All \(\d+\)/i })); // Display all
+    userEvent.click(screen.getByRole('button', { name: /all \(\d+\)/i })); // Display all
 
     expect(screen.getAllByRole('listitem')).toHaveLength(10);
 
-    userEvent.click(screen.getByRole('button', { name: /Completed \(\d+\)/i })); // Display only completed
+    userEvent.click(screen.getByRole('button', { name: /completed \(\d+\)/i })); // Display only completed
 
     expect(screen.getAllByRole('listitem')).toHaveLength(5);
   });
@@ -117,13 +123,13 @@ describe('<Todo />', () => {
     await waitForElementToBeRemoved(screen.getByTestId('loading-todos')); // Wait until loader to disappear
 
     const clearButton = screen.getByRole('button', {
-      name: /Clear completed/i,
+      name: /clear completed/i,
     });
     userEvent.click(clearButton);
 
     expect(screen.getAllByRole('listitem')).toHaveLength(5);
     expect(clearButton).not.toBeInTheDocument();
 
-    screen.getByRole('button', { name: /Completed \(0\)/i });
+    screen.getByRole('button', { name: /completed \(0\)/i });
   });
 });

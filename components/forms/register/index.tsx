@@ -65,7 +65,7 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
             fullWidth
             autoFocus
             inputRef={register(validations.firstName)}
-            error={!!errors.firstName}
+            error={Boolean(errors.firstName)}
             helperText={errors.firstName && errors.firstName.message}
           />
         </Grid>
@@ -79,7 +79,7 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
             name="lastName"
             autoComplete="lname"
             inputRef={register(validations.lastName)}
-            error={!!errors.lastName}
+            error={Boolean(errors.lastName)}
             helperText={errors.lastName && errors.lastName.message}
           />
         </Grid>
@@ -94,7 +94,7 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
             name="username"
             autoComplete="username"
             inputRef={register(validations.username)}
-            error={!!errors.username}
+            error={Boolean(errors.username)}
             helperText={errors.username && errors.username.message}
           />
         </Grid>
@@ -109,7 +109,7 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
             id="password"
             autoComplete="current-password"
             inputRef={register(validations.password)}
-            error={!!errors.password}
+            error={Boolean(errors.password)}
             helperText={errors.password && errors.password.message}
           />
         </Grid>
@@ -142,6 +142,7 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
     </form>
   );
 };
+
 RegisterForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
