@@ -1,0 +1,21 @@
+{
+  "space": true,
+  "prettier": true,
+  "envs": ["es2020", "node", "browser"],
+  "plugins": ["deprecation"],
+  "overrides": [
+    {
+      "files": ["__tests__/**/*.ts", "__tests__/**/*.tsx"],
+      "extends": [
+        "plugin:jest/recommended",
+        "plugin:jest/style",
+        "plugin:jest-formatting/strict",
+        "plugin:testing-library/react"
+      ]
+    },
+    {
+      "files": ["cypress/**/*.js", "cypress/**/*.ts", "cypress/**/*.tsx"],
+      "extends": ["plugin:cypress/recommended"]
+    }
+  ]
+}
