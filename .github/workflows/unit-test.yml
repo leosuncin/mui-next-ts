@@ -33,32 +33,25 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
     steps:
-    - name: Checkout 🛎
-      uses: actions/checkout@v2
-    - name: Install NPM dependencies 📦
-      uses: bahmutov/npm-install@v1
-    - name: Run unit tests 🧪
-      run: npm t -- --coverage
-      env:
-        APP_SECRET: this-is-not-a-secret
-        JWT_ISSUER: unit-tests
-    - name: Publish code coverage 🚀
-      uses: paambaati/codeclimate-action@v2.6.0
-      with:
-        coverageCommand: echo true
-        coverageLocations: ${{ github.workspace }}/coverage/unit/lcov.info:lcov
-      env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_REPO_TOKEN }}
-    - name: Monitor coverage 📫
-      if: "github.event_name == 'pull_request'"
-      uses: slavcodev/coverage-monitor-action@1.1.0
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        clover_file: coverage/unit/clover.xml
-        threshold_alert: 50
-        threshold_warning: 80
-    - name: Upload code coverage ⬆️
-      uses: actions/upload-artifact@v2
-      with:
-        name: unit-coverage
-        path: coverage/unit
+      - name: Checkout 🛎
+        uses: actions/checkout@v2
+      - name: Install NPM dependencies 📦
+        uses: bahmutov/npm-install@v1
+      - name: Run unit tests 🧪
+        run: npm t -- --coverage
+        env:
+          APP_SECRET: this-is-not-a-secret
+          JWT_ISSUER: unit-tests
+      - name: Monitor coverage 📫
+        if: "github.event_name == 'pull_request'"
+        uses: slavcodev/coverage-monitor-action@1.1.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          clover_file: coverage/unit/clover.xml
+          threshold_alert: 50
+          threshold_warning: 80
+      - name: Upload code coverage ⬆️
+        uses: actions/upload-artifact@v2
+        with:
+          name: unit-coverage
+          path: coverage/unit
