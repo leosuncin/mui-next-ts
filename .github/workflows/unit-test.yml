@@ -46,7 +46,7 @@ jobs:
     - name: Run unit tests 🧪
       run: npm t -- --coverage
       env:
-        APP_SECRET: ${{ secrets.APP_SECRET }}
+        APP_SECRET: this-is-not-a-secret
         JWT_ISSUER: unit-tests
     - name: Publish code coverage 🚀
       uses: paambaati/codeclimate-action@v2.6.0

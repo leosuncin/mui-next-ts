@@ -14,7 +14,7 @@ on:
 
 env:
   CODE_COVERAGE: true
-  APP_SECRET: ${{ secrets.APP_SECRET }}
+  APP_SECRET: this-is-not-a-secret
   JWT_ISSUER: e2e-test
 
 jobs:
