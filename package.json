@@ -83,7 +83,7 @@
     "cypress": "^6.1.0",
     "cypress-dotenv": "^1.2.2",
     "cypress-react-unit-test": "^4.17.2",
-    "cypress-terminal-report": "^2.4.0",
+    "cypress-terminal-report": "^3.0.3",
     "cypress-wait-until": "^1.7.1",
     "dotenv": "^8.2.0",
     "eslint": "^7.16.0",
