@@ -1,5 +1,5 @@
-import faker from 'faker';
 import { StatusCodes } from 'http-status-codes';
+import { loginBuild } from 'utils/factories';
 
 describe('Login API', () => {
   it('should validate the request method', () => {
@@ -22,10 +22,7 @@ describe('Login API', () => {
     cy.api({
       url: '/api/auth/login',
       method: 'POST',
-      body: {
-        username: faker.internet.userName(),
-        password: faker.internet.password(),
-      },
+      body: loginBuild(),
       failOnStatusCode: false,
     }).validateResponse(StatusCodes.UNAUTHORIZED, 'ApiError');
   });

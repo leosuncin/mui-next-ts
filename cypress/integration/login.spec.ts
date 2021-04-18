@@ -1,6 +1,6 @@
 import { createModel } from '@xstate/test';
-import faker from 'faker';
 import createMachineWithTests, { FillEvent } from 'machines/login-test-machine';
+import { loginBuild } from 'utils/factories';
 
 const usernameLabel = /Username/i;
 const passwordLabel = /Password/i;
@@ -44,17 +44,11 @@ const testModel = createModel(testMachine, {
         cy.findByLabelText(passwordLabel).clear().type(event.password).blur();
       },
       cases: [
-        { username: 'user', password: faker.internet.password(7) },
-        { username: 'user', password: faker.internet.password(12, true) },
-        { username: 'admin', password: faker.internet.password() },
-        {
-          username: faker.lorem.word(),
-          password: faker.internet.password(7),
-        },
-        {
-          username: faker.internet.userName(),
-          password: faker.internet.password(),
-        },
+        loginBuild({ overrides: { username: 'user' }, traits: 'invalid' }),
+        loginBuild({ overrides: { username: 'user' } }),
+        loginBuild({ overrides: { username: 'admin' } }),
+        loginBuild({ traits: 'invalid' }),
+        loginBuild(),
         { username: 'admin', password: 'Pa$$w0rd!' },
       ],
     },
@@ -66,14 +60,10 @@ const testModel = createModel(testMachine, {
         .should('satisfy', status => [200, 401].includes(status));
     },
     RETRY(cy: Cypress.cy) {
-      cy.findByLabelText(passwordLabel)
-        .clear()
-        .type(faker.internet.password(12, true));
+      cy.findByLabelText(passwordLabel).clear().type(loginBuild().password);
       cy.findByText(submitButton).click().wait('@sendLogin');
 
-      cy.findByLabelText(passwordLabel)
-        .clear()
-        .type(faker.internet.password(18));
+      cy.findByLabelText(passwordLabel).clear().type(loginBuild().password);
     },
   },
 });

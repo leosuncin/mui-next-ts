@@ -1,7 +1,6 @@
 /**
  * @jest-environment node
  */
-import faker from 'faker';
 import { StatusCodes } from 'http-status-codes';
 import { todos } from 'libs/db/todos';
 import { users } from 'libs/db/users';
@@ -11,6 +10,11 @@ import { createMocks } from 'node-mocks-http';
 import indexHandler from 'pages/api/todos';
 import byIdHandler from 'pages/api/todos/[id]';
 import { User } from 'types';
+import {
+  createTodoBuild,
+  randomArrayElement,
+  todoBuild,
+} from 'utils/factories';
 
 const testUser = users[1];
 const testTodos = todos.filter(todo => todo.createdBy === testUser.id);
@@ -27,9 +31,7 @@ describe('[POST] /api/todos', () => {
         cookie: `token=${token}; Path=/; HttpOnly; SameSite=Strict`,
         authorization: `Bearer ${token}`,
       },
-      body: {
-        text: faker.lorem.sentence(),
-      },
+      body: createTodoBuild(),
     });
 
     await indexHandler(req, res);
@@ -38,7 +40,7 @@ describe('[POST] /api/todos', () => {
     expect(res._getJSONData()).toHaveProperty('done', false);
   });
 
-  it.each([{}, { text: faker.lorem.paragraphs() }])(
+  it.each([{}, createTodoBuild({ traits: 'invalid' })])(
     'should fail with body: %j',
     async body => {
       const { req, res } = createMocks<
@@ -113,7 +115,7 @@ describe('[GET] /api/todos', () => {
         authorization: `Bearer ${token}`,
       },
       query: {
-        search: faker.lorem.word(),
+        search: createTodoBuild({ traits: 'search' }).text,
       },
     });
 
@@ -126,7 +128,7 @@ describe('[GET] /api/todos', () => {
 
 describe('[GET] /api/todos/:id', () => {
   it('should get one todo', async () => {
-    const todo = faker.random.arrayElement(testTodos);
+    const todo = randomArrayElement(testTodos);
     const { req, res } = createMocks<
       NextApiRequest & { user: User },
       NextApiResponse
@@ -148,7 +150,7 @@ describe('[GET] /api/todos/:id', () => {
   });
 
   it('should fail due authorization', async () => {
-    const todo = faker.random.arrayElement(
+    const todo = randomArrayElement(
       todos.filter(t => t.createdBy !== testUser.id),
     );
     const { req, res } = createMocks<
@@ -182,7 +184,7 @@ describe('[GET] /api/todos/:id', () => {
         authorization: `Bearer ${token}`,
       },
       query: {
-        id: faker.random.uuid(),
+        id: todoBuild().id,
       },
     });
 
@@ -194,7 +196,7 @@ describe('[GET] /api/todos/:id', () => {
 });
 
 describe('[PUT] /api/todos/:id', () => {
-  const todo = faker.random.arrayElement(testTodos);
+  const todo = randomArrayElement(testTodos);
 
   it('should update one todo', async () => {
     const { req, res } = createMocks<
@@ -210,7 +212,7 @@ describe('[PUT] /api/todos/:id', () => {
         id: todo.id,
       },
       body: {
-        text: faker.hacker.phrase(),
+        ...createTodoBuild(),
         done: !todo.done,
       },
     });
@@ -222,7 +224,7 @@ describe('[PUT] /api/todos/:id', () => {
   });
 
   it.each([
-    { text: faker.lorem.paragraphs(), done: 'a' },
+    { ...createTodoBuild({ traits: 'invalid' }), done: 'a' },
     { text: null, done: 42 },
     { text: null, done: null },
   ])('should fail with body: %j', async body => {

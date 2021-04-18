@@ -1,13 +1,13 @@
 /**
  * @jest-environment node
  */
-import faker from 'faker';
 import fc from 'fast-check';
 import { StatusCodes } from 'http-status-codes';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
 import registerHandler from 'pages/api/auth/register';
 import { AuthRegister } from 'types';
+import { registerBuild } from 'utils/factories';
 
 describe('/api/auth/register', () => {
   it('should validate the request method', async () => {
@@ -75,12 +75,7 @@ describe('/api/auth/register', () => {
   it('should register a new user', async () => {
     const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
       method: 'POST',
-      body: {
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        username: faker.internet.email(),
-        password: faker.internet.password(),
-      },
+      body: registerBuild(),
     });
 
     await registerHandler(req as any, res);

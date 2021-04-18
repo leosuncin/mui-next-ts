@@ -14,13 +14,13 @@
     "lint": "run-p lint:*",
     "lint:eslint": "eslint --ext '.js' --ext '.ts' --ext '.tsx' .",
     "lint:tsc": "tsc --noEmit --noErrorTruncation --pretty false --incremental false",
+    "postinstall": "is-ci || husky install",
     "start": "next start",
     "start:e2e": "start-test dev 3000 test:e2e",
     "test": "jest",
     "test:component": "cypress run --config-file cypress-unit.json",
     "test:e2e": "cypress run",
-    "test:watch": "jest --watch",
-    "postinstall": "is-ci || husky install"
+    "test:watch": "jest --watch"
   },
   "keywords": [],
   "optionalDependencies": {
@@ -37,7 +37,6 @@
     "@nano-sql/core": "^2.3.7",
     "@nano-sql/plugin-fuzzy-search": "^2.0.2",
     "@xstate/react": "^1.2.0",
-    "faker": "^5.1.0",
     "http-status-codes": "^2.1.2",
     "jsonwebtoken": "^8.5.1",
     "luxon": "^1.25.0",
@@ -65,7 +64,6 @@
     "@testing-library/jest-dom": "^5.11.0",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^13.1.1",
-    "@types/faker": "^5.1.0",
     "@types/jest": "^26.0.19",
     "@types/js-cookie": "^2.2.6",
     "@types/jsonwebtoken": "^8.5.0",

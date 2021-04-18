@@ -1,8 +1,11 @@
 import Todo from 'components/todo';
 import { mount } from 'cypress-react-unit-test';
-import faker from 'faker';
 import React from 'react';
-import { todoBuild } from 'utils/factories';
+import {
+  createTodoBuild,
+  randomArrayElement,
+  todoBuild,
+} from 'utils/factories';
 
 describe('Todo component', () => {
   const todos = Array.from({ length: 10 }, () => todoBuild({ traits: 'old' }));
@@ -73,8 +76,8 @@ describe('Todo component', () => {
   });
 
   it('should edit one todo', () => {
-    const todo = faker.random.arrayElement(todos);
-    const text = faker.lorem.words();
+    const todo = randomArrayElement(todos);
+    const { text } = createTodoBuild();
     cy.intercept('PUT', '**/api/todos/**', {
       statusCode: 200,
       body: {
@@ -97,7 +100,7 @@ describe('Todo component', () => {
   });
 
   it('should change status of one todo', () => {
-    const todo = faker.random.arrayElement(todos);
+    const todo = randomArrayElement(todos);
     const newActiveCount = activeCount + (todo.done ? 1 : -1);
     const newCompletedCount = completedCount + (todo.done ? -1 : 1);
     cy.intercept('PUT', '**/api/todos/**', req => {
@@ -128,7 +131,7 @@ describe('Todo component', () => {
   });
 
   it('should remove one todo', () => {
-    const todo = faker.random.arrayElement(todos);
+    const todo = randomArrayElement(todos);
     cy.intercept('DELETE', '**/api/todos/**', { statusCode: 204, body: null });
     mount(<Todo />);
 
@@ -143,7 +146,7 @@ describe('Todo component', () => {
   });
 
   it('should revert remove on error', () => {
-    const todo = faker.random.arrayElement(todos);
+    const todo = randomArrayElement(todos);
     cy.intercept(
       {
         method: 'DELETE',
@@ -179,8 +182,8 @@ describe('Todo component', () => {
   });
 
   it('should revert changes when update request fail', () => {
-    const todo = faker.random.arrayElement(todos);
-    const text = faker.lorem.words();
+    const todo = randomArrayElement(todos);
+    const { text } = createTodoBuild();
     cy.intercept(
       {
         method: 'PUT',

@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ListTodo from 'components/todo/list-todo';
-import { random } from 'faker';
 import React from 'react';
+import { randomArrayElement } from 'utils/factories';
 import { todoBuild } from 'utils/factories';
 
 describe('<ListTodo />', () => {
@@ -20,7 +20,7 @@ describe('<ListTodo />', () => {
     const todos = Array.from({ length: 10 }, () =>
       todoBuild({ traits: 'old' }),
     );
-    const todo = random.arrayElement(todos);
+    const todo = randomArrayElement(todos);
 
     render(
       <ListTodo

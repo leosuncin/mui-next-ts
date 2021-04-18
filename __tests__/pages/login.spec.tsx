@@ -133,7 +133,7 @@ const testModel = createModel(testMachine, {
         // Wrong password
         { username: 'admin', password: '$0rdiDHUm4n8/95' },
         // Wrong username
-        { username: 'administrator', password: ")miLNZWw43')Uvc1F{" },
+        { username: 'administrator', password: ")miLNZWw43')Uvc1F" },
         // Correct credentials
         { username: 'admin', password: 'Pa$$w0rd!' },
       ],
