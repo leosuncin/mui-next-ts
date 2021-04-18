@@ -3,9 +3,9 @@ name: E2E test
 on:
   push:
     branches:
-    - master
-    - wip/*
-    - feat/*
+      - master
+      - wip/*
+      - feat/*
   pull_request:
     types:
       - opened
@@ -19,64 +19,55 @@ env:
 
 jobs:
   components:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
     steps:
-    - name: Checkout 🛎
-      uses: actions/checkout@v2
-    - name: Run Cypress component tests 🌲
-      uses: cypress-io/github-action@v2
-      timeout-minutes: 10
-      with:
-        env: coverage=false
-        config-file: cypress-unit.json
-    - name: Upload screenshots on failure ⬆️
-      uses: actions/upload-artifact@v2
-      if: failure()
-      with:
-        name: Component screenshots
-        path: cypress/screenshots
+      - name: Checkout 🛎
+        uses: actions/checkout@v2
+      - name: Run Cypress component tests 🌲
+        uses: cypress-io/github-action@v2
+        timeout-minutes: 10
+        with:
+          env: coverage=false
+          config-file: cypress-unit.json
+      - name: Upload screenshots and videos on failure ⬆️
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: Cypress screenshots and videos
+          path: |
+            cypress/screenshots
+            cypress/videos
 
   e2e:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
     steps:
-    - name: Checkout 🛎
-      uses: actions/checkout@v2
-    - name: Cache Next.js build 📦
-      uses: actions/cache@v2
-      with:
-        path: .next/cache
-        key: ${{ runner.os }}-next-build-${{ hashFiles('**/next.config.js') }}
-    - name: Run Cypress tests 🌲
-      uses: cypress-io/github-action@v2
-      timeout-minutes: 10
-      with:
-        build: npm run build
-        start: npm start
-        wait-on: 'http://localhost:3000'
-    - name: Upload screenshots on failure ⬆️
-      uses: actions/upload-artifact@v2
-      if: failure()
-      with:
-        name: Cypress screenshots
-        path: cypress/screenshots
-    - name: Upload videos on failure ⬆️
-      uses: actions/upload-artifact@v2
-      if: failure()
-      with:
-        name: Cypress video
-        path: cypress/videos
-    - name: Show code coverage 📊
-      run: npx nyc report
-    - name: Set code coverage commit status 📫
-      run: |
-        npx nyc report --reporter json-summary --report-dir coverage
-        npx -p check-code-coverage set-gh-status
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Upload code coverage ⬆️
-      uses: actions/upload-artifact@v2
-      with:
-        name: e2e-coverage
-        path: coverage/e2e
+      - name: Checkout 🛎
+        uses: actions/checkout@v2
+      - name: Cache Next.js build 📦
+        uses: actions/cache@v2
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-next-build-${{ hashFiles('**/next.config.js') }}
+      - name: Run Cypress tests 🌲
+        uses: cypress-io/github-action@v2
+        with:
+          build: npm run build
+          start: npm start
+          wait-on: 'http://localhost:3000'
+      - name: Upload screenshots and videos on failure ⬆️
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: Cypress screenshots and videos
+          path: |
+            cypress/screenshots
+            cypress/videos
+      - name: Show code coverage 📊
+        run: npx nyc report
+      - name: Upload code coverage ⬆️
+        uses: actions/upload-artifact@v2
+        with:
+          name: e2e-coverage
+          path: coverage/e2e
