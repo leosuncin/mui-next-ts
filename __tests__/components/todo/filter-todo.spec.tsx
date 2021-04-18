@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import FilterTodo from 'components/todo/filter-todo';
-import { helpers } from 'faker';
 import React from 'react';
+import { shuffleArray } from 'utils/factories';
 
 describe('<FilterTodo />', () => {
   it('should render', () => {
@@ -34,7 +34,7 @@ describe('<FilterTodo />', () => {
       />,
     );
 
-    helpers.shuffle(['all', 'completed', 'active']).forEach(filter => {
+    shuffleArray(['all', 'completed', 'active']).forEach(filter => {
       userEvent.click(
         screen.getByRole('button', { name: RegExp(filter, 'i') }),
       );

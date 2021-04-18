@@ -1,4 +1,4 @@
-import faker from 'faker';
+import { createTodoBuild } from 'utils/factories';
 
 describe('Todos page', () => {
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe('Todos page', () => {
   });
 
   it('should add a todo', () => {
-    const text = faker.hacker.phrase();
+    const { text } = createTodoBuild();
 
     cy.findByRole('textbox', { name: /Text/i }).type(text);
     cy.findByRole('button', { name: /Add/i }).click();
@@ -44,7 +44,7 @@ describe('Todos page', () => {
       .first()
       .next()
       .within(() => {
-        const text = faker.lorem.sentence();
+        const { text } = createTodoBuild();
 
         cy.findAllByRole('button').first().dblclick();
         cy.findByRole('textbox').clear().type(text).type('{enter}');

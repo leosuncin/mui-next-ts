@@ -1,6 +1,5 @@
 import LoginForm from 'components/forms/login';
 import { mount } from 'cypress-react-unit-test';
-import faker from 'faker';
 import fc from 'fast-check';
 import { RouterContext } from 'next/dist/next-server/lib/router-context';
 import type { NextRouter } from 'next/router';
@@ -81,18 +80,19 @@ describe('LoginForm component', () => {
 
   it('should lock the form after three failed attempts', () => {
     const handleSubmit = cy.stub().throws(new Error('Wrong password'));
+    const loginData = loginBuild();
 
     mount(<Component onSubmit={handleSubmit} />);
 
-    cy.findByLabelText(usernameLabel).type(faker.internet.userName());
-    cy.findByLabelText(passwordLabel).type(faker.internet.password());
+    cy.findByLabelText(usernameLabel).type(loginData.username);
+    cy.findByLabelText(passwordLabel).type(loginData.password);
     cy.findByRole('button', { name: submitButton }).click();
     cy.findByText(/Wrong password/);
 
-    cy.findByLabelText(passwordLabel).clear().type(faker.internet.password());
+    cy.findByLabelText(passwordLabel).clear().type(loginBuild().password);
     cy.findByRole('button', { name: submitButton }).click();
 
-    cy.findByLabelText(passwordLabel).clear().type(faker.internet.password());
+    cy.findByLabelText(passwordLabel).clear().type(loginBuild().password);
     cy.findByRole('button', { name: submitButton }).click();
     cy.findByRole('img', { name: 'sad face' }).should('be.visible');
     cy.findByText(/Too many failed attempts/);

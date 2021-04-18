@@ -1,5 +1,4 @@
 import { nSQL } from '@nano-sql/core';
-import faker from 'faker';
 import { hashPassword } from 'libs/encrypt';
 import { signJWT } from 'libs/jwt';
 import {
@@ -30,8 +29,10 @@ const register: NextHttpHandler = async (req, res) => {
       lastName: req.body.lastName,
       username: req.body.username,
       password: hashPassword(req.body.password),
-      picture: faker.image.avatar(),
-      bio: faker.lorem.paragraph(),
+      picture: `https://avatars.dicebear.com/api/avataaars/${encodeURIComponent(
+        req.body.username,
+      )}.svg`,
+      bio: '',
     })
     .exec()) as [User];
 

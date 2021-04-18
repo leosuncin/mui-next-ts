@@ -2,7 +2,6 @@
  * @jest-environment node
  */
 import { nSQL } from '@nano-sql/core';
-import faker from 'faker';
 import { sign } from 'jsonwebtoken';
 import { dbConfig, users } from 'libs/db';
 import { signJWT } from 'libs/jwt';
@@ -10,6 +9,7 @@ import { withAuthentication } from 'libs/middleware';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
 import { UnauthorizedError } from 'types';
+import { tokenBuilder } from 'utils/factories';
 
 const toBase64 = (str: String) => Buffer.from(str).toString('base64');
 const toBase64UrlSafe = (str: String) =>
@@ -19,17 +19,20 @@ describe('withAuthentication middleware', () => {
   const testCases = [
     null,
     undefined,
-    faker.lorem.slug(),
-    faker.lorem.paragraphs(3).split('\n \r').map(toBase64).join('.'),
-    faker.lorem.sentences(3).split('. ').map(toBase64UrlSafe).join('.'),
-    sign({ sub: faker.random.uuid() }, process.env.APP_SECRET || '5€cr3t'),
+    tokenBuilder({ traits: 'slug' }),
+    tokenBuilder({ traits: 'base64' }),
+    tokenBuilder(),
+    sign(
+      { sub: tokenBuilder({ traits: 'uuid' }) },
+      process.env.APP_SECRET || '5€cr3t',
+    ),
     `${toBase64UrlSafe(
       users[0].id,
     )}.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`,
     `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${toBase64UrlSafe(
       users[0].id,
     )}.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`,
-    signJWT({ id: faker.random.uuid() } as any),
+    signJWT({ id: tokenBuilder({ traits: 'uuid' }) } as any),
   ];
 
   beforeAll(async () => {
