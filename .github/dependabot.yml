@@ -1,12 +1,20 @@
 version: 2
 updates:
-- package-ecosystem: npm
-  directory: "/"
-  schedule:
-    interval: weekly
-    day: sunday
-  open-pull-requests-limit: 10
-  versioning-strategy: widen
-  labels:
-    - dependencies
-    - automerge
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: weekly
+      day: sunday
+    versioning-strategy: widen
+    labels:
+      - dependencies
+      # Add default Kodiak `merge.automerge_label`
+      - automerge
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
+    labels:
+      - dependencies
+      - automerge
