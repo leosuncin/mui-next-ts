@@ -1,5 +1,5 @@
-import faker from 'faker';
 import { StatusCodes } from 'http-status-codes';
+import { registerBuild } from 'utils/factories';
 
 describe('Register API', () => {
   it('should validate the request method', () => {
@@ -19,12 +19,12 @@ describe('Register API', () => {
   });
 
   it('should reject duplicate user', () => {
-    const body = {
-      firstName: faker.name.firstName(),
-      lastName: faker.name.lastName(),
-      username: 'jane_doe',
-      password: 'ji32k7au4a83',
-    };
+    const body = registerBuild({
+      overrides: {
+        username: 'jane_doe',
+        password: 'ji32k7au4a83',
+      },
+    });
 
     cy.api({
       url: '/api/auth/register',
@@ -35,12 +35,7 @@ describe('Register API', () => {
   });
 
   it('should register a new user', () => {
-    const body = {
-      firstName: faker.name.firstName(),
-      lastName: faker.name.lastName(),
-      username: faker.internet.userName().toLowerCase(),
-      password: faker.internet.password(),
-    };
+    const body = registerBuild();
 
     cy.api({
       url: '/api/auth/register',

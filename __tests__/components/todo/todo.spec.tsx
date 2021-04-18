@@ -6,8 +6,8 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Todo from 'components/todo';
-import faker from 'faker';
 import React from 'react';
+import { createTodoBuild, randomArrayElement } from 'utils/factories';
 import server from 'utils/test-server';
 import { respondWithServiceUnavailable } from 'utils/test-server/handlers/handle-with-error';
 
@@ -47,7 +47,7 @@ describe('<Todo />', () => {
   });
 
   it('should create a new todo and add to list', async () => {
-    const text = faker.lorem.words();
+    const { text } = createTodoBuild();
     render(<Todo />);
 
     await waitForElementToBeRemoved(screen.getByTestId('loading-todos')); // Wait until loader to disappear
@@ -62,7 +62,7 @@ describe('<Todo />', () => {
   });
 
   it('should edit one todo', async () => {
-    const text = faker.lorem.words();
+    const { text } = createTodoBuild();
     render(<Todo />);
 
     await waitForElementToBeRemoved(screen.getByTestId('loading-todos')); // Wait until loader to disappear
@@ -87,7 +87,7 @@ describe('<Todo />', () => {
 
     await waitForElementToBeRemoved(screen.getByTestId('loading-todos')); // Wait until loader to disappear
 
-    const element = faker.random.arrayElement(screen.getAllByRole('listitem')); // Get one random todo item
+    const element = randomArrayElement(screen.getAllByRole('listitem')); // Get one random todo item
     userEvent.click(getByRole(element, 'button', { name: /Delete todo/ })); // Delete it
 
     expect(element).not.toBeInTheDocument(); // Check not exist anymore

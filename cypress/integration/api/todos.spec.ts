@@ -1,12 +1,16 @@
-import faker from 'faker';
 import fc from 'fast-check';
 import { StatusCodes } from 'http-status-codes';
 import { todos } from 'libs/db/todos';
 import { users } from 'libs/db/users';
+import {
+  createTodoBuild,
+  randomArrayElement,
+  todoBuild,
+} from 'utils/factories';
 
 describe('Todo API', () => {
   const url = '/api/todos';
-  const todo = faker.random.arrayElement(
+  const todo = randomArrayElement(
     todos.filter(t => t.createdBy === users[0].id),
   );
   let authorization: string;
@@ -18,7 +22,7 @@ describe('Todo API', () => {
   });
 
   it('should create a new todo', () => {
-    const text = faker.hacker.phrase();
+    const { text } = createTodoBuild();
     cy.api({
       url,
       method: 'POST',
@@ -79,7 +83,7 @@ describe('Todo API', () => {
   it('should search by text', () => {
     cy.api({
       url,
-      qs: { search: faker.hacker.verb() },
+      qs: { search: createTodoBuild({ traits: 'search' }).text },
       headers: { authorization },
     }).validateResponse(StatusCodes.OK, 'Todo');
   });
@@ -96,7 +100,7 @@ describe('Todo API', () => {
       url: url + '/' + todo.id,
       method: 'PUT',
       body: {
-        text: faker.fake('Buy {{commerce.product}}'),
+        ...createTodoBuild(),
         done: !todo.done,
       },
       headers: { authorization },
@@ -107,9 +111,7 @@ describe('Todo API', () => {
     cy.api({
       url,
       method: 'POST',
-      body: {
-        text: faker.lorem.sentence(),
-      },
+      body: createTodoBuild(),
       headers: { authorization },
     })
       .its('body')
@@ -127,7 +129,7 @@ describe('Todo API', () => {
   context('Todo not exist', () => {
     it('should fail to get', () => {
       cy.api({
-        url: url + '/' + faker.random.uuid(),
+        url: url + '/' + todoBuild().id,
         failOnStatusCode: false,
         headers: { authorization },
       }).validateResponse(StatusCodes.NOT_FOUND, 'ApiError');
@@ -135,10 +137,10 @@ describe('Todo API', () => {
 
     it('should fail to update', () => {
       cy.api({
-        url: url + '/' + faker.random.uuid(),
+        url: url + '/' + todoBuild().id,
         method: 'PUT',
         body: {
-          text: faker.fake('Buy {{finance.amount}} x {{commerce.product}}'),
+          ...createTodoBuild(),
           done: !todo.done,
         },
         headers: { authorization },
@@ -148,7 +150,7 @@ describe('Todo API', () => {
 
     it('should fail to remove', () => {
       cy.api({
-        url: url + '/' + faker.random.uuid(),
+        url: url + '/' + todoBuild().id,
         method: 'DELETE',
         headers: { authorization },
         failOnStatusCode: false,
@@ -161,7 +163,7 @@ describe('Todo API', () => {
       cy.api({
         url,
         method: 'POST',
-        body: { text: faker.lorem.sentence() },
+        body: createTodoBuild(),
         failOnStatusCode: false,
       }).validateResponse(StatusCodes.UNAUTHORIZED, 'ApiError');
     });
@@ -185,7 +187,7 @@ describe('Todo API', () => {
         url: url + '/' + todo.id,
         method: 'PUT',
         body: {
-          text: faker.fake(`Buy {{commerce.product}}`),
+          ...createTodoBuild(),
           done: !todo.done,
         },
         failOnStatusCode: false,
@@ -223,7 +225,7 @@ describe('Todo API', () => {
         url: url + '/' + todo.id,
         method: 'PUT',
         body: {
-          text: faker.fake('Buy {{finance.amount}} x {{commerce.product}}'),
+          ...createTodoBuild(),
           done: !todo.done,
         },
         headers: { authorization },

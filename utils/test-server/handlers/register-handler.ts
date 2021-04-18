@@ -1,9 +1,9 @@
-import faker from 'faker';
 import { StatusCodes } from 'http-status-codes';
 import { signJWT } from 'libs/jwt';
 import { registerSchema as validationSchema } from 'libs/validation';
 import { RequestHandler, rest } from 'msw';
 import { AuthRegister } from 'types';
+import { userBuild } from 'utils/factories';
 
 const registerHandler: RequestHandler = rest.post(
   '/api/auth/register',
@@ -48,14 +48,13 @@ const registerHandler: RequestHandler = rest.post(
       );
     }
 
-    const newUser = {
-      id: faker.random.uuid(),
-      firstName,
-      lastName,
-      username,
-      picture: faker.image.avatar(),
-      bio: faker.lorem.paragraph(),
-    };
+    const newUser = userBuild({
+      overrides: {
+        firstName,
+        lastName,
+        username,
+      },
+    });
     const token = signJWT(newUser as any);
 
     return res(

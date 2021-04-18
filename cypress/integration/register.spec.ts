@@ -1,9 +1,9 @@
 import { createModel } from '@xstate/test';
-import faker from 'faker';
 import { users } from 'libs/db/users';
 import createMachineWithTests, {
   FillEvent,
 } from 'machines/register-test-machine';
+import { randomArrayElement, registerBuild } from 'utils/factories';
 
 const firstNameLabel = /First name/i;
 const lastNameLabel = /Last name/i;
@@ -60,54 +60,49 @@ const testModel = createModel(testMachine, {
         cy.findByLabelText(passwordLabel).clear().type(event.password);
       },
       cases: [
-        {
-          firstName: 'a{backspace}{enter}',
-          lastName: faker.name.lastName(),
-          username: faker.internet.userName(),
-          password: 'Pa$$w0rd!',
-        },
-        {
-          firstName: faker.name.firstName(),
-          lastName: 'a{backspace}{enter}',
-          username: faker.internet.userName(),
-          password: 'ji32k7au4a83',
-        },
-        {
-          firstName: faker.name.firstName(),
-          lastName: faker.name.lastName(),
-          username: 'a{backspace}{enter}',
-          password: '12345678',
-        },
-        {
-          firstName: faker.name.firstName(),
-          lastName: faker.name.lastName(),
-          username: faker.internet.userName(),
-          password: 'a{backspace}{enter}',
-        },
-        {
-          firstName: faker.name.firstName(),
-          lastName: faker.name.lastName(),
-          username: faker.lorem.word().substr(0, 4) + '{enter}',
-          password: faker.internet.password(),
-        },
-        {
-          firstName: faker.name.firstName(),
-          lastName: faker.name.lastName(),
-          username: faker.internet.userName(),
-          password: faker.internet.password(7) + '{enter}',
-        },
-        {
-          firstName: faker.name.firstName(),
-          lastName: faker.name.lastName(),
-          username: faker.internet.userName(),
-          password: faker.internet.password(12, true),
-        },
-        {
-          firstName: faker.random.arrayElement(users).firstName,
-          lastName: faker.random.arrayElement(users).lastName,
-          username: faker.random.arrayElement(users).username,
-          password: faker.internet.password(10, true),
-        },
+        registerBuild({
+          overrides: {
+            firstName: 'a{backspace}{enter}',
+            password: 'Pa$$w0rd!',
+          },
+        }),
+        registerBuild({
+          overrides: {
+            lastName: 'a{backspace}{enter}',
+            password: 'ji32k7au4a83',
+          },
+        }),
+        registerBuild({
+          overrides: {
+            username: 'a{backspace}{enter}',
+            password: '12345678',
+          },
+        }),
+        registerBuild({
+          overrides: {
+            password: 'a{backspace}{enter}',
+          },
+        }),
+        registerBuild({
+          map: register => ({
+            ...register,
+            username: register.username.substr(0, 4) + '{enter}',
+          }),
+        }),
+        registerBuild({
+          map: register => ({
+            ...register,
+            password: register.password.substr(0, 7) + '{enter}',
+          }),
+        }),
+        registerBuild(),
+        registerBuild({
+          overrides: {
+            firstName: randomArrayElement(users).firstName,
+            lastName: randomArrayElement(users).lastName,
+            username: randomArrayElement(users).username,
+          },
+        }),
       ],
     },
     SUBMIT(cy: Cypress.cy) {
