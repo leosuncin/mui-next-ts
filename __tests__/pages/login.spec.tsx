@@ -1,3 +1,4 @@
+/* eslint-disable testing-library/no-node-access */
 import { RenderResult, act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createModel } from '@xstate/test';
@@ -41,62 +42,69 @@ const invalidErrorMessages = /(?:Username|Password).+(?:empty|too short)/i;
 const lockedErrorMessage = /Too many failed attempts/i;
 
 const testMachine = createMachineWithTests({
-  pristine: ({ getByLabelText }: RenderResult) => {
-    expect(getByLabelText('sad face').parentElement).toHaveAttribute(
+  pristine: (screen: RenderResult) => {
+    expect(screen.getByLabelText('sad face').parentElement).toHaveAttribute(
       'aria-expanded',
       'false',
     );
   },
-  invalid: async ({ findAllByText }: RenderResult) => {
-    const errorMessages = await findAllByText(invalidErrorMessages);
+  invalid: async (screen: RenderResult) => {
+    const errorMessages = await screen.findAllByText(invalidErrorMessages);
 
     expect(errorMessages.length).toBeGreaterThanOrEqual(1);
     expect(errorMessages.length).toBeLessThan(3);
   },
-  'invalid.username': async ({ findByText }: RenderResult) => {
-    await expect(findByText(usernameErrorMessage)).resolves.toBeInTheDocument();
+  'invalid.username': async (screen: RenderResult) => {
+    await expect(
+      screen.findByText(usernameErrorMessage),
+    ).resolves.toBeInTheDocument();
   },
-  'invalid.password': async ({ findByText }: RenderResult) => {
-    await expect(findByText(passwordErrorMessage)).resolves.toBeInTheDocument();
+  'invalid.password': async (screen: RenderResult) => {
+    await expect(
+      screen.findByText(passwordErrorMessage),
+    ).resolves.toBeInTheDocument();
   },
-  valid: ({ queryAllByText }: RenderResult) => {
-    expect(queryAllByText(usernameErrorMessage)).toHaveLength(0);
+  valid: (screen: RenderResult) => {
+    expect(screen.queryAllByText(usernameErrorMessage)).toHaveLength(0);
   },
-  correctCredentials: ({ getByLabelText }: RenderResult) => {
-    expect(getByLabelText(usernameLabel)).toBeValid();
-    expect(getByLabelText(passwordLabel)).toBeValid();
+  correctCredentials: (screen: RenderResult) => {
+    expect(screen.getByLabelText(usernameLabel)).toBeValid();
+    expect(screen.getByLabelText(passwordLabel)).toBeValid();
   },
-  incorrectCredentials: ({ getByText }: RenderResult) => {
-    expect(getByText(credentialsErrorMessage)).toBeInTheDocument();
+  incorrectCredentials: (screen: RenderResult) => {
+    expect(screen.getByText(credentialsErrorMessage)).toBeInTheDocument();
   },
   success: () => {
     expect(routerMocked.push).toHaveBeenCalledTimes(1);
   },
-  retry: ({ getByText }: RenderResult) => {
-    expect(getByText(submitButton).parentElement).toBeEnabled();
+  retry: (screen: RenderResult) => {
+    expect(screen.getByText(submitButton).parentElement).toBeEnabled();
   },
-  locked: ({ getByLabelText, getByText }: RenderResult) => {
-    expect(getByText(lockedErrorMessage)).toBeInTheDocument();
-    expect(getByLabelText(usernameLabel)).toBeDisabled();
-    expect(getByLabelText(passwordLabel)).toBeDisabled();
-    expect(getByText(submitButton).parentElement).toBeDisabled();
+  locked: (screen: RenderResult) => {
+    expect(screen.getByText(lockedErrorMessage)).toBeInTheDocument();
+    expect(screen.getByLabelText(usernameLabel)).toBeDisabled();
+    expect(screen.getByLabelText(passwordLabel)).toBeDisabled();
+    expect(screen.getByText(submitButton).parentElement).toBeDisabled();
   },
 });
 const testModel = createModel(testMachine, {
   events: {
     FILL_FORM: {
-      async exec({ getByLabelText }: RenderResult, event: FillEvent) {
-        const usernameInput = getByLabelText(usernameLabel) as HTMLInputElement;
-        const passwordInput = getByLabelText(passwordLabel) as HTMLInputElement;
-
-        usernameInput.value = '';
-        passwordInput.value = '';
+      async exec(screen: RenderResult, event: FillEvent) {
+        const usernameInput = screen.getByLabelText(
+          usernameLabel,
+        ) as HTMLInputElement;
+        const passwordInput = screen.getByLabelText(
+          passwordLabel,
+        ) as HTMLInputElement;
 
         await act(async () => {
-          await userEvent.type(usernameInput, event.username);
+          userEvent.clear(usernameInput);
+          userEvent.type(usernameInput, event.username);
           fireEvent.blur(usernameInput);
 
-          await userEvent.type(passwordInput, event.password);
+          userEvent.clear(passwordInput);
+          userEvent.type(passwordInput, event.password);
           fireEvent.blur(passwordInput);
         });
 
@@ -138,19 +146,19 @@ const testModel = createModel(testMachine, {
         { username: 'admin', password: 'Pa$$w0rd!' },
       ],
     },
-    SUBMIT({ getByTitle }: RenderResult) {
+    SUBMIT(screen: RenderResult) {
       return act(async () => {
-        fireEvent.submit(getByTitle(formTitle));
+        fireEvent.submit(screen.getByTitle(formTitle));
       });
     },
-    RETRY(cy: RenderResult) {
+    RETRY(screen: RenderResult) {
       return act(async () => {
-        const passwordInput = cy.getByLabelText(
+        const passwordInput = screen.getByLabelText(
           passwordLabel,
         ) as HTMLInputElement;
 
         userEvent.type(passwordInput, '-l}AIlZx&gEB');
-        fireEvent.submit(cy.getByTitle(formTitle));
+        fireEvent.submit(screen.getByTitle(formTitle));
 
         userEvent.type(passwordInput, 'Id"Dqe!um3Z&h}~h\',%*=hlm');
       });

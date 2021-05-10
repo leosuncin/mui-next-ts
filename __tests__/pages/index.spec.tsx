@@ -1,6 +1,7 @@
 import {
   fireEvent,
   render,
+  screen,
   waitForElementToBeRemoved,
 } from '@testing-library/react';
 import { AuthProvider } from 'hooks/auth-context';
@@ -42,9 +43,9 @@ describe('<IndexPage />', () => {
   });
 
   it('should close the session', async () => {
-    const { getByTestId, getByText } = render(tree);
-    const profileMenu = getByTestId('profile-menu');
-    const logoutItem = getByText('Logout');
+    render(tree);
+    const profileMenu = screen.getByTestId('profile-menu');
+    const logoutItem = screen.getByText('Logout');
 
     fireEvent.click(profileMenu);
     fireEvent.click(logoutItem);
