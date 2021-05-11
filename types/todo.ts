@@ -1,12 +1,10 @@
-import { uuid } from '@nano-sql/core/lib/interfaces';
-
 export interface Todo {
-  id: uuid;
+  id: string;
   text: string;
   done: boolean;
   createdAt: Date;
   updatedAt: Date;
-  createdBy: uuid;
+  createdBy: string;
 }
 
 export interface TodoResponse {

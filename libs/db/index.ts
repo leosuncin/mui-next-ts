@@ -25,7 +25,7 @@ export const dbConfig: InanoSQLConfig = {
         'bio:string': {},
       },
       indexes: {
-        'username:string': { unique: true, ignore_case: true },
+        'username:string': { unique: true, ignore_case: true }, // eslint-disable-line camelcase
       },
     },
     {

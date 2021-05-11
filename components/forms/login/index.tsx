@@ -80,7 +80,6 @@ const LoginForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
           id="username"
           label="Username"
           autoComplete="username"
-          autoFocus
           error={!!formState.errors.username}
           disabled={attempt > 3}
           helperText={

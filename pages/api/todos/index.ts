@@ -54,6 +54,9 @@ export default catchErrors(
 
           case 'POST':
             return validateBody(createTodoSchema)(saveNote)(req, res);
+
+          default:
+            return void 0;
         }
       }),
     ),

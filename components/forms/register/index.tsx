@@ -60,7 +60,6 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
             label="First name"
             required
             fullWidth
-            autoFocus
             error={!!formState.errors.firstName}
             helperText={
               formState.errors.firstName && formState.errors.firstName.message

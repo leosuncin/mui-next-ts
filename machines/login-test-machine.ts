@@ -9,19 +9,19 @@ import {
 
 export interface LoginTestStateSchema extends StateSchema<never> {
   states: {
-    pristine: {};
+    pristine: Record<string, unknown>;
     invalid: {
       states: {
-        username: {};
-        password: {};
+        username: Record<string, unknown>;
+        password: Record<string, unknown>;
       };
     };
-    valid: {};
-    correctCredentials: {};
-    incorrectCredentials: {};
-    success: {};
-    retry: {};
-    locked: {};
+    valid: Record<string, unknown>;
+    correctCredentials: Record<string, unknown>;
+    incorrectCredentials: Record<string, unknown>;
+    success: Record<string, unknown>;
+    retry: Record<string, unknown>;
+    locked: Record<string, unknown>;
   };
 }
 interface TypeUsernameEvent extends EventObject {
@@ -106,7 +106,7 @@ const loginTestConfig: MachineConfig<never, LoginTestStateSchema, FillEvent> = {
 };
 
 export default (
-  testSuite: Record<string, Function>,
+  testSuite: Record<string, CallableFunction>,
 ): StateMachine<never, LoginTestStateSchema, FillEvent> => {
   Object.entries(testSuite).forEach(([state, test]) => {
     const path = `states.${state.replace(/\./g, '.states.')}.meta.test`;

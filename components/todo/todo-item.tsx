@@ -96,10 +96,8 @@ const TodoItem: React.FC<PropTypes.InferProps<typeof propTypes>> = ({
                 }
               }}
             />
-          ) : todo.done ? (
-            <s>{todo.text}</s>
           ) : (
-            todo.text
+            (todo.done && <s>{todo.text}</s>) || todo.text
           )
         }
         secondary={DateTime.fromISO(
@@ -107,7 +105,6 @@ const TodoItem: React.FC<PropTypes.InferProps<typeof propTypes>> = ({
         ).toRelative()}
         secondaryTypographyProps={{
           component: 'time',
-          // @ts-ignore
           dateTime: todo.done ? todo.updatedAt : todo.createdAt,
         }}
         onDoubleClick={() => setIsEditing(prevIsEditing => !prevIsEditing)}

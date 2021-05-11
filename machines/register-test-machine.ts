@@ -10,19 +10,19 @@ import {
 
 export interface RegisterTestStateSchema extends StateSchema<never> {
   states: {
-    pristine: {};
+    pristine: Record<string, unknown>;
     invalid: {
       states: {
-        firstName: {};
-        lastName: {};
-        username: {};
-        password: {};
+        firstName: Record<string, unknown>;
+        lastName: Record<string, unknown>;
+        username: Record<string, unknown>;
+        password: Record<string, unknown>;
       };
     };
-    valid: {};
-    duplicateCredentials: {};
-    success: {};
-    fail: {};
+    valid: Record<string, unknown>;
+    duplicateCredentials: Record<string, unknown>;
+    success: Record<string, unknown>;
+    fail: Record<string, unknown>;
   };
 }
 interface TypeFirstNameEvent extends EventObject {
@@ -142,7 +142,7 @@ const registerTestConfig: MachineConfig<
 };
 
 export default (
-  testSuite: Record<string, Function>,
+  testSuite: Record<string, CallableFunction>,
 ): StateMachine<never, RegisterTestStateSchema, FillEvent> => {
   Object.entries(testSuite).forEach(([state, test]) => {
     const path = `states.${state.replace(/\./g, '.states.')}.meta.test`;

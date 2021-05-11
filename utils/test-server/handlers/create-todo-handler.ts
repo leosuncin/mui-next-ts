@@ -16,7 +16,7 @@ const createTodoHandler: RequestHandler = rest.post(
         done: false,
         createdBy: db.users.findFirst({ where: {} }),
       });
-      // @ts-expect-error
+      // @ts-expect-error createdBy refers to user.id
       todo.createdBy = todo.createdBy.id;
 
       return res(

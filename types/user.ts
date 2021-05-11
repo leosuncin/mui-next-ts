@@ -1,7 +1,5 @@
-import { uuid } from '@nano-sql/core/lib/interfaces';
-
 export interface User {
-  id: uuid;
+  id: string;
   firstName: string;
   lastName: string;
   username: string;

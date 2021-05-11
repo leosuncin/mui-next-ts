@@ -11,8 +11,8 @@ import { createMocks } from 'node-mocks-http';
 import { UnauthorizedError } from 'types';
 import { tokenBuilder } from 'utils/factories';
 
-const toBase64 = (str: String) => Buffer.from(str).toString('base64');
-const toBase64UrlSafe = (str: String) =>
+const toBase64 = (str: string) => Buffer.from(str).toString('base64');
+const toBase64UrlSafe = (str: string) =>
   Buffer.from(str).toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
 
 describe('withAuthentication middleware', () => {

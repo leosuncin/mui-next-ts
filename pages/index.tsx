@@ -59,7 +59,7 @@ const IndexPage: NextPage<AuthenticationProps> = () => {
     responsive: 'standard',
     expandableRows: true,
     expandableRowsOnClick: true,
-    renderExpandableRow(rowData, rowMeta) {
+    renderExpandableRow(rowData: Array<any>) {
       const colSpan = rowData.length + 1;
 
       return (
@@ -113,7 +113,7 @@ const IndexPage: NextPage<AuthenticationProps> = () => {
         direction="column"
         style={{ paddingTop: '2em' }}
       >
-        <Grid item lg style={{ display: Boolean(error) ? 'block' : 'none' }}>
+        <Grid item lg style={{ display: error ? 'block' : 'none' }}>
           <Collapse in={Boolean(error)}>
             <Alert severity="error">{error}</Alert>
           </Collapse>

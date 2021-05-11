@@ -92,8 +92,8 @@ export const registerBuild = build<AuthRegister>({
   },
 });
 
-const toBase64 = (str: String) => Buffer.from(str).toString('base64');
-const toBase64UrlSafe = (str: String) =>
+const toBase64 = (str: string) => Buffer.from(str).toString('base64');
+const toBase64UrlSafe = (str: string) =>
   Buffer.from(str).toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
 
 export const tokenBuilder = build<{ token: string }>({
@@ -123,7 +123,7 @@ export const tokenBuilder = build<{ token: string }>({
   },
 });
 
-export function uuid() {
+export function uuid(): string {
   let uuid = '';
 
   for (let n = 0; n < 32; n++) {
@@ -133,7 +133,7 @@ export function uuid() {
       uuid += '-';
     }
 
-    // eslint-disable-next-line no-mixed-operators
+    // eslint-disable-next-line no-nested-ternary
     uuid += (n === 12 ? 4 : n === 16 ? (random & 3) | 8 : random).toString(16);
   }
 

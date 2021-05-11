@@ -59,6 +59,9 @@ const endpointHandler: NextHttpHandler = async (req, res) => {
 
     case 'DELETE':
       return deleteHandler(req, res);
+
+    default:
+      return void 0;
   }
 };
 

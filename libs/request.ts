@@ -9,7 +9,7 @@ async function fetcher<Data>(
   const resp = await fetch(input, options);
   let result: Data | ErrorResponse;
 
-  if (resp.status === 204) return;
+  if (resp.status === 204) return undefined;
 
   try {
     const text = await resp.text();

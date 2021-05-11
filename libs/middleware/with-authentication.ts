@@ -10,11 +10,11 @@ function extractTokenFromCookies(req: NextApiRequest) {
   return cookies.token;
 }
 
-function extractTokenFromHeaders(req: NextApiRequest) {
+function extractTokenFromHeaders(req: NextApiRequest): string {
   const bearerRegex = /Bearer (.*)/;
   const { authorization } = req.headers;
 
-  if (!authorization || !bearerRegex.test(authorization)) return;
+  if (!authorization || !bearerRegex.test(authorization)) return null;
 
   const [, token] = bearerRegex.exec(authorization);
 
@@ -38,7 +38,7 @@ function isJSON(json: string, encoding: BufferEncoding = 'binary'): boolean {
 function isJWT(token: string): boolean {
   const urlSafeBase64 = /^[A-Z0-9_-]+$/i;
 
-  if (typeof token !== 'string') return;
+  if (typeof token !== 'string') return false;
 
   const parts = token.split('.');
 
