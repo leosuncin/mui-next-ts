@@ -46,7 +46,11 @@ const LoginForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
   return (
     <>
       <Fade in={!!errorMessage} aria-expanded={!!errorMessage}>
-        <Typography color="secondary" className={classes.errorMessage}>
+        <Typography
+          color="secondary"
+          role="alert"
+          className={classes.errorMessage}
+        >
           <span role="img" aria-label="sad face">
             😥
           </span>
@@ -55,7 +59,6 @@ const LoginForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
         </Typography>
       </Fade>
       <form
-        title="login form"
         className={classes.root}
         noValidate
         onSubmit={handleSubmit(async body => {
@@ -101,7 +104,12 @@ const LoginForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
         />
         {formState.isSubmitting ? (
           <div className={classes.loaderContainer}>
-            <CircularProgress size={26} data-testid="sending-login" />
+            <CircularProgress
+              size={26}
+              aria-valuetext="Sending..."
+              aria-busy="true"
+              aria-live="polite"
+            />
           </div>
         ) : (
           <Button

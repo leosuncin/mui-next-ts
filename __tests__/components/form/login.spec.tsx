@@ -1,16 +1,22 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import {
+  render,
+  screen,
+  waitForElementToBeRemoved,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import LoginForm, { validations } from 'components/forms/login';
 import React from 'react';
 
-jest.mock('next/link', () => ({ children, href }) =>
-  React.cloneElement(React.Children.only(children), { href }),
+jest.mock(
+  'next/link',
+  () =>
+    ({ children, href }) =>
+      React.cloneElement(React.Children.only(children), { href }),
 );
 
 describe('<LoginForm />', () => {
   const usernameLabel = /Username/i;
   const passwordLabel = /Password/i;
-  const formTitle = 'login form';
 
   it('should render', () => {
     expect(render(<LoginForm onSubmit={jest.fn} />)).toBeDefined();
@@ -19,12 +25,14 @@ describe('<LoginForm />', () => {
   it('should require the fields', async () => {
     render(<LoginForm onSubmit={jest.fn} />);
 
-    await act(async () => {
-      fireEvent.submit(screen.getByTitle(formTitle));
-    });
+    userEvent.click(screen.getByRole('button'));
 
-    expect(screen.getByText(validations.username.required)).toBeInTheDocument();
-    expect(screen.getByText(validations.password.required)).toBeInTheDocument();
+    await expect(
+      screen.findByText(validations.username.required),
+    ).resolves.toBeInTheDocument();
+    await expect(
+      screen.findByText(validations.password.required),
+    ).resolves.toBeInTheDocument();
   });
 
   it('should validate the length of fields', async () => {
@@ -32,16 +40,14 @@ describe('<LoginForm />', () => {
 
     userEvent.type(screen.getByLabelText(usernameLabel), 'user');
     userEvent.type(screen.getByLabelText(passwordLabel), 'pwd');
-    await act(async () => {
-      fireEvent.submit(screen.getByTitle(formTitle));
-    });
+    userEvent.click(screen.getByRole('button'));
 
-    expect(
-      screen.getByText(validations.username.minLength.message),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(validations.password.minLength.message),
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText(validations.username.minLength.message),
+    ).resolves.toBeInTheDocument();
+    await expect(
+      screen.findByText(validations.password.minLength.message),
+    ).resolves.toBeInTheDocument();
   });
 
   it('should show error message', async () => {
@@ -52,7 +58,8 @@ describe('<LoginForm />', () => {
 
     userEvent.type(screen.getByLabelText(usernameLabel), 'admin');
     userEvent.type(screen.getByLabelText(passwordLabel), 'ji32k7au4a83');
-    fireEvent.submit(screen.getByTitle(formTitle));
+    userEvent.click(screen.getByRole('button'));
+
     await expect(
       screen.findByText(/Wrong password/),
     ).resolves.toBeInTheDocument();
@@ -66,15 +73,15 @@ describe('<LoginForm />', () => {
 
     userEvent.type(screen.getByLabelText(usernameLabel), 'admin');
     userEvent.type(screen.getByLabelText(passwordLabel), 'ji32k7au4a83');
-    await act(async () => {
-      fireEvent.submit(screen.getByTitle(formTitle));
-    });
-    await act(async () => {
-      fireEvent.submit(screen.getByTitle(formTitle));
-    });
-    await act(async () => {
-      fireEvent.submit(screen.getByTitle(formTitle));
-    });
+    userEvent.click(screen.getByRole('button'));
+    await waitForElementToBeRemoved(screen.getByRole('progressbar'));
+
+    userEvent.click(screen.getByRole('button'));
+    await waitForElementToBeRemoved(screen.getByRole('progressbar'));
+
+    userEvent.click(screen.getByRole('button'));
+    await waitForElementToBeRemoved(screen.getByRole('progressbar'));
+
     await expect(
       screen.findByText(/Too many failed attempts/),
     ).resolves.toBeInTheDocument();
@@ -89,9 +96,8 @@ describe('<LoginForm />', () => {
 
     userEvent.type(screen.getByLabelText(usernameLabel), 'admin');
     userEvent.type(screen.getByLabelText(passwordLabel), 'Pa$$w0rd!');
-    await act(async () => {
-      fireEvent.submit(screen.getByTitle(formTitle));
-    });
+    userEvent.click(screen.getByRole('button'));
+    await waitForElementToBeRemoved(screen.getByRole('progressbar'));
 
     expect(handleSubmit).toHaveBeenCalledWith({
       username: 'admin',

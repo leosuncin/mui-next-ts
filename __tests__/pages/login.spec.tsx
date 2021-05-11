@@ -1,5 +1,10 @@
-/* eslint-disable testing-library/no-node-access */
-import { RenderResult, act, fireEvent, render } from '@testing-library/react';
+import {
+  RenderResult,
+  act,
+  fireEvent,
+  render,
+  waitForElementToBeRemoved,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createModel } from '@xstate/test';
 import { AuthProvider } from 'hooks/auth-context';
@@ -31,7 +36,6 @@ const routerMocked: jest.Mocked<NextRouter> = {
 };
 fetchMock.enableMocks();
 
-const formTitle = 'login form';
 const usernameLabel = /Username/i;
 const passwordLabel = /Password/i;
 const submitButton = /Log me in/i;
@@ -43,10 +47,7 @@ const lockedErrorMessage = /Too many failed attempts/i;
 
 const testMachine = createMachineWithTests({
   pristine: (screen: RenderResult) => {
-    expect(screen.getByLabelText('sad face').parentElement).toHaveAttribute(
-      'aria-expanded',
-      'false',
-    );
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   },
   invalid: async (screen: RenderResult) => {
     const errorMessages = await screen.findAllByText(invalidErrorMessages);
@@ -78,13 +79,13 @@ const testMachine = createMachineWithTests({
     expect(routerMocked.push).toHaveBeenCalledTimes(1);
   },
   retry: (screen: RenderResult) => {
-    expect(screen.getByText(submitButton).parentElement).toBeEnabled();
+    expect(screen.getByRole('button', { name: submitButton })).toBeEnabled();
   },
   locked: (screen: RenderResult) => {
-    expect(screen.getByText(lockedErrorMessage)).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent(lockedErrorMessage);
     expect(screen.getByLabelText(usernameLabel)).toBeDisabled();
     expect(screen.getByLabelText(passwordLabel)).toBeDisabled();
-    expect(screen.getByText(submitButton).parentElement).toBeDisabled();
+    expect(screen.getByRole('button', { name: submitButton })).toBeDisabled();
   },
 });
 const testModel = createModel(testMachine, {
@@ -146,22 +147,20 @@ const testModel = createModel(testMachine, {
         { username: 'admin', password: 'Pa$$w0rd!' },
       ],
     },
-    SUBMIT(screen: RenderResult) {
-      return act(async () => {
-        fireEvent.submit(screen.getByTitle(formTitle));
-      });
+    async SUBMIT(screen: RenderResult) {
+      userEvent.click(screen.getByRole('button', { name: submitButton }));
+      await screen.findByRole('progressbar');
     },
-    RETRY(screen: RenderResult) {
-      return act(async () => {
-        const passwordInput = screen.getByLabelText(
-          passwordLabel,
-        ) as HTMLInputElement;
+    async RETRY(screen: RenderResult) {
+      const passwordInput = screen.getByLabelText(
+        passwordLabel,
+      ) as HTMLInputElement;
 
-        userEvent.type(passwordInput, '-l}AIlZx&gEB');
-        fireEvent.submit(screen.getByTitle(formTitle));
+      userEvent.type(passwordInput, '-l}AIlZx&gEB');
+      userEvent.click(screen.getByRole('button', { name: submitButton }));
+      await waitForElementToBeRemoved(screen.getByRole('progressbar'));
 
-        userEvent.type(passwordInput, 'Id"Dqe!um3Z&h}~h\',%*=hlm');
-      });
+      userEvent.type(passwordInput, 'Id"Dqe!um3Z&h}~h\',%*=hlm');
     },
   },
 });
