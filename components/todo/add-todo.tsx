@@ -9,7 +9,7 @@ const propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
 const TodoForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
-  const { handleSubmit, register, errors, formState, reset } = useForm({
+  const { handleSubmit, register, formState, reset } = useForm({
     resolver: yupResolver(createTodoSchema),
   });
 
@@ -25,13 +25,12 @@ const TodoForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
       <TextField
         label="Text"
         margin="normal"
-        name="text"
         id="text-input"
         variant="outlined"
         fullWidth
-        error={!!errors.text}
-        helperText={errors.text?.message}
-        inputRef={register}
+        error={!!formState.errors.text}
+        helperText={formState.errors.text?.message}
+        {...register('text')}
       />
       <Button
         color="primary"

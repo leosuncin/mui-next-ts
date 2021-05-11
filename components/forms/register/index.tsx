@@ -41,7 +41,7 @@ export const validations = {
   },
 };
 const RegisterForm: React.FC<RegisterFormProps> = props => {
-  const { handleSubmit, register, errors, formState } =
+  const { handleSubmit, register, formState } =
     useForm<Record<keyof typeof validations, string>>();
   const classes = useStyles(props);
 
@@ -55,16 +55,17 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
         <Grid item xs={12} sm={6}>
           <TextField
             id="firstName"
-            name="firstName"
             variant="outlined"
             autoComplete="fname"
             label="First name"
             required
             fullWidth
             autoFocus
-            inputRef={register(validations.firstName)}
-            error={!!errors.firstName}
-            helperText={errors.firstName && errors.firstName.message}
+            error={!!formState.errors.firstName}
+            helperText={
+              formState.errors.firstName && formState.errors.firstName.message
+            }
+            {...register('firstName', validations.firstName)}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -74,11 +75,12 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
             fullWidth
             id="lastName"
             label="Last Name"
-            name="lastName"
             autoComplete="lname"
-            inputRef={register(validations.lastName)}
-            error={!!errors.lastName}
-            helperText={errors.lastName && errors.lastName.message}
+            error={!!formState.errors.lastName}
+            helperText={
+              formState.errors.lastName && formState.errors.lastName.message
+            }
+            {...register('lastName', validations.lastName)}
           />
         </Grid>
         <Grid item xs={12}>
@@ -89,11 +91,12 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
             fullWidth
             id="username"
             label="Username"
-            name="username"
             autoComplete="username"
-            inputRef={register(validations.username)}
-            error={!!errors.username}
-            helperText={errors.username && errors.username.message}
+            error={!!formState.errors.username}
+            helperText={
+              formState.errors.username && formState.errors.username.message
+            }
+            {...register('username', validations.username)}
           />
         </Grid>
         <Grid item xs={12}>
@@ -101,14 +104,15 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
             variant="outlined"
             required
             fullWidth
-            name="password"
             label="Password"
             type="password"
             id="password"
             autoComplete="current-password"
-            inputRef={register(validations.password)}
-            error={!!errors.password}
-            helperText={errors.password && errors.password.message}
+            error={!!formState.errors.password}
+            helperText={
+              formState.errors.password && formState.errors.password.message
+            }
+            {...register('password', validations.password)}
           />
         </Grid>
       </Grid>
