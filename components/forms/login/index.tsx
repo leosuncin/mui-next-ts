@@ -38,7 +38,7 @@ export const validations = {
 const LoginForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
   const [errorMessage, setErrorMessage] = useState<string>();
   const [attempt, setAttempt] = useState(1);
-  const { handleSubmit, register, errors, formState } = useForm<AuthLogin>({
+  const { handleSubmit, register, formState } = useForm<AuthLogin>({
     mode: 'onBlur',
   });
   const classes = useStyles(props);
@@ -79,28 +79,30 @@ const LoginForm: React.FC<PropTypes.InferProps<typeof propTypes>> = props => {
           fullWidth
           id="username"
           label="Username"
-          name="username"
           autoComplete="username"
           autoFocus
-          inputRef={register(validations.username)}
-          error={!!errors.username}
+          error={!!formState.errors.username}
           disabled={attempt > 3}
-          helperText={errors.username && errors.username.message}
+          helperText={
+            formState.errors.username && formState.errors.username.message
+          }
+          {...register('username', validations.username)}
         />
         <TextField
           variant="outlined"
           margin="normal"
           required
           fullWidth
-          name="password"
           label="Password"
           type="password"
           id="password"
           autoComplete="current-password"
-          inputRef={register(validations.password)}
-          error={!!errors.password}
+          error={!!formState.errors.password}
           disabled={attempt > 3}
-          helperText={errors.password && errors.password.message}
+          helperText={
+            formState.errors.password && formState.errors.password.message
+          }
+          {...register('password', validations.password)}
         />
         {formState.isSubmitting ? (
           <div className={classes.loaderContainer}>
