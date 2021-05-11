@@ -122,3 +122,20 @@ export const tokenBuilder = build<{ token: string }>({
     },
   },
 });
+
+export function uuid() {
+  let uuid = '';
+
+  for (let n = 0; n < 32; n++) {
+    const random = (Math.random() * 16) | 0;
+
+    if ([8, 12, 16, 20].includes(n)) {
+      uuid += '-';
+    }
+
+    // eslint-disable-next-line no-mixed-operators
+    uuid += (n === 12 ? 4 : n === 16 ? (random & 3) | 8 : random).toString(16);
+  }
+
+  return uuid;
+}
