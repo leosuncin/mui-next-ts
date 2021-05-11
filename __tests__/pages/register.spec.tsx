@@ -63,7 +63,7 @@ describe('<RegisterPage />', () => {
     userEvent.type(screen.getByLabelText(/Username/i), 'jane_doe');
     userEvent.type(screen.getByLabelText(/Password/i), '!drowssap');
     userEvent.click(screen.getByText(/Sign Me Up/i));
-    await waitForElementToBeRemoved(screen.getByTestId('registering-user'));
+    await waitForElementToBeRemoved(screen.getByRole('progressbar'));
 
     await expect(
       screen.findByText('Username or Email already registered'),
@@ -78,7 +78,7 @@ describe('<RegisterPage />', () => {
     userEvent.type(screen.getByLabelText(/Username/i), 'kristen.williams');
     userEvent.type(screen.getByLabelText(/Password/i), 'Pa$$w0rd!');
     userEvent.click(screen.getByText(/Sign Me Up/i));
-    await waitForElementToBeRemoved(screen.getByTestId('registering-user'));
+    await waitForElementToBeRemoved(screen.getByRole('progressbar'));
 
     expect(routerMocked.push).toHaveBeenCalledTimes(1);
   });

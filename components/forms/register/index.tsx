@@ -41,14 +41,12 @@ export const validations = {
   },
 };
 const RegisterForm: React.FC<RegisterFormProps> = props => {
-  const { handleSubmit, register, errors, formState } = useForm<
-    Record<keyof typeof validations, string>
-  >();
+  const { handleSubmit, register, errors, formState } =
+    useForm<Record<keyof typeof validations, string>>();
   const classes = useStyles(props);
 
   return (
     <form
-      title="register form"
       className={classes.root}
       noValidate
       onSubmit={handleSubmit(props.onSubmit)}
@@ -116,7 +114,12 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
       </Grid>
       {formState.isSubmitting ? (
         <div className={classes.loader}>
-          <CircularProgress data-testid="registering-user" size={26} />
+          <CircularProgress
+            size={26}
+            aria-valuetext="Sending..."
+            aria-busy="true"
+            aria-live="polite"
+          />
         </div>
       ) : (
         <Button

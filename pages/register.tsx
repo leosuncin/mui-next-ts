@@ -57,7 +57,11 @@ export default function RegisterPage(props) {
             Welcome aboard
           </Typography>
           <Fade in={!!error} aria-expanded={!!error}>
-            <Typography color="secondary" className={classes.errorMessage}>
+            <Typography
+              color="secondary"
+              role="alert"
+              className={classes.errorMessage}
+            >
               <span role="img" aria-label="sad face">
                 😥
               </span>
