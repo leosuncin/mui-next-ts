@@ -3,11 +3,6 @@ module.exports = {
     return Buffer.from(Array(size).fill(0));
   },
   pbkdf2Sync(password) {
-    return Buffer.from(
-      password
-        .split('')
-        .reverse()
-        .join(''),
-    );
+    return Buffer.from(password.split('').reverse().join(''));
   },
 };

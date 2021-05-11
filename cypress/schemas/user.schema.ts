@@ -42,8 +42,7 @@ export const user100: ObjectSchema = {
     additionalProperties: false,
   },
   example: {
-    bio:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
     firstName: 'John',
     id: '760add88-0a2b-4358-bc3f-7d82245c5dea',
     lastName: 'Doe',

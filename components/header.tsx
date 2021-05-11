@@ -8,12 +8,11 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import FaceIcon from '@material-ui/icons/Face';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountIcon from '@material-ui/icons/Person';
-import PropTypes from 'prop-types';
-import React, { useState } from 'react';
-
 import { useAuth } from 'hooks/auth-context';
 import { useUserState } from 'hooks/user-context';
 import { useRouter } from 'next/router';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 
 const Header: React.FC<{ title?: string }> = props => {
   const user = useUserState();

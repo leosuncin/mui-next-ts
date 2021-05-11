@@ -9,8 +9,7 @@ export const users: User[] = [
     password:
       'MTc3NzI2ZmE4ZTUwYThhMWFhNWU0MjBjNzQyNzRjZDI6MzBjY2Y5ZDAxMzFiNmZkNQ==',
     picture: 'https://i.pravatar.cc/200',
-    bio:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
   },
   {
     id: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
@@ -20,7 +19,6 @@ export const users: User[] = [
     password:
       'OTQ1Yzk1NWVlYWI3ZDNkOWYyMjA4MGI1YjIwMmI4MzA6MWIzMmQxMDUwZjRlMTFiMw==',
     picture: 'https://i.pravatar.cc/200',
-    bio:
-      'She had this enormous capacity for wonder, and lived by the Golden Rule.',
+    bio: 'She had this enormous capacity for wonder, and lived by the Golden Rule.',
   },
 ];

@@ -10,7 +10,7 @@ import {
 describe('Todo component', () => {
   const todos = Array.from({ length: 10 }, () => todoBuild({ traits: 'old' }));
   const activeCount = todos.reduce(
-    (count, todo) => count + ((!todo.done as unknown) as number),
+    (count, todo) => count + (!todo.done as unknown as number),
     0,
   );
   const completedCount = todos.length - activeCount;
