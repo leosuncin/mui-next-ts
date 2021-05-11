@@ -2,20 +2,16 @@ import { StatusCodes } from 'http-status-codes';
 import { signJWT } from 'libs/jwt';
 import { loginSchema as validationSchema } from 'libs/validation';
 import { RequestHandler, rest } from 'msw';
-import { AuthLogin } from 'types';
+import type { AuthLogin } from 'types';
+import { db } from 'utils/db';
 
 const loginHandler: RequestHandler = rest.post(
   '/api/auth/login',
   (req, res, ctx) => {
-    const user = {
-      id: '760add88-0a2b-4358-bc3f-7d82245c5dea',
-      username: 'admin',
-      firstName: 'John',
-      lastName: 'Doe',
-      picture: 'https://i.pravatar.cc/200',
-      bio: 'Lorem ipsum dolorem',
-    };
     const { username, password } = req.body as AuthLogin;
+    const user = db.users.findFirst({
+      where: { username: { equals: username } },
+    });
 
     try {
       validationSchema.validateSync(req.body, {
@@ -36,7 +32,7 @@ const loginHandler: RequestHandler = rest.post(
       );
     }
 
-    if (username === user.username && password === 'Pa$$w0rd!') {
+    if (user && password === 'Pa$$w0rd!') {
       const token = signJWT(user as any);
       return res(
         ctx.status(StatusCodes.OK),
@@ -55,12 +51,12 @@ const loginHandler: RequestHandler = rest.post(
       );
     }
 
-    if (username === user.username)
+    if (!user)
       return res(
         ctx.status(StatusCodes.UNAUTHORIZED),
         ctx.json({
           statusCode: StatusCodes.UNAUTHORIZED,
-          message: `Wrong password for user: ${username}`,
+          message: `Wrong username: ${username}`,
         }),
       );
 
@@ -68,7 +64,7 @@ const loginHandler: RequestHandler = rest.post(
       ctx.status(StatusCodes.UNAUTHORIZED),
       ctx.json({
         statusCode: StatusCodes.UNAUTHORIZED,
-        message: `Wrong username: ${username}`,
+        message: `Wrong password for user: ${username}`,
       }),
     );
   },

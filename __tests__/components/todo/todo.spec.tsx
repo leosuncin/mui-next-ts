@@ -1,8 +1,8 @@
 import {
-  getByRole,
   render,
   screen,
   waitForElementToBeRemoved,
+  within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Todo from 'components/todo';
@@ -50,7 +50,7 @@ describe('<Todo />', () => {
 
     await waitForElementToBeRemoved(screen.getByTestId('loading-todos')); // Wait until loader to disappear
 
-    await userEvent.type(screen.getByRole('textbox', { name: /Text/ }), text); // Typing the new todo
+    userEvent.type(screen.getByRole('textbox', { name: /Text/ }), text); // Typing the new todo
     userEvent.click(screen.getByRole('button', { name: /^Add$/i })); // Submit the form
 
     await screen.findByTestId('loading-todos'); // Wait until loader appear
@@ -69,7 +69,7 @@ describe('<Todo />', () => {
     // Activate the edit state
     userEvent.dblClick(item.querySelector('span + time')); // eslint-disable-line testing-library/no-node-access
     userEvent.clear(screen.getByRole('textbox', { name: /Edit text/i })); // Clear the input
-    await userEvent.type(
+    userEvent.type(
       screen.getByRole('textbox', { name: /Edit text/i }),
       text + '{enter}',
     ); // Type changes and save with Enter
@@ -86,8 +86,9 @@ describe('<Todo />', () => {
     await waitForElementToBeRemoved(screen.getByTestId('loading-todos')); // Wait until loader to disappear
 
     const element = randomArrayElement(screen.getAllByRole('listitem')); // Get one random todo item
-    // eslint-disable-next-line testing-library/prefer-screen-queries
-    userEvent.click(getByRole(element, 'button', { name: /Delete todo/ })); // Delete it
+    userEvent.click(
+      within(element).getByRole('button', { name: /Delete todo/ }),
+    ); // Delete it
 
     expect(element).not.toBeInTheDocument(); // Check not exist anymore
   });

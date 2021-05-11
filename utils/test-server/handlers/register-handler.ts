@@ -2,22 +2,16 @@ import { StatusCodes } from 'http-status-codes';
 import { signJWT } from 'libs/jwt';
 import { registerSchema as validationSchema } from 'libs/validation';
 import { RequestHandler, rest } from 'msw';
-import { AuthRegister } from 'types';
-import { userBuild } from 'utils/factories';
+import type { AuthRegister } from 'types';
+import { db } from 'utils/db';
 
 const registerHandler: RequestHandler = rest.post(
   '/api/auth/register',
   (req, res, ctx) => {
-    const user = {
-      id: 'ee60d495-e47e-4df2-87dd-db964a8e833b',
-      firstName: 'Jane',
-      lastName: 'Doe',
-      username: 'jane_doe',
-      picture: 'https://i.pravatar.cc/200',
-      bio:
-        'She had this enormous capacity for wonder, and lived by the Golden Rule.',
-    };
     const { firstName, lastName, username } = req.body as AuthRegister;
+    const user = db.users.findFirst({
+      where: { username: { equals: username } },
+    });
 
     try {
       validationSchema.validateSync(req.body, {
@@ -38,7 +32,7 @@ const registerHandler: RequestHandler = rest.post(
       );
     }
 
-    if (username === user.username) {
+    if (user) {
       return res(
         ctx.status(StatusCodes.CONFLICT),
         ctx.json({
@@ -48,12 +42,10 @@ const registerHandler: RequestHandler = rest.post(
       );
     }
 
-    const newUser = userBuild({
-      overrides: {
-        firstName,
-        lastName,
-        username,
-      },
+    const newUser = db.users.create({
+      firstName,
+      lastName,
+      username,
     });
     const token = signJWT(newUser as any);
 

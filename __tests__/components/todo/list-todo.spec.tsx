@@ -1,4 +1,4 @@
-import { queries, render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ListTodo from 'components/todo/list-todo';
 import React from 'react';
@@ -30,11 +30,9 @@ describe('<ListTodo />', () => {
       />,
     );
     userEvent.click(
-      // eslint-disable-next-line testing-library/prefer-screen-queries
-      queries.getByRole(
+      within(
         screen.getByRole('listitem', { name: RegExp(todo.text) }),
-        'checkbox',
-      ),
+      ).getByRole('checkbox'),
     );
 
     expect(spyChangeTodo).toHaveBeenCalledWith(todo.id, { done: !todo.done });

@@ -1,8 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
-import { users } from 'libs/db/users';
 import { createTodoSchema as validationSchema } from 'libs/validation/todo';
 import { RequestHandler, rest } from 'msw';
-import { todoBuild } from 'utils/factories';
+import { db } from 'utils/db';
 
 const createTodoHandler: RequestHandler = rest.post(
   '/api/todos',
@@ -12,20 +11,18 @@ const createTodoHandler: RequestHandler = rest.post(
         abortEarly: false,
         stripUnknown: true,
       });
+      const todo = db.todo.create({
+        ...newTodo,
+        done: false,
+        createdBy: db.users.findFirst({ where: {} }),
+      });
+      // @ts-expect-error
+      todo.createdBy = todo.createdBy.id;
 
       return res(
         ctx.delay(30),
         ctx.status(StatusCodes.CREATED),
-        ctx.json(
-          todoBuild({
-            map: todo => ({
-              ...todo,
-              ...newTodo,
-              done: false,
-              createdBy: users[0].id as string,
-            }),
-          }),
-        ),
+        ctx.json(todo),
       );
     } catch (error) {
       return res(
