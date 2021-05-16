@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import AddTodo from 'components/todo/add-todo';
 import React from 'react';
+import AddTodo from 'src/components/todo/add-todo';
 
 describe('<AddTodo />', () => {
   const textLabel = /Text/i;

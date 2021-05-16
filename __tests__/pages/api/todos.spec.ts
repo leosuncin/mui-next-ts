@@ -2,19 +2,19 @@
  * @jest-environment node
  */
 import { StatusCodes } from 'http-status-codes';
-import { todos } from 'libs/db/todos';
-import { users } from 'libs/db/users';
-import { signJWT } from 'libs/jwt';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
-import indexHandler from 'pages/api/todos';
-import byIdHandler from 'pages/api/todos/[id]';
-import { User } from 'types';
+import { todos } from 'src/libs/db/todos';
+import { users } from 'src/libs/db/users';
+import { signJWT } from 'src/libs/jwt';
+import indexHandler from 'src/pages/api/todos';
+import byIdHandler from 'src/pages/api/todos/[id]';
+import { User } from 'src/types';
 import {
   createTodoBuild,
   randomArrayElement,
   todoBuild,
-} from 'utils/factories';
+} from 'src/utils/factories';
 
 const testUser = users[1];
 const testTodos = todos.filter(todo => todo.createdBy === testUser.id);

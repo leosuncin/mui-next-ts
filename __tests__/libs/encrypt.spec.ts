@@ -1,6 +1,6 @@
 jest.mock('crypto');
 
-import { comparePassword, hashPassword } from 'libs/encrypt';
+import { comparePassword, hashPassword } from 'src/libs/encrypt';
 
 describe('encrypt', () => {
   it('should hash the password', () => {

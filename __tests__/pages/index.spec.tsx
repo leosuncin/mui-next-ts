@@ -4,12 +4,12 @@ import {
   screen,
   waitForElementToBeRemoved,
 } from '@testing-library/react';
-import { AuthProvider } from 'hooks/auth-context';
-import { UserProvider } from 'hooks/user-context';
-import { users } from 'libs/db/users';
-import IndexPage from 'pages/index';
 import React from 'react';
-import server from 'utils/test-server';
+import { AuthProvider } from 'src/hooks/auth-context';
+import { UserProvider } from 'src/hooks/user-context';
+import { users } from 'src/libs/db/users';
+import IndexPage from 'src/pages/index';
+import server from 'src/utils/test-server';
 
 const spyRouterPush = jest.fn();
 jest.mock('next/router', () => ({

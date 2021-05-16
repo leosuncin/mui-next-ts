@@ -1,4 +1,4 @@
-import { createTodoBuild } from 'utils/factories';
+import { createTodoBuild } from 'src/utils/factories';
 
 describe('Todos page', () => {
   beforeEach(() => {

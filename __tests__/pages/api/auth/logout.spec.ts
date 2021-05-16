@@ -4,8 +4,8 @@
 import { StatusCodes } from 'http-status-codes';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
-import logoutHandler from 'pages/api/auth/logout';
-import { User } from 'types';
+import logoutHandler from 'src/pages/api/auth/logout';
+import { User } from 'src/types';
 
 describe('[DELETE] /api/auth/logout', () => {
   it('should close the session', () => {

@@ -2,12 +2,12 @@
  * @jest-environment node
  */
 import { StatusCodes } from 'http-status-codes';
-import { users } from 'libs/db/users';
-import { signJWT } from 'libs/jwt';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
-import authMeHandler from 'pages/api/auth/me';
-import { User } from 'types';
+import { users } from 'src/libs/db/users';
+import { signJWT } from 'src/libs/jwt';
+import authMeHandler from 'src/pages/api/auth/me';
+import { User } from 'src/types';
 
 describe('[GET] /api/auth/me', () => {
   it('should get current session user', async () => {

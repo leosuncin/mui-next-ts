@@ -3,13 +3,13 @@
  */
 import { nSQL } from '@nano-sql/core';
 import { sign } from 'jsonwebtoken';
-import { dbConfig, users } from 'libs/db';
-import { signJWT } from 'libs/jwt';
-import { withAuthentication } from 'libs/middleware';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
-import { UnauthorizedError, User } from 'types';
-import { tokenBuilder } from 'utils/factories';
+import { dbConfig, users } from 'src/libs/db';
+import { signJWT } from 'src/libs/jwt';
+import { withAuthentication } from 'src/libs/middleware';
+import { UnauthorizedError, User } from 'src/types';
+import { tokenBuilder } from 'src/utils/factories';
 
 const toBase64 = (str: string) => Buffer.from(str).toString('base64');
 const toBase64UrlSafe = (str: string) =>

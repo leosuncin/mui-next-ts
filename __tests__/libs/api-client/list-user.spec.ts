@@ -1,5 +1,5 @@
-import listUser from 'libs/api-client/list-user';
-import server from 'utils/test-server';
+import listUser from 'src/libs/api-client/list-user';
+import server from 'src/utils/test-server';
 
 describe('fetch users', () => {
   beforeAll(() => server.listen());

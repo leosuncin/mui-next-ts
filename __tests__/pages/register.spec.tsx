@@ -4,13 +4,13 @@ import {
   waitForElementToBeRemoved,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { AuthProvider } from 'hooks/auth-context';
-import { UserProvider } from 'hooks/user-context';
 import { RouterContext } from 'next/dist/next-server/lib/router-context';
 import type { NextRouter } from 'next/router';
-import RegisterPage from 'pages/register';
 import React from 'react';
-import server from 'utils/test-server';
+import { AuthProvider } from 'src/hooks/auth-context';
+import { UserProvider } from 'src/hooks/user-context';
+import RegisterPage from 'src/pages/register';
+import server from 'src/utils/test-server';
 
 const routerMocked: jest.Mocked<NextRouter> = {
   pathname: '/register',

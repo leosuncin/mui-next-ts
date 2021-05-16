@@ -1,10 +1,10 @@
-import RegisterForm from 'components/forms/register';
 import { mount } from 'cypress-react-unit-test';
 import fc from 'fast-check';
 import { RouterContext } from 'next/dist/next-server/lib/router-context';
 import type { NextRouter } from 'next/router';
 import React from 'react';
-import { registerBuild } from 'utils/factories';
+import RegisterForm from 'src/components/forms/register';
+import { registerBuild } from 'src/utils/factories';
 
 describe('RegisterForm component', () => {
   const firstNameLabel = /First name/i;

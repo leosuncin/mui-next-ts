@@ -5,9 +5,9 @@ import fc from 'fast-check';
 import { StatusCodes } from 'http-status-codes';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
-import registerHandler from 'pages/api/auth/register';
-import type { AuthRegister, User } from 'types';
-import { registerBuild } from 'utils/factories';
+import registerHandler from 'src/pages/api/auth/register';
+import type { AuthRegister, User } from 'src/types';
+import { registerBuild } from 'src/utils/factories';
 
 describe('/api/auth/register', () => {
   it('should validate the request method', async () => {

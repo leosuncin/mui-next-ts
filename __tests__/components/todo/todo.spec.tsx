@@ -5,11 +5,11 @@ import {
   within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import Todo from 'components/todo';
 import React from 'react';
-import { createTodoBuild, randomArrayElement } from 'utils/factories';
-import server from 'utils/test-server';
-import { respondWithServiceUnavailable } from 'utils/test-server/handlers/handle-with-error';
+import Todo from 'src/components/todo';
+import { createTodoBuild, randomArrayElement } from 'src/utils/factories';
+import server from 'src/utils/test-server';
+import { respondWithServiceUnavailable } from 'src/utils/test-server/handlers/handle-with-error';
 
 describe('<Todo />', () => {
   beforeAll(() => server.listen());

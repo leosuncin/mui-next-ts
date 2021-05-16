@@ -1,10 +1,10 @@
-import LoginForm from 'components/forms/login';
 import { mount } from 'cypress-react-unit-test';
 import fc from 'fast-check';
 import { RouterContext } from 'next/dist/next-server/lib/router-context';
 import type { NextRouter } from 'next/router';
 import React from 'react';
-import { loginBuild } from 'utils/factories';
+import LoginForm from 'src/components/forms/login';
+import { loginBuild } from 'src/utils/factories';
 
 describe('LoginForm component', () => {
   const usernameLabel = /Username/i;

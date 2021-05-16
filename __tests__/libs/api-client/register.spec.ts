@@ -1,6 +1,6 @@
-import register from 'libs/api-client/register';
-import { HttpError, UserWithoutPassword } from 'types';
-import server, { respondWithInternalServerError } from 'utils/test-server';
+import register from 'src/libs/api-client/register';
+import { HttpError, UserWithoutPassword } from 'src/types';
+import server, { respondWithInternalServerError } from 'src/utils/test-server';
 
 describe('register', () => {
   beforeAll(() => server.listen());

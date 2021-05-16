@@ -5,9 +5,9 @@ jest.mock('next/router', () => ({
 
 import type { IncomingMessage, ServerResponse } from 'http';
 
-import withAuthentication from 'components/hoc/with-authentication';
 import type { NextPageContext } from 'next';
 import { createMocks } from 'node-mocks-http';
+import withAuthentication from 'src/components/hoc/with-authentication';
 
 describe('withAuthentication HOC', () => {
   afterEach(() => {

@@ -7,14 +7,16 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createModel } from '@xstate/test';
-import { AuthProvider } from 'hooks/auth-context';
-import { UserProvider } from 'hooks/user-context';
 import fetchMock from 'jest-fetch-mock';
-import createMachineWithTests, { FillEvent } from 'machines/login-test-machine';
 import { RouterContext } from 'next/dist/next-server/lib/router-context';
 import type { NextRouter } from 'next/router';
-import LoginPage from 'pages/login';
 import React from 'react';
+import { AuthProvider } from 'src/hooks/auth-context';
+import { UserProvider } from 'src/hooks/user-context';
+import createMachineWithTests, {
+  FillEvent,
+} from 'src/machines/login-test-machine';
+import LoginPage from 'src/pages/login';
 
 const routerMocked: jest.Mocked<NextRouter> = {
   pathname: '/login',

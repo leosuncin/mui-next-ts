@@ -1,11 +1,11 @@
-import Todo from 'components/todo';
 import { mount } from 'cypress-react-unit-test';
 import React from 'react';
+import Todo from 'src/components/todo';
 import {
   createTodoBuild,
   randomArrayElement,
   todoBuild,
-} from 'utils/factories';
+} from 'src/utils/factories';
 
 describe('Todo component', () => {
   const todos = Array.from({ length: 10 }, () => todoBuild({ traits: 'old' }));

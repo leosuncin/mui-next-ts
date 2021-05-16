@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import FilterTodo from 'components/todo/filter-todo';
 import React from 'react';
-import { shuffleArray } from 'utils/factories';
+import FilterTodo from 'src/components/todo/filter-todo';
+import { shuffleArray } from 'src/utils/factories';
 
 describe('<FilterTodo />', () => {
   it('should render', () => {

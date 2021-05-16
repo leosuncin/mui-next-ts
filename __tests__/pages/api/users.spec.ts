@@ -2,12 +2,12 @@
  * @jest-environment node
  */
 import { StatusCodes } from 'http-status-codes';
-import { users } from 'libs/db/users';
-import { signJWT } from 'libs/jwt';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
-import indexHandler from 'pages/api/users';
-import { User } from 'types';
+import { users } from 'src/libs/db/users';
+import { signJWT } from 'src/libs/jwt';
+import indexHandler from 'src/pages/api/users';
+import { User } from 'src/types';
 
 const testUser = users[1];
 const token = signJWT(testUser);

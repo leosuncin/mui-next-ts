@@ -1,0 +1,66 @@
+import { nSQL } from '@nano-sql/core';
+import { setCookie } from 'nookies';
+import { hashPassword } from 'src/libs/encrypt';
+import { signJWT } from 'src/libs/jwt';
+import {
+  catchErrors,
+  validateBody,
+  validateMethod,
+  withDB,
+} from 'src/libs/middleware';
+import { registerSchema } from 'src/libs/validation';
+import { ConflictError, NextHttpHandler, User } from 'src/types';
+
+/**
+ * Register a new a user
+ */
+const register: NextHttpHandler = async (req, res) => {
+  const [{ total }] = await nSQL('users')
+    .query('select', ['COUNT(*) AS total'])
+    .where(['username', 'LIKE', req.body.username])
+    .exec();
+
+  if (total > 0)
+    throw new ConflictError('Username or Email already registered');
+
+  const [user] = (await nSQL('users')
+    .query('upsert', {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      username: req.body.username,
+      password: hashPassword(req.body.password),
+      picture: `https://avatars.dicebear.com/api/avataaars/${encodeURIComponent(
+        req.body.username,
+      )}.svg`,
+      bio: '',
+    })
+    .exec()) as [User];
+
+  const token = signJWT(user);
+  const userWithoutPassword = {
+    id: user.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    username: user.username,
+    picture: user.picture,
+    bio: user.bio,
+  };
+
+  res.setHeader('Authorization', `Bearer ${token}`);
+  setCookie({ res }, 'token', token, {
+    httpOnly: true,
+    path: '/',
+    sameSite: 'strict',
+    maxAge: 30 * 24 * 3600, // 30 days
+  });
+  setCookie({ res }, 'sessionUser', JSON.stringify(userWithoutPassword), {
+    path: '/',
+    sameSite: 'strict',
+  });
+
+  res.json(userWithoutPassword);
+};
+
+export default catchErrors(
+  validateMethod(['POST'])(validateBody(registerSchema)(withDB(register))),
+);

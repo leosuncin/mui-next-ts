@@ -4,8 +4,8 @@ import {
   waitForElementToBeRemoved,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import LoginForm, { validations } from 'components/forms/login';
 import React from 'react';
+import LoginForm, { validations } from 'src/components/forms/login';
 
 jest.mock(
   'next/link',

@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import { loginBuild } from 'utils/factories';
+import { loginBuild } from 'src/utils/factories';
 
 describe('Login API', () => {
   it('should validate the request method', () => {

@@ -1,4 +1,9 @@
-import { TodoEffect, TodoEvent, TodoState, todoReducer } from 'hooks/use-todo';
+import {
+  TodoEffect,
+  TodoEvent,
+  TodoState,
+  todoReducer,
+} from 'src/hooks/use-todo';
 import { EffectReducerExec } from 'use-effect-reducer';
 
 type TodoEffectReducerExec = EffectReducerExec<
