@@ -1,5 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
-import { registerBuild } from 'src/utils/factories';
+
+import { registerBuild } from '@app/utils/factories';
 
 describe('Register API', () => {
   it('should validate the request method', () => {

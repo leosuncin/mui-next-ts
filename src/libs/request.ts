@@ -1,4 +1,4 @@
-import { ErrorResponse, HttpError } from 'src/types';
+import { ErrorResponse, HttpError } from '@app/types';
 
 const defaultOptions: RequestInit = { mode: 'cors', credentials: 'include' };
 

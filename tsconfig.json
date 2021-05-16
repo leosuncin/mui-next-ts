@@ -14,7 +14,11 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "strict": false,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@app/*": ["src/*"],
+      "@e2e/*": ["cypress/*"]
+    }
   },
   "exclude": ["node_modules", "cypress"],
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]

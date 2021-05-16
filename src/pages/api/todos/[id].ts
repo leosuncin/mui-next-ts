@@ -1,19 +1,20 @@
 import { nSQL } from '@nano-sql/core';
 import { StatusCodes } from 'http-status-codes';
+
 import {
   catchErrors,
   validateBody,
   validateMethod,
   withAuthentication,
   withDB,
-} from 'src/libs/middleware';
-import { editTodoSchema } from 'src/libs/validation';
+} from '@app/libs/middleware';
+import { editTodoSchema } from '@app/libs/validation';
 import {
   ForbiddenError,
   NextHttpHandler,
   NotFoundError,
   Todo,
-} from 'src/types';
+} from '@app/types';
 
 const putHandler: NextHttpHandler = async (req, res) => {
   const [updates] = await nSQL('todos')

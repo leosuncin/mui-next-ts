@@ -1,5 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
-import { ErrorResponse, HttpApiError, NextHttpHandler } from 'src/types';
+
+import { ErrorResponse, HttpApiError, NextHttpHandler } from '@app/types';
 
 function isValidationObjectErrors(
   context: unknown,

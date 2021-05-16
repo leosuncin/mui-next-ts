@@ -1,5 +1,5 @@
-import { put } from 'src/libs/request';
-import { TodoResponse as Todo, UpdateTodo } from 'src/types';
+import { put } from '@app/libs/request';
+import { TodoResponse as Todo, UpdateTodo } from '@app/types';
 
 export default async function updateTodo(
   id: string,

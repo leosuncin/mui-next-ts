@@ -1,6 +1,7 @@
 import { RequestHandler, rest } from 'msw';
-import { db } from 'src/utils/db';
-import { userBuild } from 'src/utils/factories';
+
+import { db } from '@app/utils/db';
+import { userBuild } from '@app/utils/factories';
 
 const listUserHandler: RequestHandler = rest.get(
   '/api/users',

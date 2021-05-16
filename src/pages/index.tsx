@@ -13,13 +13,14 @@ import MUIDataTable, {
 } from 'mui-datatables';
 import { NextPage } from 'next';
 import React, { useEffect, useState } from 'react';
-import CardUser from 'src/components/cards/user';
+
+import CardUser from '@app/components/cards/user';
 import withAuthentication, {
   AuthenticationProps,
-} from 'src/components/hoc/with-authentication';
-import Layout from 'src/components/layout';
-import { listUser } from 'src/libs/api-client';
-import { UserWithoutPassword as User } from 'src/types';
+} from '@app/components/hoc/with-authentication';
+import Layout from '@app/components/layout';
+import { listUser } from '@app/libs/api-client';
+import { UserWithoutPassword as User } from '@app/types';
 
 const columns: MUIDataTableColumn[] = [
   {

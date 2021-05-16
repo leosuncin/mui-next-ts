@@ -1,6 +1,7 @@
 import { RequestHandler, rest } from 'msw';
-import { todos } from 'src/libs/db/todos';
-import { users } from 'src/libs/db/users';
+
+import { todos } from '@app/libs/db/todos';
+import { users } from '@app/libs/db/users';
 
 const listTodoHandler: RequestHandler = rest.get(
   '/api/todos',

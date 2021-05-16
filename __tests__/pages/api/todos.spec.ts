@@ -4,17 +4,18 @@
 import { StatusCodes } from 'http-status-codes';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
-import { todos } from 'src/libs/db/todos';
-import { users } from 'src/libs/db/users';
-import { signJWT } from 'src/libs/jwt';
-import indexHandler from 'src/pages/api/todos';
-import byIdHandler from 'src/pages/api/todos/[id]';
-import { User } from 'src/types';
+
+import { todos } from '@app/libs/db/todos';
+import { users } from '@app/libs/db/users';
+import { signJWT } from '@app/libs/jwt';
+import indexHandler from '@app/pages/api/todos';
+import byIdHandler from '@app/pages/api/todos/[id]';
+import { User } from '@app/types';
 import {
   createTodoBuild,
   randomArrayElement,
   todoBuild,
-} from 'src/utils/factories';
+} from '@app/utils/factories';
 
 const testUser = users[1];
 const testTodos = todos.filter(todo => todo.createdBy === testUser.id);

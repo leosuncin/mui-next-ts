@@ -5,8 +5,9 @@ import fc from 'fast-check';
 import { StatusCodes } from 'http-status-codes';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
-import loginHandler from 'src/pages/api/auth/login';
-import type { AuthLogin, User } from 'src/types';
+
+import loginHandler from '@app/pages/api/auth/login';
+import type { AuthLogin, User } from '@app/types';
 
 describe('/api/auth/login', () => {
   it('should validate the request method', async () => {

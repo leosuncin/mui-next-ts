@@ -1,8 +1,9 @@
 import { createModel } from '@xstate/test';
+
 import createMachineWithTests, {
   FillEvent,
-} from 'src/machines/login-test-machine';
-import { loginBuild } from 'src/utils/factories';
+} from '@app/machines/login-test-machine';
+import { loginBuild } from '@app/utils/factories';
 
 const usernameLabel = /Username/i;
 const passwordLabel = /Password/i;

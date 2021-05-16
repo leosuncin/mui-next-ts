@@ -1,4 +1,4 @@
-import { MethodNotAllowedError, NextHttpHandler } from 'src/types';
+import { MethodNotAllowedError, NextHttpHandler } from '@app/types';
 
 export function validateMethod(methods: string[]) {
   return (handler: NextHttpHandler): NextHttpHandler =>

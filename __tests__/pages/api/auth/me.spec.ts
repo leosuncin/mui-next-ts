@@ -4,10 +4,11 @@
 import { StatusCodes } from 'http-status-codes';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
-import { users } from 'src/libs/db/users';
-import { signJWT } from 'src/libs/jwt';
-import authMeHandler from 'src/pages/api/auth/me';
-import { User } from 'src/types';
+
+import { users } from '@app/libs/db/users';
+import { signJWT } from '@app/libs/jwt';
+import authMeHandler from '@app/pages/api/auth/me';
+import { User } from '@app/types';
 
 describe('[GET] /api/auth/me', () => {
   it('should get current session user', async () => {

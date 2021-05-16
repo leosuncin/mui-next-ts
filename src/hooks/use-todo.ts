@@ -1,12 +1,13 @@
-import { filterTodoBy } from 'src/components/todo/filter-todo';
+import { EffectReducer, useEffectReducer } from 'use-effect-reducer';
+
+import { filterTodoBy } from '@app/components/todo/filter-todo';
 import {
   createTodo,
   deleteTodo,
   listTodo,
   updateTodo,
-} from 'src/libs/api-client';
-import { CreateTodo, TodoResponse as Todo, UpdateTodo } from 'src/types';
-import { EffectReducer, useEffectReducer } from 'use-effect-reducer';
+} from '@app/libs/api-client';
+import { CreateTodo, TodoResponse as Todo, UpdateTodo } from '@app/types';
 
 export type TodoState = {
   loading: boolean;

@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
-import { JwtPayload, User } from 'src/types';
+
+import { JwtPayload, User } from '@app/types';
 
 export function signJWT(user: User): string {
   return jwt.sign(

@@ -1,10 +1,11 @@
+import { EffectReducerExec } from 'use-effect-reducer';
+
 import {
   TodoEffect,
   TodoEvent,
   TodoState,
   todoReducer,
-} from 'src/hooks/use-todo';
-import { EffectReducerExec } from 'use-effect-reducer';
+} from '@app/hooks/use-todo';
 
 type TodoEffectReducerExec = EffectReducerExec<
   TodoState,

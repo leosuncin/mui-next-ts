@@ -1,6 +1,7 @@
 import { nSQL } from '@nano-sql/core';
-import { dbConfig, todos, users } from 'src/libs/db';
-import { NextHttpHandler, ServiceUnavailableError } from 'src/types';
+
+import { dbConfig, todos, users } from '@app/libs/db';
+import { NextHttpHandler, ServiceUnavailableError } from '@app/types';
 
 export function withDB(handler: NextHttpHandler): NextHttpHandler {
   return async (req, res) => {

@@ -7,10 +7,11 @@ import userEvent from '@testing-library/user-event';
 import { RouterContext } from 'next/dist/next-server/lib/router-context';
 import type { NextRouter } from 'next/router';
 import React from 'react';
-import { AuthProvider } from 'src/hooks/auth-context';
-import { UserProvider } from 'src/hooks/user-context';
-import RegisterPage from 'src/pages/register';
-import server from 'src/utils/test-server';
+
+import { AuthProvider } from '@app/hooks/auth-context';
+import { UserProvider } from '@app/hooks/user-context';
+import RegisterPage from '@app/pages/register';
+import server from '@app/utils/test-server';
 
 const routerMocked: jest.Mocked<NextRouter> = {
   pathname: '/register',

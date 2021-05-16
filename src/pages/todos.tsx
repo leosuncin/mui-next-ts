@@ -1,11 +1,12 @@
 import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import { NextPage } from 'next';
 import React from 'react';
+
 import withAuthentication, {
   AuthenticationProps,
-} from 'src/components/hoc/with-authentication';
-import Layout from 'src/components/layout';
-import Todo from 'src/components/todo';
+} from '@app/components/hoc/with-authentication';
+import Layout from '@app/components/layout';
+import Todo from '@app/components/todo';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

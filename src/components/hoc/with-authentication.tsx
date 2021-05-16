@@ -2,7 +2,8 @@ import { NextPage } from 'next';
 import Router from 'next/router';
 import { parseCookies } from 'nookies';
 import React, { useEffect } from 'react';
-import { UserWithoutPassword as User } from 'src/types';
+
+import { UserWithoutPassword as User } from '@app/types';
 
 export type AuthenticationProps = {
   user: User;

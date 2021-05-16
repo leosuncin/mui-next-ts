@@ -5,7 +5,8 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import RegisterForm, { validations } from 'src/components/forms/register';
+
+import RegisterForm, { validations } from '@app/components/forms/register';
 
 jest.mock(
   'next/link',

@@ -6,7 +6,8 @@ import { WithStyles, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { UserWithoutPassword as User } from 'src/types';
+
+import { UserWithoutPassword as User } from '@app/types';
 
 import styles from './styles';
 

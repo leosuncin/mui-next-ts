@@ -1,9 +1,10 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import ListTodo from 'src/components/todo/list-todo';
-import { randomArrayElement } from 'src/utils/factories';
-import { todoBuild } from 'src/utils/factories';
+
+import ListTodo from '@app/components/todo/list-todo';
+import { randomArrayElement } from '@app/utils/factories';
+import { todoBuild } from '@app/utils/factories';
 
 describe('<ListTodo />', () => {
   it('should render', () => {

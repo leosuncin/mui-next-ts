@@ -1,12 +1,13 @@
 import fc from 'fast-check';
 import { StatusCodes } from 'http-status-codes';
-import { todos } from 'src/libs/db/todos';
-import { users } from 'src/libs/db/users';
+
+import { todos } from '@app/libs/db/todos';
+import { users } from '@app/libs/db/users';
 import {
   createTodoBuild,
   randomArrayElement,
   todoBuild,
-} from 'src/utils/factories';
+} from '@app/utils/factories';
 
 describe('Todo API', () => {
   const url = '/api/todos';

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
-import { UserWithoutPassword as User } from 'src/types';
+
+import { UserWithoutPassword as User } from '@app/types';
 
 const UserStateContext = createContext<User>(null);
 const UserDispatchContext = createContext<React.Dispatch<User>>(null);

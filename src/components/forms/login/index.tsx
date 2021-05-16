@@ -10,8 +10,9 @@ import Link from 'next/link';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import Copyright from 'src/components/copyright';
-import { AuthLogin } from 'src/types';
+
+import Copyright from '@app/components/copyright';
+import { AuthLogin } from '@app/types';
 
 import useStyles from './styles';
 

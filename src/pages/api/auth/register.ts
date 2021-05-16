@@ -1,15 +1,16 @@
 import { nSQL } from '@nano-sql/core';
 import { setCookie } from 'nookies';
-import { hashPassword } from 'src/libs/encrypt';
-import { signJWT } from 'src/libs/jwt';
+
+import { hashPassword } from '@app/libs/encrypt';
+import { signJWT } from '@app/libs/jwt';
 import {
   catchErrors,
   validateBody,
   validateMethod,
   withDB,
-} from 'src/libs/middleware';
-import { registerSchema } from 'src/libs/validation';
-import { ConflictError, NextHttpHandler, User } from 'src/types';
+} from '@app/libs/middleware';
+import { registerSchema } from '@app/libs/validation';
+import { ConflictError, NextHttpHandler, User } from '@app/types';
 
 /**
  * Register a new a user

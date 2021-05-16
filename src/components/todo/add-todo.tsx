@@ -3,7 +3,8 @@ import { Button, Grid, TextField } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { createTodoSchema } from 'src/libs/validation';
+
+import { createTodoSchema } from '@app/libs/validation';
 
 const propTypes = {
   onSubmit: PropTypes.func.isRequired,

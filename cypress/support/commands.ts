@@ -9,7 +9,7 @@
 // ***********************************************
 import { assertSchema } from '@cypress/schema-tools';
 
-import { formats, schemas } from '../schemas';
+import { formats, schemas } from '@e2e/schemas';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare global {

@@ -3,8 +3,9 @@ import fc from 'fast-check';
 import { RouterContext } from 'next/dist/next-server/lib/router-context';
 import type { NextRouter } from 'next/router';
 import React from 'react';
-import LoginForm from 'src/components/forms/login';
-import { loginBuild } from 'src/utils/factories';
+
+import LoginForm from '@app/components/forms/login';
+import { loginBuild } from '@app/utils/factories';
 
 describe('LoginForm component', () => {
   const usernameLabel = /Username/i;

@@ -1,5 +1,5 @@
-import { get } from 'src/libs/request';
-import { UserWithoutPassword as User } from 'src/types';
+import { get } from '@app/libs/request';
+import { UserWithoutPassword as User } from '@app/types';
 
 import { PaginationParams } from '.';
 

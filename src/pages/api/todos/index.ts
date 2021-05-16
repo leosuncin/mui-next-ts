@@ -1,15 +1,16 @@
 import { nSQL } from '@nano-sql/core';
 import { FuzzyUserSanitize } from '@nano-sql/plugin-fuzzy-search';
 import { StatusCodes } from 'http-status-codes';
+
 import {
   catchErrors,
   validateBody,
   validateMethod,
   withAuthentication,
   withDB,
-} from 'src/libs/middleware';
-import { createTodoSchema } from 'src/libs/validation';
-import { NextHttpHandler, Todo } from 'src/types';
+} from '@app/libs/middleware';
+import { createTodoSchema } from '@app/libs/validation';
+import { NextHttpHandler, Todo } from '@app/types';
 
 const saveNote: NextHttpHandler = async (req, res) => {
   const [note] = (await nSQL('todos')

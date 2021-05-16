@@ -4,8 +4,12 @@ module.exports = {
   setupFiles: ['dotenv/config'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleDirectories: ['node_modules', '.'],
+  moduleNameMapper: {
+    '@app/(.*)': '<rootDir>/src/$1',
+    '@e2e/(.*)': '<rootDir>/cypress/$1',
+  },
   modulePathIgnorePatterns: ['<rootDir>/cypress'],
-  testPathIgnorePatterns: ['/node_modules/', '/cypress/'],
+  testPathIgnorePatterns: ['/node_modules/', '/cypress/', '/.next/'],
   coverageDirectory: '<rootDir>/coverage/unit',
   coveragePathIgnorePatterns: [
     '/node_modules/',

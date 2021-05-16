@@ -1,11 +1,12 @@
 import { nSQL } from '@nano-sql/core';
+
 import {
   catchErrors,
   validateMethod,
   withAuthentication,
   withDB,
-} from 'src/libs/middleware';
-import { NextHttpHandler, UserWithoutPassword as User } from 'src/types';
+} from '@app/libs/middleware';
+import { NextHttpHandler, UserWithoutPassword as User } from '@app/types';
 
 const findUsers: NextHttpHandler = async (req, res) => {
   const limit = Math.abs(parseInt(req.query.limit as string, 10) || 10);

@@ -11,8 +11,9 @@ import AccountIcon from '@material-ui/icons/Person';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import { useAuth } from 'src/hooks/auth-context';
-import { useUserState } from 'src/hooks/user-context';
+
+import { useAuth } from '@app/hooks/auth-context';
+import { useUserState } from '@app/hooks/user-context';
 
 const Header: React.FC<{ title?: string }> = props => {
   const user = useUserState();

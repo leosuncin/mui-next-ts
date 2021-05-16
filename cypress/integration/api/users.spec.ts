@@ -1,6 +1,7 @@
 import fc from 'fast-check';
 import { StatusCodes } from 'http-status-codes';
-import { users } from 'src/libs/db/users';
+
+import { users } from '@app/libs/db/users';
 
 describe('Users API', () => {
   const url = '/api/users';

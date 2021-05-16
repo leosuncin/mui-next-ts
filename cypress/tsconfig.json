@@ -7,7 +7,11 @@
     "target": "es6",
     "module": "es6",
     "jsx": "react",
-    "baseUrl": "..",
+    "baseUrl": ".",
+    "paths": {
+      "@app/*": ["../src/*"],
+      "@e2e/*": ["./*"]
+    },
     "types": [
       "cypress",
       "@testing-library/cypress",

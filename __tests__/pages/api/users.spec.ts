@@ -4,10 +4,11 @@
 import { StatusCodes } from 'http-status-codes';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
-import { users } from 'src/libs/db/users';
-import { signJWT } from 'src/libs/jwt';
-import indexHandler from 'src/pages/api/users';
-import { User } from 'src/types';
+
+import { users } from '@app/libs/db/users';
+import { signJWT } from '@app/libs/jwt';
+import indexHandler from '@app/pages/api/users';
+import { User } from '@app/types';
 
 const testUser = users[1];
 const token = signJWT(testUser);

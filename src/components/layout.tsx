@@ -2,7 +2,8 @@ import Container from '@material-ui/core/Container';
 import Head from 'next/head';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Header from 'src/components/header';
+
+import Header from '@app/components/header';
 
 const Layout: React.FC<{ title?: string }> = props => {
   return (

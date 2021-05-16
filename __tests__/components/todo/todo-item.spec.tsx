@@ -1,8 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import TodoItem from 'src/components/todo/todo-item';
-import { todoBuild } from 'src/utils/factories';
+
+import TodoItem from '@app/components/todo/todo-item';
+import { todoBuild } from '@app/utils/factories';
 
 describe('<TodoItem />', () => {
   it('should render', () => {

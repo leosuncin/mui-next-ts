@@ -1,5 +1,6 @@
 import { Secret, SignOptions, sign } from 'jsonwebtoken';
-import { signJWT } from 'src/libs/jwt';
+
+import { signJWT } from '@app/libs/jwt';
 
 export type SignParams = {
   payload: string | Record<string, unknown>;

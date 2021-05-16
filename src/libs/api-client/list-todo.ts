@@ -1,5 +1,5 @@
-import { get } from 'src/libs/request';
-import { TodoResponse as Todo } from 'src/types';
+import { get } from '@app/libs/request';
+import { TodoResponse as Todo } from '@app/types';
 
 import { PaginationParams } from '.';
 

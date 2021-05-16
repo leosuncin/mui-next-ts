@@ -10,7 +10,8 @@ import Link from 'next/link';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import Copyright from 'src/components/copyright';
+
+import Copyright from '@app/components/copyright';
 
 import useStyles from './styles';
 

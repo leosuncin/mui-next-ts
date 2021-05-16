@@ -1,10 +1,11 @@
 import { bool, build, fake, perBuild } from '@jackfranklin/test-data-bot';
+
 import {
   AuthLogin,
   AuthRegister,
   TodoResponse,
   UserWithoutPassword,
-} from 'src/types';
+} from '@app/types';
 
 export function randomArrayElement<Element>(array: Element[]): Element {
   const index = Math.floor(Math.random() * array.length);

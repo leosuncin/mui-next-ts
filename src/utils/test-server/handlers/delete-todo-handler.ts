@@ -1,6 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import { RequestHandler, rest } from 'msw';
-import { db } from 'src/utils/db';
+
+import { db } from '@app/utils/db';
 
 const deleteTodoHandler: RequestHandler = rest.delete(
   '/api/todos/:id',

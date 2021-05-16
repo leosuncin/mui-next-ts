@@ -1,7 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
 import { RequestHandler, rest } from 'msw';
-import { createTodoSchema as validationSchema } from 'src/libs/validation/todo';
-import { db } from 'src/utils/db';
+
+import { createTodoSchema as validationSchema } from '@app/libs/validation/todo';
+import { db } from '@app/utils/db';
 
 const createTodoHandler: RequestHandler = rest.post(
   '/api/todos',

@@ -7,7 +7,8 @@ import type { IncomingMessage, ServerResponse } from 'http';
 
 import type { NextPageContext } from 'next';
 import { createMocks } from 'node-mocks-http';
-import withAuthentication from 'src/components/hoc/with-authentication';
+
+import withAuthentication from '@app/components/hoc/with-authentication';
 
 describe('withAuthentication HOC', () => {
   afterEach(() => {

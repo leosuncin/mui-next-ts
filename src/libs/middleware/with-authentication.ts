@@ -1,8 +1,9 @@
 import { nSQL } from '@nano-sql/core';
 import { NextApiRequest } from 'next';
 import { parseCookies } from 'nookies';
-import { decodeJWT } from 'src/libs/jwt';
-import { NextHttpHandler, UnauthorizedError, User } from 'src/types';
+
+import { decodeJWT } from '@app/libs/jwt';
+import { NextHttpHandler, UnauthorizedError, User } from '@app/types';
 
 function extractTokenFromCookies(req: NextApiRequest) {
   const cookies = parseCookies({ req });

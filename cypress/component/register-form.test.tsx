@@ -3,8 +3,9 @@ import fc from 'fast-check';
 import { RouterContext } from 'next/dist/next-server/lib/router-context';
 import type { NextRouter } from 'next/router';
 import React from 'react';
-import RegisterForm from 'src/components/forms/register';
-import { registerBuild } from 'src/utils/factories';
+
+import RegisterForm from '@app/components/forms/register';
+import { registerBuild } from '@app/utils/factories';
 
 describe('RegisterForm component', () => {
   const firstNameLabel = /First name/i;

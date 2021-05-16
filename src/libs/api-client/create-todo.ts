@@ -1,5 +1,5 @@
-import { post } from 'src/libs/request';
-import { CreateTodo, TodoResponse as Todo } from 'src/types';
+import { post } from '@app/libs/request';
+import { CreateTodo, TodoResponse as Todo } from '@app/types';
 
 export default async function createTodo(
   body: CreateTodo,

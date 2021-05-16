@@ -1,15 +1,16 @@
 import { nSQL } from '@nano-sql/core';
 import { setCookie } from 'nookies';
-import { comparePassword } from 'src/libs/encrypt';
-import { signJWT } from 'src/libs/jwt';
+
+import { comparePassword } from '@app/libs/encrypt';
+import { signJWT } from '@app/libs/jwt';
 import {
   catchErrors,
   validateBody,
   validateMethod,
   withDB,
-} from 'src/libs/middleware';
-import { loginSchema } from 'src/libs/validation';
-import { NextHttpHandler, UnauthorizedError, User } from 'src/types';
+} from '@app/libs/middleware';
+import { loginSchema } from '@app/libs/validation';
+import { NextHttpHandler, UnauthorizedError, User } from '@app/types';
 
 /**
  * Login a existing user

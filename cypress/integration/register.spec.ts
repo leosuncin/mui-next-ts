@@ -1,9 +1,10 @@
 import { createModel } from '@xstate/test';
-import { users } from 'src/libs/db/users';
+
+import { users } from '@app/libs/db/users';
 import createMachineWithTests, {
   FillEvent,
-} from 'src/machines/register-test-machine';
-import { randomArrayElement, registerBuild } from 'src/utils/factories';
+} from '@app/machines/register-test-machine';
+import { randomArrayElement, registerBuild } from '@app/utils/factories';
 
 const firstNameLabel = /First name/i;
 const lastNameLabel = /Last name/i;

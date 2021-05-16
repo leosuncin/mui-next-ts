@@ -1,7 +1,8 @@
 import React, { createContext, useContext } from 'react';
-import { useUserDispatch } from 'src/hooks/user-context';
-import { login, logout, register } from 'src/libs/api-client';
-import { AuthLogin, AuthRegister } from 'src/types';
+
+import { useUserDispatch } from '@app/hooks/user-context';
+import { login, logout, register } from '@app/libs/api-client';
+import { AuthLogin, AuthRegister } from '@app/types';
 
 type AuthContextType = {
   login: (body: AuthLogin) => Promise<void>;

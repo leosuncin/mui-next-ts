@@ -1,7 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
 import { destroyCookie } from 'nookies';
-import { catchErrors, validateMethod } from 'src/libs/middleware';
-import { NextHttpHandler } from 'src/types';
+
+import { catchErrors, validateMethod } from '@app/libs/middleware';
+import { NextHttpHandler } from '@app/types';
 
 const logout: NextHttpHandler = (_, res) => {
   destroyCookie({ res }, 'token', { httpOnly: true, path: '/' });

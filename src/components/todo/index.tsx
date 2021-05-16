@@ -2,7 +2,8 @@ import { Backdrop, CircularProgress, Collapse, Grid } from '@material-ui/core';
 import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import { Alert } from '@material-ui/lab';
 import React from 'react';
-import { useTodo } from 'src/hooks/use-todo';
+
+import { useTodo } from '@app/hooks/use-todo';
 
 import AddTodoForm from './add-todo';
 import FilterTodo from './filter-todo';

@@ -1,9 +1,10 @@
 import { StatusCodes } from 'http-status-codes';
 import { RequestHandler, rest } from 'msw';
-import { signJWT } from 'src/libs/jwt';
-import { registerSchema as validationSchema } from 'src/libs/validation';
-import type { AuthRegister, User } from 'src/types';
-import { db } from 'src/utils/db';
+
+import { signJWT } from '@app/libs/jwt';
+import { registerSchema as validationSchema } from '@app/libs/validation';
+import type { AuthRegister, User } from '@app/types';
+import { db } from '@app/utils/db';
 
 const registerHandler: RequestHandler = rest.post(
   '/api/auth/register',

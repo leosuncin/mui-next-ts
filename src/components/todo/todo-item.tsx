@@ -11,7 +11,8 @@ import { Delete as DeleteIcon } from '@material-ui/icons';
 import { DateTime } from 'luxon';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { createTodoSchema as validationSchema } from 'src/libs/validation';
+
+import { createTodoSchema as validationSchema } from '@app/libs/validation';
 
 const propTypes = {
   todo: PropTypes.shape({

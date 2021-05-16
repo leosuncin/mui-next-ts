@@ -1,6 +1,7 @@
 import { Grid, LinearProgress, List } from '@material-ui/core';
 import React from 'react';
-import { TodoResponse as Todo, UpdateTodo } from 'src/types';
+
+import { TodoResponse as Todo, UpdateTodo } from '@app/types';
 
 import TodoItem from './todo-item';
 

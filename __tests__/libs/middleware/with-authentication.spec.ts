@@ -5,11 +5,12 @@ import { nSQL } from '@nano-sql/core';
 import { sign } from 'jsonwebtoken';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
-import { dbConfig, users } from 'src/libs/db';
-import { signJWT } from 'src/libs/jwt';
-import { withAuthentication } from 'src/libs/middleware';
-import { UnauthorizedError, User } from 'src/types';
-import { tokenBuilder } from 'src/utils/factories';
+
+import { dbConfig, users } from '@app/libs/db';
+import { signJWT } from '@app/libs/jwt';
+import { withAuthentication } from '@app/libs/middleware';
+import { UnauthorizedError, User } from '@app/types';
+import { tokenBuilder } from '@app/utils/factories';
 
 const toBase64 = (str: string) => Buffer.from(str).toString('base64');
 const toBase64UrlSafe = (str: string) =>

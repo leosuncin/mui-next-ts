@@ -1,4 +1,4 @@
-import { remove } from 'src/libs/request';
+import { remove } from '@app/libs/request';
 
 export default async function deleteTodo(
   id: string,

@@ -2,8 +2,9 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import React, { useEffect } from 'react';
-import { AuthProvider } from 'src/hooks/auth-context';
-import { UserProvider } from 'src/hooks/user-context';
+
+import { AuthProvider } from '@app/hooks/auth-context';
+import { UserProvider } from '@app/hooks/user-context';
 
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {

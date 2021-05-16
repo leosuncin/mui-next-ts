@@ -3,7 +3,7 @@ import {
   validateMethod,
   withAuthentication,
   withDB,
-} from 'src/libs/middleware';
+} from '@app/libs/middleware';
 
 export default catchErrors(
   validateMethod(['GET'])(

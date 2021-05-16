@@ -1,6 +1,7 @@
 import fetchMock from 'jest-fetch-mock';
-import getAuthUser from 'src/libs/api-client/get-auth-user';
-import { UserWithoutPassword as User } from 'src/types';
+
+import getAuthUser from '@app/libs/api-client/get-auth-user';
+import { UserWithoutPassword as User } from '@app/types';
 
 fetchMock.enableMocks();
 

@@ -8,8 +8,9 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
-import RegisterForm from 'src/components/forms/register';
-import { useAuth } from 'src/hooks/auth-context';
+
+import RegisterForm from '@app/components/forms/register';
+import { useAuth } from '@app/hooks/auth-context';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

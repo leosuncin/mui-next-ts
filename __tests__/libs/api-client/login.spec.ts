@@ -1,6 +1,6 @@
-import login from 'src/libs/api-client/login';
-import { AuthLogin, HttpError, UserWithoutPassword } from 'src/types';
-import server, { respondWithServiceUnavailable } from 'src/utils/test-server';
+import login from '@app/libs/api-client/login';
+import { AuthLogin, HttpError, UserWithoutPassword } from '@app/types';
+import server, { respondWithServiceUnavailable } from '@app/utils/test-server';
 
 describe('login', () => {
   beforeAll(() => server.listen());

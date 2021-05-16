@@ -19,7 +19,11 @@ const options = {
   webpackOptions: {
     resolve: {
       extensions: ['.ts', '.tsx', '.js'],
-      modules: [path.resolve(__dirname, '../..'), 'node_modules'],
+      modules: [process.cwd(), 'node_modules'],
+      alias: {
+        '@app': path.resolve(process.cwd(), 'src'),
+        '@e2e': path.resolve(process.cwd(), 'cypress'),
+      },
     },
     module: {
       rules: [
