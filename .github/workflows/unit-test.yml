@@ -43,7 +43,7 @@ jobs:
           APP_SECRET: this-is-not-a-secret
           JWT_ISSUER: unit-tests
       - name: Monitor coverage 📫
-        if: "github.event_name == 'pull_request'"
+        if: github.event_name == 'pull_request' && !contains(github.event.pull_request.user.login, 'dependabot')
         uses: slavcodev/coverage-monitor-action@1.2.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -16,7 +16,9 @@ function parseUser(sessionUser: string) {
     return false;
   }
 }
-const withAuthentication = (WrappedPage: NextPage): NextPage => {
+function withAuthentication(
+  WrappedPage: NextPage,
+): NextPage<AuthenticationProps> {
   const Wrapper: NextPage<AuthenticationProps> = props => {
     useEffect(() => {
       const syncLogout = (event: StorageEvent) => {
@@ -56,6 +58,6 @@ const withAuthentication = (WrappedPage: NextPage): NextPage => {
   };
 
   return Wrapper;
-};
+}
 
 export default withAuthentication;
