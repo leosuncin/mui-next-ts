@@ -1,5 +1,5 @@
 import login from 'libs/api-client/login';
-import { HttpError, UserWithoutPassword } from 'types';
+import { AuthLogin, HttpError, UserWithoutPassword } from 'types';
 import server, { respondWithServiceUnavailable } from 'utils/test-server';
 
 describe('login', () => {
@@ -23,7 +23,7 @@ describe('login', () => {
   });
 
   it('should fail for missing credentials', async () => {
-    const body: any = {};
+    const body = {} as unknown as AuthLogin;
 
     await expect(login(body)).rejects.toThrow(HttpError);
   });

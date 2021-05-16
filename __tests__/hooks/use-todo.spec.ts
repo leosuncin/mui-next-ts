@@ -1,10 +1,21 @@
-import { TodoEvent, TodoState, todoReducer } from 'hooks/use-todo';
+import { TodoEffect, TodoEvent, TodoState, todoReducer } from 'hooks/use-todo';
+import { EffectReducerExec } from 'use-effect-reducer';
+
+type TodoEffectReducerExec = EffectReducerExec<
+  TodoState,
+  TodoEvent,
+  TodoEffect
+>;
 
 describe('useTodo Hook', () => {
   describe('reducer', () => {
     it('should return the state by default', () => {
       expect(
-        todoReducer(undefined, {} as TodoEvent, jest.fn() as any),
+        todoReducer(
+          undefined,
+          {} as TodoEvent,
+          jest.fn() as unknown as TodoEffectReducerExec,
+        ),
       ).toStrictEqual({
         all: [],
         completed: [],
@@ -22,9 +33,9 @@ describe('useTodo Hook', () => {
         loading: false,
         _filter: 'all',
       };
-      const mockExec = jest.fn();
+      const mockExec = jest.fn() as unknown as TodoEffectReducerExec;
 
-      expect(todoReducer(prevState, { type: 'FETCH_TODOS' }, mockExec as any))
+      expect(todoReducer(prevState, { type: 'FETCH_TODOS' }, mockExec))
         .toMatchInlineSnapshot(`
         Object {
           "_filter": "all",
@@ -131,7 +142,11 @@ describe('useTodo Hook', () => {
         ],
       };
 
-      const nextState = todoReducer(prevState, event, jest.fn() as any);
+      const nextState = todoReducer(
+        prevState,
+        event,
+        jest.fn() as unknown as TodoEffectReducerExec,
+      );
 
       expect(nextState.all).toHaveLength(10);
       expect(nextState.active).toHaveLength(5);
@@ -153,7 +168,11 @@ describe('useTodo Hook', () => {
       };
       const mockExec = jest.fn();
 
-      const nextState = todoReducer(prevState, event, mockExec as any);
+      const nextState = todoReducer(
+        prevState,
+        event,
+        mockExec as unknown as TodoEffectReducerExec,
+      );
 
       expect(nextState).toHaveProperty('loading', true);
       expect(nextState.error).toBeUndefined();
@@ -183,7 +202,11 @@ describe('useTodo Hook', () => {
         },
       };
 
-      const nextState = todoReducer(prevState, event, jest.fn() as any);
+      const nextState = todoReducer(
+        prevState,
+        event,
+        jest.fn() as unknown as TodoEffectReducerExec,
+      );
 
       expect(nextState).toHaveProperty('loading', false);
       expect(nextState.all).toStrictEqual([event.payload]);
@@ -309,7 +332,11 @@ describe('useTodo Hook', () => {
       };
       const mockExec = jest.fn();
 
-      const nextState = todoReducer(prevState, event, mockExec as any);
+      const nextState = todoReducer(
+        prevState,
+        event,
+        mockExec as unknown as TodoEffectReducerExec,
+      );
 
       expect(mockExec).toHaveBeenCalledWith({
         type: 'editTodo',
@@ -450,7 +477,11 @@ describe('useTodo Hook', () => {
         },
       };
 
-      const nextState = todoReducer(prevState, event, jest.fn() as any);
+      const nextState = todoReducer(
+        prevState,
+        event,
+        jest.fn() as unknown as TodoEffectReducerExec,
+      );
 
       expect(nextState.all).toHaveLength(6);
       expect(nextState.active).toHaveLength(2);
@@ -578,7 +609,11 @@ describe('useTodo Hook', () => {
         payload: 'Database connection error',
       };
 
-      const nextState = todoReducer(prevState, event, jest.fn() as any);
+      const nextState = todoReducer(
+        prevState,
+        event,
+        jest.fn() as unknown as TodoEffectReducerExec,
+      );
 
       expect(nextState).toHaveProperty('error', 'Database connection error');
       expect(nextState._position).toBeUndefined();
@@ -726,7 +761,11 @@ describe('useTodo Hook', () => {
       };
       const mockExec = jest.fn();
 
-      const nextState = todoReducer(prevState, event, mockExec as any);
+      const nextState = todoReducer(
+        prevState,
+        event,
+        mockExec as unknown as TodoEffectReducerExec,
+      );
 
       expect(mockExec).toHaveBeenCalledWith({
         type: 'removeTodo',
@@ -852,7 +891,11 @@ describe('useTodo Hook', () => {
         payload: 'Database connection error',
       };
 
-      const nextState = todoReducer(prevState, event, jest.fn() as any);
+      const nextState = todoReducer(
+        prevState,
+        event,
+        jest.fn() as unknown as TodoEffectReducerExec,
+      );
 
       expect(nextState).toHaveProperty('error', 'Database connection error');
       expect(nextState._position).toBeUndefined();
@@ -977,14 +1020,14 @@ describe('useTodo Hook', () => {
         todoReducer(
           prevState,
           { type: 'SWITCH_FILTER', payload: 'active' },
-          jest.fn() as any,
+          jest.fn() as unknown as TodoEffectReducerExec,
         ),
       ).toHaveProperty('_filter', 'active');
       expect(
         todoReducer(
           prevState,
           { type: 'SWITCH_FILTER', payload: 'completed' },
-          jest.fn() as any,
+          jest.fn() as unknown as TodoEffectReducerExec,
         ),
       ).toHaveProperty('_filter', 'completed');
     });
@@ -999,7 +1042,11 @@ describe('useTodo Hook', () => {
       };
       const event: TodoEvent = { type: 'ERROR', payload: 'Network Error' };
 
-      const nextState = todoReducer(prevState, event, jest.fn() as any);
+      const nextState = todoReducer(
+        prevState,
+        event,
+        jest.fn() as unknown as TodoEffectReducerExec,
+      );
 
       expect(nextState).toHaveProperty('loading', false);
       expect(nextState).toHaveProperty('error', 'Network Error');

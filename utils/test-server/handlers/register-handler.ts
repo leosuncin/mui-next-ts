@@ -2,7 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import { signJWT } from 'libs/jwt';
 import { registerSchema as validationSchema } from 'libs/validation';
 import { RequestHandler, rest } from 'msw';
-import type { AuthRegister } from 'types';
+import type { AuthRegister, User } from 'types';
 import { db } from 'utils/db';
 
 const registerHandler: RequestHandler = rest.post(
@@ -11,7 +11,7 @@ const registerHandler: RequestHandler = rest.post(
     const { firstName, lastName, username } = req.body as AuthRegister;
     const user = db.users.findFirst({
       where: { username: { equals: username } },
-    });
+    }) as User;
 
     try {
       validationSchema.validateSync(req.body, {
@@ -46,8 +46,8 @@ const registerHandler: RequestHandler = rest.post(
       firstName,
       lastName,
       username,
-    });
-    const token = signJWT(newUser as any);
+    }) as User;
+    const token = signJWT(newUser);
 
     return res(
       ctx.status(StatusCodes.OK),

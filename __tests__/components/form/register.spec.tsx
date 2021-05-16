@@ -16,11 +16,11 @@ jest.mock(
 
 describe('<RegisterForm />', () => {
   it('should render', () => {
-    expect(render(<RegisterForm onSubmit={jest.fn as any} />)).toBeDefined();
+    expect(render(<RegisterForm onSubmit={jest.fn()} />)).toBeDefined();
   });
 
   it('should require the fields', async () => {
-    render(<RegisterForm onSubmit={jest.fn as any} />);
+    render(<RegisterForm onSubmit={jest.fn()} />);
 
     userEvent.click(screen.getByRole('button'));
 

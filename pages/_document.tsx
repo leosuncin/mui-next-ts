@@ -18,7 +18,9 @@ class MyDocument extends Document<MyDocumentProps & DocumentInitialProps> {
     locale: 'es-SV',
   };
 
-  static async getInitialProps(ctx: DocumentContext) {
+  static async getInitialProps(
+    ctx: DocumentContext,
+  ): Promise<DocumentInitialProps> {
     const sheets = new ServerStyleSheets();
     const originalRenderPage = ctx.renderPage;
 

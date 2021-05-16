@@ -16,7 +16,7 @@ export const UserProvider: React.FC<{ initialUser?: User }> = props => {
   );
 };
 
-export function useUserState() {
+export function useUserState(): User {
   return useContext(UserStateContext);
 }
 

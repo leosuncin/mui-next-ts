@@ -6,9 +6,9 @@ import { sign } from 'jsonwebtoken';
 import { dbConfig, users } from 'libs/db';
 import { signJWT } from 'libs/jwt';
 import { withAuthentication } from 'libs/middleware';
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
-import { UnauthorizedError } from 'types';
+import { UnauthorizedError, User } from 'types';
 import { tokenBuilder } from 'utils/factories';
 
 const toBase64 = (str: string) => Buffer.from(str).toString('base64');
@@ -32,7 +32,7 @@ describe('withAuthentication middleware', () => {
     `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${toBase64UrlSafe(
       users[0].id,
     )}.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`,
-    signJWT({ id: tokenBuilder({ traits: 'uuid' }) } as any),
+    signJWT({ id: tokenBuilder({ traits: 'uuid' }) } as unknown as User),
   ];
 
   beforeAll(async () => {
@@ -48,15 +48,18 @@ describe('withAuthentication middleware', () => {
     'should fail to authenticate with authorization header: %s',
     async authorization => {
       const handler = jest.fn();
-      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+      const { req, res } = createMocks<
+        NextApiRequest & { user: User },
+        NextApiResponse
+      >({
         headers: {
           authorization,
         },
       });
 
-      await expect(
-        withAuthentication(handler)(req as any, res),
-      ).rejects.toThrow(UnauthorizedError);
+      await expect(withAuthentication(handler)(req, res)).rejects.toThrow(
+        UnauthorizedError,
+      );
 
       expect(handler).not.toHaveBeenCalled();
     },
@@ -66,7 +69,10 @@ describe('withAuthentication middleware', () => {
     'should fail to authenticate with cookie token: %s',
     async token => {
       const handler = jest.fn();
-      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+      const { req, res } = createMocks<
+        NextApiRequest & { user: User },
+        NextApiResponse
+      >({
         headers: {
           cookie: token
             ? `token=${token}; Path=/; HttpOnly; SameSite=Strict`
@@ -74,9 +80,9 @@ describe('withAuthentication middleware', () => {
         },
       });
 
-      await expect(
-        withAuthentication(handler)(req as any, res),
-      ).rejects.toThrow(UnauthorizedError);
+      await expect(withAuthentication(handler)(req, res)).rejects.toThrow(
+        UnauthorizedError,
+      );
 
       expect(handler).not.toHaveBeenCalled();
     },
@@ -85,13 +91,16 @@ describe('withAuthentication middleware', () => {
   it('should authenticate with cookie token', async () => {
     const token = signJWT(users[0]);
     const handler = jest.fn();
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+    const { req, res } = createMocks<
+      NextApiRequest & { user: User },
+      NextApiResponse
+    >({
       headers: {
         cookie: `token=${token}; Path=/; HttpOnly; SameSite=Strict`,
       },
     });
 
-    await withAuthentication(handler)(req as any, res);
+    await withAuthentication(handler)(req, res);
 
     expect(handler).toHaveBeenCalled();
   });
@@ -99,13 +108,16 @@ describe('withAuthentication middleware', () => {
   it('should authenticate with authorization header', async () => {
     const token = signJWT(users[0]);
     const handler = jest.fn();
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+    const { req, res } = createMocks<
+      NextApiRequest & { user: User },
+      NextApiResponse
+    >({
       headers: {
         authorization: `Bearer ${token}`,
       },
     });
 
-    await withAuthentication(handler)(req as any, res);
+    await withAuthentication(handler)(req, res);
 
     expect(handler).toHaveBeenCalled();
   });

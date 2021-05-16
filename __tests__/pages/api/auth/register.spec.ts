@@ -3,19 +3,22 @@
  */
 import fc from 'fast-check';
 import { StatusCodes } from 'http-status-codes';
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
 import registerHandler from 'pages/api/auth/register';
-import { AuthRegister } from 'types';
+import type { AuthRegister, User } from 'types';
 import { registerBuild } from 'utils/factories';
 
 describe('/api/auth/register', () => {
   it('should validate the request method', async () => {
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+    const { req, res } = createMocks<
+      NextApiRequest & { user: User },
+      NextApiResponse
+    >({
       method: 'PUT',
     });
 
-    await registerHandler(req as any, res);
+    await registerHandler(req, res);
 
     expect(res._getStatusCode()).toBe(StatusCodes.METHOD_NOT_ALLOWED);
     expect(res._getHeaders()).toHaveProperty('allow', 'POST');
@@ -34,12 +37,15 @@ describe('/api/auth/register', () => {
           { withDeletedKeys: true },
         ),
         async body => {
-          const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+          const { req, res } = createMocks<
+            NextApiRequest & { user: User },
+            NextApiResponse
+          >({
             method: 'POST',
             body,
           });
 
-          await registerHandler(req as any, res);
+          await registerHandler(req, res);
 
           expect(res._getStatusCode()).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
           expect(res._getJSONData()).toHaveProperty(
@@ -56,7 +62,10 @@ describe('/api/auth/register', () => {
     ));
 
   it('should reject duplicate user', async () => {
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+    const { req, res } = createMocks<
+      NextApiRequest & { user: User },
+      NextApiResponse
+    >({
       method: 'POST',
       body: {
         firstName: 'Jane',
@@ -66,19 +75,22 @@ describe('/api/auth/register', () => {
       },
     });
 
-    await registerHandler(req as any, res);
+    await registerHandler(req, res);
 
     expect(res._getStatusCode()).toBe(StatusCodes.CONFLICT);
     expect(res._getJSONData().message).toMatch(/already registered/);
   });
 
   it('should register a new user', async () => {
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+    const { req, res } = createMocks<
+      NextApiRequest & { user: User },
+      NextApiResponse
+    >({
       method: 'POST',
       body: registerBuild(),
     });
 
-    await registerHandler(req as any, res);
+    await registerHandler(req, res);
 
     expect(res._getStatusCode()).toBe(StatusCodes.OK);
     expect(res._getHeaders()).toHaveProperty(

@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import LoginForm from 'components/forms/login';
 import { useAuth } from 'hooks/auth-context';
+import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import React from 'react';
 
@@ -34,9 +35,9 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function LoginPage(props) {
+const LoginPage: NextPage = () => {
   const router = useRouter();
-  const classes = useStyles(props);
+  const classes = useStyles();
   const { login } = useAuth();
 
   return (
@@ -61,4 +62,6 @@ export default function LoginPage(props) {
       </Grid>
     </Grid>
   );
-}
+};
+
+export default LoginPage;

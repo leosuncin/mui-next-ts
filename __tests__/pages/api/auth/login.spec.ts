@@ -3,18 +3,21 @@
  */
 import fc from 'fast-check';
 import { StatusCodes } from 'http-status-codes';
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks } from 'node-mocks-http';
 import loginHandler from 'pages/api/auth/login';
-import { AuthLogin } from 'types';
+import type { AuthLogin, User } from 'types';
 
 describe('/api/auth/login', () => {
   it('should validate the request method', async () => {
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+    const { req, res } = createMocks<
+      NextApiRequest & { user: User },
+      NextApiResponse
+    >({
       method: 'PUT',
     });
 
-    await loginHandler(req as any, res);
+    await loginHandler(req, res);
 
     expect(res._getStatusCode()).toBe(StatusCodes.METHOD_NOT_ALLOWED);
     expect(res._getHeaders()).toHaveProperty('allow', 'POST');
@@ -31,12 +34,15 @@ describe('/api/auth/login', () => {
           { withDeletedKeys: true },
         ),
         async body => {
-          const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+          const { req, res } = createMocks<
+            NextApiRequest & { user: User },
+            NextApiResponse
+          >({
             method: 'POST',
             body,
           });
 
-          await loginHandler(req as any, res);
+          await loginHandler(req, res);
 
           expect(res._getStatusCode()).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
           expect(res._getJSONData()).toHaveProperty(
@@ -51,7 +57,10 @@ describe('/api/auth/login', () => {
     ));
 
   it('should validate the username', async () => {
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+    const { req, res } = createMocks<
+      NextApiRequest & { user: User },
+      NextApiResponse
+    >({
       method: 'POST',
       body: {
         username: 'administrator',
@@ -59,7 +68,7 @@ describe('/api/auth/login', () => {
       },
     });
 
-    await loginHandler(req as any, res);
+    await loginHandler(req, res);
 
     expect(res._getStatusCode()).toBe(StatusCodes.UNAUTHORIZED);
     expect(res._getJSONData()).toHaveProperty(
@@ -69,7 +78,10 @@ describe('/api/auth/login', () => {
   });
 
   it('should validate the password', async () => {
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+    const { req, res } = createMocks<
+      NextApiRequest & { user: User },
+      NextApiResponse
+    >({
       method: 'POST',
       body: {
         username: 'admin',
@@ -77,7 +89,7 @@ describe('/api/auth/login', () => {
       },
     });
 
-    await loginHandler(req as any, res);
+    await loginHandler(req, res);
 
     expect(res._getStatusCode()).toBe(StatusCodes.UNAUTHORIZED);
     expect(res._getJSONData()).toHaveProperty(
@@ -87,7 +99,10 @@ describe('/api/auth/login', () => {
   });
 
   it('should validate the correct credentials', async () => {
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+    const { req, res } = createMocks<
+      NextApiRequest & { user: User },
+      NextApiResponse
+    >({
       method: 'POST',
       body: {
         username: 'admin',
@@ -95,7 +110,7 @@ describe('/api/auth/login', () => {
       },
     });
 
-    await loginHandler(req as any, res);
+    await loginHandler(req, res);
 
     expect(res._getStatusCode()).toBe(StatusCodes.OK);
     expect(res._getHeaders()).toHaveProperty(

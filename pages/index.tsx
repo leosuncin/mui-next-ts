@@ -13,7 +13,10 @@ import withAuthentication, {
 } from 'components/hoc/with-authentication';
 import Layout from 'components/layout';
 import { listUser } from 'libs/api-client';
-import MUIDataTable, { MUIDataTableColumn } from 'mui-datatables';
+import MUIDataTable, {
+  MUIDataTableColumn,
+  MUIDataTableOptions,
+} from 'mui-datatables';
 import { NextPage } from 'next';
 import React, { useEffect, useState } from 'react';
 import { UserWithoutPassword as User } from 'types';
@@ -55,11 +58,11 @@ const IndexPage: NextPage<AuthenticationProps> = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>();
-  const options = {
+  const options: Partial<MUIDataTableOptions> = {
     responsive: 'standard',
     expandableRows: true,
     expandableRowsOnClick: true,
-    renderExpandableRow(rowData: Array<any>) {
+    renderExpandableRow(rowData: Array<User[keyof User]>) {
       const colSpan = rowData.length + 1;
 
       return (
@@ -132,7 +135,7 @@ const IndexPage: NextPage<AuthenticationProps> = () => {
               </Typography>
             }
             columns={columns}
-            options={options as any}
+            options={options}
             data={users}
           />
         </Grid>

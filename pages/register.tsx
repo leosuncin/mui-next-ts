@@ -7,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import RegisterForm from 'components/forms/register';
 import { useAuth } from 'hooks/auth-context';
+import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
@@ -39,11 +40,11 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function RegisterPage(props) {
+const RegisterPage: NextPage = () => {
   const [error, setError] = useState<string>();
   const { register } = useAuth();
   const router = useRouter();
-  const classes = useStyles(props);
+  const classes = useStyles();
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -84,4 +85,6 @@ export default function RegisterPage(props) {
       </Grid>
     </Grid>
   );
-}
+};
+
+export default RegisterPage;

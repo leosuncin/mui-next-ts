@@ -2,7 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import { signJWT } from 'libs/jwt';
 import { loginSchema as validationSchema } from 'libs/validation';
 import { RequestHandler, rest } from 'msw';
-import type { AuthLogin } from 'types';
+import type { AuthLogin, User } from 'types';
 import { db } from 'utils/db';
 
 const loginHandler: RequestHandler = rest.post(
@@ -11,7 +11,7 @@ const loginHandler: RequestHandler = rest.post(
     const { username, password } = req.body as AuthLogin;
     const user = db.users.findFirst({
       where: { username: { equals: username } },
-    });
+    }) as User;
 
     try {
       validationSchema.validateSync(req.body, {
@@ -33,7 +33,7 @@ const loginHandler: RequestHandler = rest.post(
     }
 
     if (user && password === 'Pa$$w0rd!') {
-      const token = signJWT(user as any);
+      const token = signJWT(user);
       return res(
         ctx.status(StatusCodes.OK),
         ctx.set('Authorization', `Bearer ${token}`),

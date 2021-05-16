@@ -16,10 +16,10 @@ function parseUser(sessionUser: string) {
     return false;
   }
 }
-const withAuthentication = (WrappedPage: NextPage) => {
+const withAuthentication = (WrappedPage: NextPage): NextPage => {
   const Wrapper: NextPage<AuthenticationProps> = props => {
     useEffect(() => {
-      const syncLogout = event => {
+      const syncLogout = (event: StorageEvent) => {
         if (event.key === 'logoutAt') {
           Router.push('/login');
         }
