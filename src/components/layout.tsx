@@ -1,26 +1,23 @@
 import Container from '@material-ui/core/Container';
 import Head from 'next/head';
-import PropTypes from 'prop-types';
 import React from 'react';
 
 import Header from '@app/components/header';
 
-const Layout: React.FC<{ title?: string }> = props => {
+export interface LayoutProps {
+  title?: string;
+}
+
+function Layout(props: React.PropsWithChildren<LayoutProps>) {
   return (
     <>
       <Head>
-        <title>{props.title}</title>
+        <title>{props.title ?? 'Main page'}</title>
       </Head>
-      <Header title={props.title} />
+      <Header title={props.title ?? 'Main page'} />
       <Container maxWidth="md">{props.children}</Container>
     </>
   );
-};
-Layout.propTypes = {
-  title: PropTypes.string,
-};
-Layout.defaultProps = {
-  title: 'Main page',
-};
+}
 
 export default Layout;
