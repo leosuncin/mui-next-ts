@@ -41,7 +41,7 @@
     "jsonwebtoken": "^8.5.1",
     "luxon": "^1.25.0",
     "mui-datatables": "^3.7.3",
-    "next": "^10.0.0",
+    "next": "^11.0.1",
     "next-fonts": "^1.4.0",
     "nookies": "^2.4.0",
     "react": "^17.0.1",
