@@ -9,7 +9,7 @@ import {
 
 import { users } from '@app/libs/db/users';
 
-export interface RegisterTestStateSchema extends StateSchema<never> {
+export interface RegisterTestStateSchema extends StateSchema<unknown> {
   states: {
     pristine: Record<string, unknown>;
     invalid: {
@@ -66,7 +66,7 @@ function isValidPassword(password: string): boolean {
 }
 
 const registerTestConfig: MachineConfig<
-  never,
+  unknown,
   RegisterTestStateSchema,
   FillEvent
 > = {
@@ -142,13 +142,13 @@ const registerTestConfig: MachineConfig<
   },
 };
 
-export default (
+export default function addTestMeta(
   testSuite: Record<string, CallableFunction>,
-): StateMachine<never, RegisterTestStateSchema, FillEvent> => {
+): StateMachine<unknown, RegisterTestStateSchema, FillEvent> {
   Object.entries(testSuite).forEach(([state, test]) => {
     const path = `states.${state.replace(/\./g, '.states.')}.meta.test`;
     set(registerTestConfig, path, test);
   });
 
   return createMachine(registerTestConfig);
-};
+}

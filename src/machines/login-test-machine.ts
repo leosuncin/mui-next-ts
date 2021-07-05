@@ -7,7 +7,7 @@ import {
   createMachine,
 } from 'xstate';
 
-export interface LoginTestStateSchema extends StateSchema<never> {
+export interface LoginTestStateSchema extends StateSchema<unknown> {
   states: {
     pristine: Record<string, unknown>;
     invalid: {
@@ -39,79 +39,80 @@ function isValidPassword(password: string): boolean {
   return typeof password === 'string' && password.trim().length >= 8;
 }
 
-const loginTestConfig: MachineConfig<never, LoginTestStateSchema, FillEvent> = {
-  id: 'login-test',
-  initial: 'pristine',
-  states: {
-    pristine: {
-      on: {
-        FILL_FORM: [
-          {
-            target: 'invalid.username',
-            cond: (_, event: TypeUsernameEvent) =>
-              !isValidUsername(event.username),
-          },
-          {
-            target: 'invalid.password',
-            cond: (_, event: TypePasswordEvent) =>
-              !isValidPassword(event.password),
-          },
-          {
-            target: 'correctCredentials',
-            cond: (_, event) =>
-              event.username === 'admin' && event.password === 'Pa$$w0rd!',
-          },
-          {
-            target: 'valid',
-            cond: (_, event) =>
-              isValidUsername(event.username) &&
-              isValidPassword(event.password),
-          },
-        ],
+const loginTestConfig: MachineConfig<unknown, LoginTestStateSchema, FillEvent> =
+  {
+    id: 'login-test',
+    initial: 'pristine',
+    states: {
+      pristine: {
+        on: {
+          FILL_FORM: [
+            {
+              target: 'invalid.username',
+              cond: (_, event: TypeUsernameEvent) =>
+                !isValidUsername(event.username),
+            },
+            {
+              target: 'invalid.password',
+              cond: (_, event: TypePasswordEvent) =>
+                !isValidPassword(event.password),
+            },
+            {
+              target: 'correctCredentials',
+              cond: (_, event) =>
+                event.username === 'admin' && event.password === 'Pa$$w0rd!',
+            },
+            {
+              target: 'valid',
+              cond: (_, event) =>
+                isValidUsername(event.username) &&
+                isValidPassword(event.password),
+            },
+          ],
+        },
+      },
+      invalid: {
+        states: {
+          username: {},
+          password: {},
+        },
+      },
+      valid: {
+        on: {
+          SUBMIT: { target: 'incorrectCredentials' },
+        },
+      },
+      correctCredentials: {
+        on: {
+          SUBMIT: { target: 'success' },
+        },
+      },
+      incorrectCredentials: {
+        on: {
+          RETRY: { target: 'retry' },
+        },
+      },
+      success: {
+        type: 'final',
+      },
+      retry: {
+        on: {
+          SUBMIT: { target: 'locked' },
+        },
+      },
+      locked: {
+        type: 'final',
       },
     },
-    invalid: {
-      states: {
-        username: {},
-        password: {},
-      },
-    },
-    valid: {
-      on: {
-        SUBMIT: { target: 'incorrectCredentials' },
-      },
-    },
-    correctCredentials: {
-      on: {
-        SUBMIT: { target: 'success' },
-      },
-    },
-    incorrectCredentials: {
-      on: {
-        RETRY: { target: 'retry' },
-      },
-    },
-    success: {
-      type: 'final',
-    },
-    retry: {
-      on: {
-        SUBMIT: { target: 'locked' },
-      },
-    },
-    locked: {
-      type: 'final',
-    },
-  },
-};
+  };
 
-export default (
+export default function addTestMeta(
   testSuite: Record<string, CallableFunction>,
-): StateMachine<never, LoginTestStateSchema, FillEvent> => {
+): StateMachine<unknown, LoginTestStateSchema, FillEvent> {
   Object.entries(testSuite).forEach(([state, test]) => {
     const path = `states.${state.replace(/\./g, '.states.')}.meta.test`;
     set(loginTestConfig, path, test);
   });
 
   return createMachine(loginTestConfig);
-};
+}
