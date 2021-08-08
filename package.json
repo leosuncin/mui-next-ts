@@ -39,7 +39,7 @@
     "@xstate/react": "^1.4.0",
     "http-status-codes": "^2.1.2",
     "jsonwebtoken": "^8.5.1",
-    "luxon": "^1.27.0",
+    "luxon": "^2.0.1",
     "mui-datatables": "^3.7.3",
     "next": "^11.0.1",
     "next-fonts": "^1.4.0",
