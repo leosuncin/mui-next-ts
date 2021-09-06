@@ -6,8 +6,12 @@ const logoutHandler: RequestHandler = rest.delete(
   (req, res, ctx) =>
     res(
       ctx.status(StatusCodes.NO_CONTENT),
-      ctx.set('Set-Cookie', 'token=; Max-Age=-1; Path=/; HttpOnly'),
-      ctx.set('Set-Cookie', 'sessionUser=; Max-Age=-1; Path=/'),
+      ctx.cookie('token', '', {
+        httpOnly: true,
+        maxAge: -1,
+        sameSite: 'strict',
+      }),
+      ctx.cookie('sessionUser', '', { maxAge: -1, sameSite: 'strict' }),
       ctx.body(''),
     ),
 );
