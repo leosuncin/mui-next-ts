@@ -8,7 +8,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import { createModel } from '@xstate/test';
 import fetchMock from 'jest-fetch-mock';
-import { RouterContext } from 'next/dist/next-server/lib/router-context';
+import { RouterContext } from 'next/dist/shared/lib/router-context';
 import type { NextRouter } from 'next/router';
 import React from 'react';
 
