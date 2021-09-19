@@ -6,6 +6,7 @@ updates:
       interval: weekly
       day: sunday
     versioning-strategy: widen
+    open-pull-requests-limit: 10
     labels:
       - dependencies
       # Add default Kodiak `merge.automerge_label`
