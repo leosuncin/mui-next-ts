@@ -18,27 +18,6 @@ env:
   JWT_ISSUER: e2e-test
 
 jobs:
-  components:
-    runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'skip-ci')"
-    steps:
-      - name: Checkout 🛎
-        uses: actions/checkout@v2
-      - name: Run Cypress component tests 🌲
-        uses: cypress-io/github-action@v2
-        timeout-minutes: 10
-        with:
-          env: coverage=false
-          config-file: cypress-unit.json
-      - name: Upload screenshots and videos on failure ⬆️
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: Cypress screenshots and videos
-          path: |
-            cypress/screenshots
-            cypress/videos
-
   e2e:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
