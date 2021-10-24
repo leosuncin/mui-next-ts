@@ -77,7 +77,7 @@
     "@types/yup": "^0.29.11",
     "@xstate/test": "^0.4.0",
     "babel-plugin-istanbul": "^6.0.0",
-    "babel-plugin-typescript-to-proptypes": "^1.4.0",
+    "babel-plugin-typescript-to-proptypes": "^2.0.0",
     "cypress": "^8.0.0",
     "cypress-dotenv": "^2.0.0",
     "cypress-terminal-report": "^3.0.3",
