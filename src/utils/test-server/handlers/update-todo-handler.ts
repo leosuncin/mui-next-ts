@@ -21,7 +21,7 @@ const updateTodoHandler: RequestHandler = rest.put(
             map: t => ({
               ...t,
               ...todo,
-              id,
+              id: String(id),
               createdBy: users[0].id as string,
             }),
           }),

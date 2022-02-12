@@ -12,7 +12,7 @@ const loginHandler: RequestHandler = rest.post(
     const { username, password } = req.body as AuthLogin;
     const user = db.users.findFirst({
       where: { username: { equals: username } },
-    }) as User;
+    }) as unknown as User;
 
     try {
       validationSchema.validateSync(req.body, {

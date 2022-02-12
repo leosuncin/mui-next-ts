@@ -136,7 +136,7 @@ const RegisterForm: React.FC<RegisterFormProps> = props => {
           Sign Me Up
         </Button>
       )}
-      <Grid container justify="flex-end">
+      <Grid container justifyContent="flex-end">
         <Grid item>
           <Link href="/login" passHref>
             <MUILink variant="body2">Already have an account? Log in</MUILink>

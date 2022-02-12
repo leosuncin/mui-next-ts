@@ -12,7 +12,7 @@ const registerHandler: RequestHandler = rest.post(
     const { firstName, lastName, username } = req.body as AuthRegister;
     const user = db.users.findFirst({
       where: { username: { equals: username } },
-    }) as User;
+    }) as unknown as User;
 
     try {
       validationSchema.validateSync(req.body, {
@@ -47,7 +47,7 @@ const registerHandler: RequestHandler = rest.post(
       firstName,
       lastName,
       username,
-    }) as User;
+    }) as unknown as User;
     const token = signJWT(newUser);
 
     return res(

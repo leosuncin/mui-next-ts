@@ -150,5 +150,9 @@ export default function addTestMeta(
     set(registerTestConfig, path, test);
   });
 
-  return createMachine(registerTestConfig);
+  return createMachine(registerTestConfig) as unknown as StateMachine<
+    unknown,
+    RegisterTestStateSchema,
+    FillEvent
+  >;
 }

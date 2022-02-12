@@ -8,7 +8,7 @@ const deleteTodoHandler: RequestHandler = rest.delete(
   (req, res, ctx) => {
     const { id } = req.params;
 
-    db.todo.delete({ where: { id: { equals: id } } });
+    db.todo.delete({ where: { id: { equals: String(id) } } });
 
     return res(ctx.status(StatusCodes.NO_CONTENT), ctx.body(''));
   },

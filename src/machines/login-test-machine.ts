@@ -114,5 +114,9 @@ export default function addTestMeta(
     set(loginTestConfig, path, test);
   });
 
-  return createMachine(loginTestConfig);
+  return createMachine(loginTestConfig) as unknown as StateMachine<
+    unknown,
+    LoginTestStateSchema,
+    FillEvent
+  >;
 }
