@@ -16,9 +16,11 @@
     "strict": false,
     "baseUrl": ".",
     "paths": {
-      "@app/*": ["src/*"],
-      "@e2e/*": ["cypress/*"]
-    }
+      "~/*": ["src/*"],
+      "~common/*": ["src/features/common/*"],
+      "~api/*": ["src/pages/api/*"]
+    },
+    "incremental": true
   },
   "exclude": ["node_modules", "cypress"],
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]

@@ -1,15 +1,3 @@
 {
-  "extends": ["next", "prettier"],
-  "overrides": [
-    {
-      "files": ["**/*.ts", "**/*.tsx"],
-      "parserOptions": {
-        "project": "./tsconfig.lint.json"
-      },
-      "plugins": ["deprecation"],
-      "rules": {
-        "deprecation/deprecation": "warn"
-      }
-    }
-  ]
+  "extends": "next/core-web-vitals"
 }
