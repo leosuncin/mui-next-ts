@@ -24,7 +24,7 @@ jobs:
           cond: startsWith(github.event.head_commit.message, 'feat') || startsWith(github.event.head_commit.message, 'fix') || startsWith(github.event.head_commit.message, 'refactor') || startsWith(github.event.head_commit.message, 'perf')
           if_true: ${{ matrix.browser }}
       - name: Checkout 🛎
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Run Cypress 🌲
         uses: cypress-io/github-action@v2
         env:
