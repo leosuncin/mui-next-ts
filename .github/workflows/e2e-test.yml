@@ -36,7 +36,7 @@ jobs:
           start: npm start
           wait-on: 'http://localhost:3000'
       - name: Upload screenshots and videos on failure ⬆️
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: Cypress screenshots and videos
@@ -46,7 +46,7 @@ jobs:
       - name: Show code coverage 📊
         run: npx nyc report
       - name: Upload code coverage ⬆️
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: e2e-coverage
           path: coverage/e2e
