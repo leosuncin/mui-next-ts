@@ -43,7 +43,7 @@ jobs:
           record: startsWith(github.event.head_commit.message, 'feat') || startsWith(github.event.head_commit.message, 'fix') || startsWith(github.event.head_commit.message, 'refactor') || startsWith(github.event.head_commit.message, 'perf')
           tag: ${{ steps.cypress_tag.outputs.value }}
       - name: Upload screenshots and videos on error 📦
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: Cypress screenshots and videos
