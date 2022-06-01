@@ -25,7 +25,7 @@ jobs:
       - name: Checkout 🛎
         uses: actions/checkout@v3
       - name: Cache Next.js build 📦
-        uses: actions/cache@v3.0.1
+        uses: actions/cache@v3.0.3
         with:
           path: .next/cache
           key: ${{ runner.os }}-next-build-${{ hashFiles('**/next.config.js') }}
