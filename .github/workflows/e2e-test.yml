@@ -30,7 +30,7 @@ jobs:
           path: .next/cache
           key: ${{ runner.os }}-next-build-${{ hashFiles('**/next.config.js') }}
       - name: Run Cypress tests 🌲
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v5
         with:
           build: npm run build
           start: npm start
